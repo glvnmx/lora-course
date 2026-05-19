@@ -1,0 +1,21 @@
+<!doctype html><html lang="ru"><head><title>Практика 6. Донастройка LLM: инструкции, диалоги, RLHF</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script defer src="../js/main.js"></script></head><body><nav class="top-nav"><a href="../index.html">Оглавление</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav><main class="layout"><aside class="sidebar"><h3>Практики</h3><a href="practical1.html" class="">1. Практика</a><a href="practical2.html" class="">2. Практика</a><a href="practical3.html" class="">3. Практика</a><a href="practical4.html" class="">4. Практика</a><a href="practical5.html" class="">5. Практика</a><a href="practical6.html" class="active">6. Практика</a><a href="practical7.html" class="">7. Практика</a><a href="practical8.html" class="">8. Практика</a></aside><article class="content"><div class="breadcrumbs"><a href="../index.html">Курс</a><span>Практика 6</span></div><h1>Практическое задание 6. Донастройка LLM: инструкции, диалоги, RLHF</h1><p>Выполните задания последовательно. Часть упражнений рассчитана на письменный ответ, часть — на код или исследовательскую заметку.</p><ol class="tasks"><li>Сформулируйте главную учебную цель лекции 6 в одном абзаце и выделите три ключевых термина.</li>
+<li>Составьте таблицу из пяти понятий темы «Донастройка LLM: инструкции, диалоги, RLHF»: определение, формула или пример, типичная ошибка.</li>
+<li>Решите расчетную задачу: оцените число обучаемых параметров LoRA для слоя 4096x4096 при r=8, r=16 и r=64.</li>
+<li>Объясните, как изменится память оптимизатора Adam, если вместо полной матрицы обучать только LoRA-факторы.</li>
+<li>Напишите небольшой фрагмент PyTorch-кода, который создает две матрицы A и B и вычисляет delta_W = B @ A.</li>
+<li>Найдите в конфигурации модели имена линейных слоев и предложите target_modules для LoRA.</li>
+<li>Сравните full fine-tuning, LoRA и QLoRA по памяти, скорости, риску забывания и удобству деплоя.</li>
+<li>Придумайте доменный датасет из 1000 примеров и опишите схему train/validation/test.</li>
+<li>Составьте чек-лист качества данных перед SFT: дубликаты, роли, длины, язык, токсичность, лицензии.</li>
+<li>Проанализируйте, почему слишком большой learning rate может испортить адаптер даже при замороженной базе.</li>
+<li>Запишите формулу forward-прохода слоя с LoRA и подпишите размерности всех матриц.</li>
+<li>Проведите мысленный ablation study: что сравнить, чтобы понять вклад rank, alpha и dropout.</li>
+<li>Подготовьте YAML-подобную конфигурацию обучения с полями model, dataset, r, alpha, lr, batch_size.</li>
+<li>Напишите функцию, которая считает процент обучаемых параметров относительно полной модели.</li>
+<li>Опишите три метрики оценки качества адаптера для реального продукта.</li>
+<li>Сформулируйте два риска безопасности при распространении сторонних адаптеров.</li>
+<li>Сделайте мини-исследование: найдите одну статью по теме лекции и выпишите проблему, метод, результат.</li>
+<li>Сравните два возможных шаблона промпта и объясните, какой лучше для обучения диалоговой модели.</li>
+<li>Предложите процедуру отката неудачного адаптера в production-системе.</li>
+<li>Напишите короткий вывод: в каких условиях метод из лекции наиболее полезен и где его границы.</li></ol><pre><code class="language-python">from peft import LoraConfig, TaskType
+config = LoraConfig(r=16, lora_alpha=32, target_modules=["q_proj", "v_proj"], lora_dropout=0.05, task_type=TaskType.CAUSAL_LM)</code></pre><div class="pager"><a class="button" href="practical5.html">← Предыдущая практика</a><a class="button secondary" href="../index.html">К оглавлению</a><a class="button" href="practical7.html">Следующая практика →</a></div></article></main></body></html>
