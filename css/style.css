@@ -49,8 +49,24 @@ body {
     radial-gradient(circle at 10% 8%, rgba(56, 88, 233, 0.18), transparent 30vw),
     radial-gradient(circle at 90% 16%, rgba(245, 158, 11, 0.20), transparent 28vw),
     linear-gradient(135deg, var(--bg), var(--bg-2));
+  background-size: 130% 130%;
   color: var(--text);
   font: 16px/1.7 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  animation: ambient-bg 18s ease-in-out infinite alternate;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(56, 88, 233, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 149, 193, 0.06) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
+  animation: matrix-drift 24s linear infinite;
 }
 
 a {
@@ -159,6 +175,7 @@ a:hover {
     radial-gradient(circle at 74% 72%, rgba(245, 158, 11, 0.22), transparent 34%);
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px);
+  animation: stage-float 7s ease-in-out infinite;
 }
 
 .matrix {
@@ -189,12 +206,14 @@ a:hover {
 .factor-b {
   min-height: 118px;
   background: linear-gradient(145deg, #e85d75, #f59e0b);
+  animation: adapter-pulse 3.8s ease-in-out infinite;
 }
 
 .factor-a {
   min-height: 118px;
   margin-top: 14px;
   background: linear-gradient(145deg, #1095c1, #20c997);
+  animation: adapter-pulse 3.8s ease-in-out infinite 0.45s;
 }
 
 .result-matrix {
@@ -215,6 +234,7 @@ a:hover {
   height: 3px;
   background: linear-gradient(90deg, transparent, var(--primary-2), var(--accent), transparent);
   opacity: 0.7;
+  animation: signal-flow 2.8s linear infinite;
 }
 
 .home,
@@ -354,6 +374,20 @@ a:hover {
   height: 86px;
   background: linear-gradient(90deg, rgba(56, 88, 233, 0.16), rgba(245, 158, 11, 0.18));
   transform: rotate(-8deg);
+  transition: transform 0.28s ease, opacity 0.28s ease;
+}
+
+.card::before,
+.button::before,
+.tab-shell::before,
+.game-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.34), transparent 34%);
+  opacity: 0;
+  transition: opacity 0.22s ease;
 }
 
 .card:hover {
@@ -361,6 +395,17 @@ a:hover {
   box-shadow: var(--shadow);
   text-decoration: none;
   transform: translateY(-3px);
+}
+
+.card:hover::before,
+.button:hover::before,
+.tab-shell:hover::before,
+.game-panel:hover::before {
+  opacity: 1;
+}
+
+.card:hover::after {
+  transform: translateX(14px) rotate(-8deg);
 }
 
 .card strong,
@@ -374,6 +419,8 @@ a:hover {
 }
 
 .button {
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -438,6 +485,8 @@ pre {
 .tab-shell,
 .calculator-card,
 .test-callout {
+  position: relative;
+  overflow: hidden;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--panel);
@@ -483,6 +532,7 @@ pre {
 
 .tab-panel.active {
   display: block;
+  animation: panel-in 0.28s ease both;
 }
 
 .route-line,
@@ -715,6 +765,376 @@ select {
   background: var(--code);
 }
 
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.adapter-lab,
+.wow-strip,
+.game-panel,
+.game-hero {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+}
+
+.adapter-lab {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(280px, 1fr);
+  gap: 24px;
+  padding: 24px;
+}
+
+.lab-controls,
+.lab-metrics {
+  display: grid;
+  gap: 14px;
+}
+
+.lab-controls label {
+  display: grid;
+  gap: 8px;
+  font-weight: 780;
+}
+
+.lab-controls input[type="range"] {
+  accent-color: var(--primary);
+}
+
+.lab-value {
+  color: var(--accent);
+  font-size: 0.92rem;
+}
+
+.lab-toggle {
+  display: flex !important;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 10px !important;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--panel-solid) 62%, transparent);
+}
+
+.lab-meter,
+.game-meter {
+  display: grid;
+  gap: 8px;
+}
+
+.lab-meter span,
+.game-meter span {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-weight: 760;
+}
+
+.lab-meter b,
+.game-meter {
+  overflow: hidden;
+  border-radius: 999px;
+}
+
+.lab-meter b {
+  height: 16px;
+  background: var(--line);
+}
+
+.lab-meter i,
+.game-meter i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--primary), var(--primary-2), var(--accent));
+  transition: width 0.35s ease;
+}
+
+.lab-meter.danger i,
+.game-meter.danger i {
+  background: linear-gradient(90deg, var(--accent), var(--rose));
+}
+
+.wow-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  padding: 24px;
+}
+
+.wow-strip article {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--panel-solid) 66%, transparent);
+}
+
+.command-palette {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: start center;
+  padding-top: 12vh;
+  background: rgba(10, 14, 28, 0.42);
+  backdrop-filter: blur(8px);
+}
+
+.command-palette[hidden] {
+  display: none;
+}
+
+.command-box {
+  width: min(640px, calc(100vw - 28px));
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel-solid);
+  box-shadow: var(--shadow);
+}
+
+.command-box input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.command-results {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.command-results a {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  color: var(--text);
+}
+
+.command-results a:hover {
+  background: var(--code);
+  text-decoration: none;
+}
+
+.command-results span {
+  color: var(--muted);
+}
+
+.achievement-toast {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 55;
+  width: min(340px, calc(100vw - 28px));
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 62%, var(--line));
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--panel-solid), color-mix(in srgb, var(--accent) 12%, var(--panel-solid)));
+  box-shadow: var(--shadow);
+  animation: toast-in 0.35s ease both;
+}
+
+.achievement-toast strong,
+.achievement-toast span {
+  display: block;
+}
+
+.achievement-toast strong {
+  color: var(--accent);
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+
+.game-page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 34px 22px 60px;
+}
+
+.game-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 22px;
+  padding: 28px;
+}
+
+.game-hero h1 {
+  margin: 0 0 10px;
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  line-height: 1.04;
+}
+
+.peter-badge {
+  min-height: 180px;
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  padding: 22px;
+  border-radius: var(--radius);
+  color: #241400;
+  background:
+    linear-gradient(135deg, #ffd37a, #f59e0b),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.22) 0 8px, transparent 8px 16px);
+  box-shadow: var(--soft-shadow);
+}
+
+.peter-badge strong {
+  font-size: 2rem;
+}
+
+.game-panel {
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+}
+
+.game-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+
+.game-top h2 {
+  margin: 0;
+}
+
+.game-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) 320px;
+  gap: 20px;
+}
+
+.farm-field {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(58px, 1fr));
+  gap: 12px;
+  min-height: 360px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(32, 201, 151, 0.16), rgba(245, 158, 11, 0.12)),
+    color-mix(in srgb, var(--panel-solid) 62%, transparent);
+}
+
+.plot {
+  min-height: 72px;
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--line));
+  border-radius: var(--radius);
+  background: linear-gradient(145deg, #8b5a2b, #c08435);
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 850;
+  box-shadow: inset 0 -10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.plot.grown {
+  background:
+    radial-gradient(circle at 50% 22%, #d9f99d 0 12px, transparent 13px),
+    linear-gradient(145deg, #21a67a, #0f766e);
+  color: #fff;
+  animation: crop-grow 0.45s ease both;
+}
+
+.game-dashboard {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.game-meter {
+  height: auto;
+  padding: 14px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--panel-solid) 66%, transparent);
+}
+
+.game-meter::after {
+  content: "";
+  display: block;
+  height: 12px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: var(--line);
+}
+
+.game-meter i {
+  height: 12px;
+  margin-top: -12px;
+}
+
+.game-meter.harvest i {
+  background: linear-gradient(90deg, #20c997, var(--accent));
+}
+
+.game-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.action-card {
+  min-height: 122px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel-solid);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--soft-shadow);
+}
+
+.action-card strong,
+.action-card span {
+  display: block;
+}
+
+.action-card span {
+  margin-top: 6px;
+  color: var(--muted);
+}
+
+.game-log {
+  max-height: 170px;
+  overflow: auto;
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--code);
+}
+
+.game-log p {
+  margin: 0 0 8px;
+}
+
 .study-joke {
   position: fixed;
   z-index: 40;
@@ -729,6 +1149,18 @@ select {
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px);
   animation: joke-pop 0.34s ease both;
+}
+
+.study-joke.variant-2 {
+  border-color: color-mix(in srgb, var(--primary-2) 54%, var(--line));
+}
+
+.study-joke.variant-3 {
+  border-color: color-mix(in srgb, var(--rose) 54%, var(--line));
+}
+
+.study-joke.leaving {
+  animation: joke-out 0.28s ease both;
 }
 
 .study-joke strong,
@@ -772,9 +1204,107 @@ select {
   }
 }
 
+@keyframes joke-out {
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.96);
+  }
+}
+
+@keyframes ambient-bg {
+  from {
+    background-position: 0% 0%;
+  }
+
+  to {
+    background-position: 100% 60%;
+  }
+}
+
+@keyframes matrix-drift {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 42px 84px;
+  }
+}
+
+@keyframes stage-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes adapter-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: saturate(1);
+  }
+
+  50% {
+    transform: scale(1.035);
+    filter: saturate(1.18);
+  }
+}
+
+@keyframes signal-flow {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 220px 0;
+  }
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes crop-grow {
+  from {
+    transform: scale(0.9);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
 @media (max-width: 980px) {
   .hero-lab,
-  .calculator-card {
+  .calculator-card,
+  .adapter-lab,
+  .game-layout,
+  .game-hero {
     grid-template-columns: 1fr;
   }
 
@@ -788,7 +1318,8 @@ select {
   }
 
   .timeline,
-  .stats-strip {
+  .stats-strip,
+  .wow-strip {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -832,11 +1363,16 @@ select {
   .test-callout {
     display: block;
   }
+
+  .game-actions {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 560px) {
   .stats-strip,
-  .timeline {
+  .timeline,
+  .wow-strip {
     grid-template-columns: 1fr;
   }
 

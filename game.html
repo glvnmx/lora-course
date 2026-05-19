@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <title>Петровская LoRA-ферма</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script defer src="js/main.js"></script>
+</head>
+<body>
+  <nav class="top-nav">
+    <a href="index.html">Оглавление</a>
+    <a href="index.html#course-map">Карта курса</a>
+    <a href="index.html#visual-lab">Визуализации</a>
+    <a href="game.html">Мини-игра</a>
+    <a href="test.html">Итоговый тест</a>
+    <button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button>
+  </nav>
+
+  <main class="game-page">
+    <section class="game-hero">
+      <div>
+        <p class="eyebrow">Мини-игра</p>
+        <h1>Петровская LoRA-ферма</h1>
+        <p>Петр I реформирует сельхоз-модель: добавляйте LoRA-адаптеры, повышайте качество урожая и не ломайте базовые знания модели.</p>
+      </div>
+      <div class="peter-badge">
+        <strong>Указ</strong>
+        <span>«Учить надобно, но базу не рушить»</span>
+      </div>
+    </section>
+
+    <section class="game-panel" id="peterFarmGame">
+      <div class="game-top">
+        <div>
+          <h2>Поле адаптеров</h2>
+          <p>Выбирайте карточки действий. Победа: высокий урожай и качество при умеренной памяти и забывании.</p>
+        </div>
+        <button class="button secondary" type="button" data-game-reset>Новый сезон</button>
+      </div>
+
+      <div class="game-layout">
+        <div class="farm-field" aria-label="Игровое поле"></div>
+
+        <aside class="game-dashboard">
+          <div class="game-meter" data-game-meter="quality">
+            <span>Качество модели <b data-game-value="quality">0%</b></span>
+            <i></i>
+          </div>
+          <div class="game-meter" data-game-meter="memory">
+            <span>Память GPU <b data-game-value="memory">0%</b></span>
+            <i></i>
+          </div>
+          <div class="game-meter danger" data-game-meter="forgetting">
+            <span>Забывание <b data-game-value="forgetting">0%</b></span>
+            <i></i>
+          </div>
+          <div class="game-meter harvest" data-game-meter="harvest">
+            <span>Урожай <b data-game-value="harvest">0%</b></span>
+            <i></i>
+          </div>
+        </aside>
+      </div>
+
+      <div class="game-actions" aria-label="Карточки действий"></div>
+      <div class="game-log" aria-live="polite"></div>
+    </section>
+  </main>
+</body>
+</html>

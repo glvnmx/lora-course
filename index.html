@@ -17,6 +17,7 @@
     <a href="index.html">Оглавление</a>
     <a href="#course-map">Карта курса</a>
     <a href="#visual-lab">Визуализации</a>
+    <a href="game.html">Мини-игра</a>
     <a href="test.html">Итоговый тест</a>
     <button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button>
   </nav>
@@ -29,6 +30,7 @@
       <div class="hero-actions">
         <a class="button" href="lectures/lecture1.html">Начать курс</a>
         <a class="button secondary" href="#visual-lab">Открыть визуализации</a>
+        <a class="button secondary" href="game.html">Играть</a>
       </div>
     </div>
     <div class="lora-stage" aria-label="Визуальная схема LoRA">
@@ -158,6 +160,40 @@
           <output id="loraCalcResult">131 072 параметра, 0.78% от полной матрицы</output>
         </form>
       </div>
+    </section>
+
+    <section class="lab-section">
+      <div class="section-heading">
+        <p class="eyebrow">Симулятор</p>
+        <h2>Лаборатория LoRA-параметров</h2>
+      </div>
+      <div class="adapter-lab" id="adapterLab">
+        <div class="lab-controls">
+          <label>rank <span class="lab-value">r=16</span><input type="range" name="labRank" min="2" max="64" value="16"></label>
+          <label>alpha <span class="lab-value">alpha=32</span><input type="range" name="labAlpha" min="4" max="128" value="32"></label>
+          <label>dropout <span class="lab-value">dropout=5%</span><input type="range" name="labDropout" min="0" max="30" value="5"></label>
+          <label class="lab-toggle"><input type="checkbox" name="labQuant" checked> QLoRA / NF4</label>
+        </div>
+        <div class="lab-metrics">
+          <div class="lab-meter" data-metric="quality"><span>Качество</span><b><i></i></b></div>
+          <div class="lab-meter" data-metric="memory"><span>Память GPU</span><b><i></i></b></div>
+          <div class="lab-meter danger" data-metric="overfit"><span>Риск переобучения</span><b><i></i></b></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wow-strip">
+      <article>
+        <p class="eyebrow">Быстрый переход</p>
+        <h2>Нажмите Ctrl+K</h2>
+        <p>Откроется командная палитра для перехода к лекциям, практикам, тесту, визуализациям и игре.</p>
+      </article>
+      <article>
+        <p class="eyebrow">Мини-игра</p>
+        <h2>Петровская LoRA-ферма</h2>
+        <p>Соберите урожай адаптеров: поднимайте качество, берегите память GPU и не допускайте катастрофического забывания.</p>
+        <a class="button accent" href="game.html">Открыть игру</a>
+      </article>
     </section>
 
     <section class="timeline-section">
