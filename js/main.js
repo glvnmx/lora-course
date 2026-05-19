@@ -347,25 +347,9 @@ function initPeterFarmGame() {
 
 function initCourseProgress() {
   const total = 8;
-  const readVisited = () => {
-    try {
-      return JSON.parse(localStorage.getItem('loraCourseVisitedLectures') || '[]');
-    } catch {
-      return [];
-    }
-  };
-  const match = location.pathname.match(/lecture(\d+)\.html$/);
-  if (match) {
-    const id = Number(match[1]);
-    const visited = readVisited();
-    if (!visited.includes(id)) {
-      visited.push(id);
-      localStorage.setItem('loraCourseVisitedLectures', JSON.stringify(visited.sort((a, b) => a - b)));
-    }
-  }
-  const visited = readVisited()
-    .filter((id) => Number.isInteger(id) && id >= 1 && id <= total);
-  const count = new Set(visited).size;
+  const completed = Array.from({ length: total }, (_, i) => i + 1)
+    .filter((id) => localStorage.getItem(`lora_course_lecture_${id}_completed`) === 'true');
+  const count = completed.length;
   const pct = Math.round(count / total * 100);
   document.querySelectorAll('[data-progress-count]').forEach((node) => {
     node.textContent = `${count} из ${total} лекций`;
@@ -375,6 +359,49 @@ function initCourseProgress() {
   });
   document.querySelectorAll('[data-progress-bar]').forEach((node) => {
     node.style.width = `${pct}%`;
+  });
+  document.querySelectorAll('[data-lecture-progress-text]').forEach((node) => {
+    node.textContent = `Пройдено ${count} из ${total}: ${pct}% маршрута LoRA-инженера`;
+  });
+}
+
+function initMiniTests() {
+  document.querySelectorAll('.mini-test').forEach((test) => {
+    const lectureId = Number(test.dataset.lectureId);
+    const result = test.querySelector('.mini-test__result');
+    const button = test.querySelector('.mini-test__button');
+    const key = `lora_course_lecture_${lectureId}_completed`;
+    const setAlreadyDone = () => {
+      if (localStorage.getItem(key) === 'true' && result && !result.textContent.trim()) {
+        result.textContent = 'Лекция уже засчитана в прогресс.';
+        result.classList.add('success');
+      }
+    };
+    setAlreadyDone();
+    button?.addEventListener('click', () => {
+      const questions = [...test.querySelectorAll('.mini-test__question')];
+      let score = 0;
+      questions.forEach((question) => {
+        const picked = question.querySelector('input:checked');
+        const ok = picked && picked.value === question.dataset.answer;
+        question.classList.toggle('correct', !!ok);
+        question.classList.toggle('wrong', !!picked && !ok);
+        if (ok) score += 1;
+      });
+      if (!result) return;
+      result.classList.remove('success', 'warning');
+      if (score >= 2) {
+        localStorage.setItem(key, 'true');
+        result.textContent = localStorage.getItem(key) === 'true'
+          ? `Лекция пройдена. Прогресс обновлён. Результат: ${score} из 3.`
+          : 'Лекция пройдена. Прогресс обновлён.';
+        result.classList.add('success');
+        initCourseProgress();
+      } else {
+        result.textContent = 'Пока рано засчитывать лекцию. Перечитай ключевые блоки и попробуй ещё раз.';
+        result.classList.add('warning');
+      }
+    });
   });
 }
 
@@ -423,6 +450,90 @@ function initCodePractice() {
       editor.value = '';
       localStorage.removeItem(key);
       editor.focus();
+    });
+  });
+}
+
+function initCodeRunners() {
+  document.querySelectorAll('.code-runner').forEach((runner, index) => {
+    const id = runner.dataset.runnerId || `runner-${index}`;
+    const editor = runner.querySelector('.code-runner__editor');
+    const output = runner.querySelector('.code-runner__output');
+    const solution = runner.querySelector('.code-runner__solution');
+    const runBtn = runner.querySelector('.code-runner__run');
+    const clearBtn = runner.querySelector('.code-runner__clear');
+    const solutionBtn = runner.querySelector('.code-runner__solution-btn');
+    const copyBtn = runner.querySelector('.code-runner__copy');
+    if (!editor || !output) return;
+    const key = `loraCourseRunner:${id}`;
+    editor.value = localStorage.getItem(key) || '';
+    editor.addEventListener('input', () => localStorage.setItem(key, editor.value));
+    const runCode = () => {
+      output.textContent = 'Выполнение...';
+      const workerSource = `
+        self.onmessage = (event) => {
+          const logs = [];
+          console.log = (...args) => logs.push(args.map((item) => {
+            try { return typeof item === 'string' ? item : JSON.stringify(item); }
+            catch { return String(item); }
+          }).join(' '));
+          try {
+            Function(event.data.code)();
+            self.postMessage({ output: logs.join('\\\\n') });
+          } catch (error) {
+            self.postMessage({ output: error.name + ': ' + error.message });
+          }
+        };
+      `;
+      const workerUrl = URL.createObjectURL(new Blob([workerSource], { type: 'application/javascript' }));
+      const worker = new Worker(workerUrl);
+      const timeout = setTimeout(() => {
+        output.textContent = 'Выполнение остановлено: превышен лимит времени.';
+        worker.terminate();
+        URL.revokeObjectURL(workerUrl);
+      }, 1200);
+      const cleanup = () => {
+        clearTimeout(timeout);
+        worker.terminate();
+        URL.revokeObjectURL(workerUrl);
+      };
+      worker.onmessage = (event) => {
+        output.textContent = event.data.output || 'Код выполнен без вывода.';
+        cleanup();
+      };
+      worker.onerror = (event) => {
+        output.textContent = `${event.message}`;
+        cleanup();
+      };
+      worker.postMessage({ code: editor.value });
+    };
+    runBtn?.addEventListener('click', runCode);
+    clearBtn?.addEventListener('click', () => {
+      editor.value = '';
+      output.textContent = 'Вывод появится здесь.';
+      localStorage.removeItem(key);
+      editor.focus();
+    });
+    solutionBtn?.addEventListener('click', () => {
+      if (!solution) return;
+      const hidden = solution.hidden;
+      solution.hidden = !hidden;
+      solutionBtn.textContent = hidden ? 'Скрыть решение' : 'Показать решение';
+    });
+    copyBtn?.addEventListener('click', async () => {
+      const code = solution?.innerText.trim() || '';
+      try {
+        await navigator.clipboard.writeText(code);
+        copyBtn.textContent = 'Скопировано';
+        setTimeout(() => { copyBtn.textContent = 'Скопировать решение'; }, 1400);
+      } catch {
+        const area = document.createElement('textarea');
+        area.value = code;
+        document.body.append(area);
+        area.select();
+        document.execCommand('copy');
+        area.remove();
+      }
     });
   });
 }
@@ -563,7 +674,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initStudyJokes();
   initPeterFarmGame();
   initCourseProgress();
+  initMiniTests();
   initInlineChecks();
   initCodePractice();
+  initCodeRunners();
   renderQuiz();
 });

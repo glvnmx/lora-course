@@ -1,6 +1,6 @@
 <!doctype html><html lang="ru"><head><title>Лекция 6. Донастройка LLM: инструкции, диалоги, RLHF</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script defer src="../js/main.js"></script></head><body><nav class="top-nav"><a href="../index.html">Оглавление</a><a href="../index.html#course-map">Карта курса</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">Мини-игра</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav><main class="layout"><aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class="">1. Введение в трансферное обучение и донастройку</a><a href="lecture2.html" class="">2. Математические основы низкоранговых разложений</a><a href="lecture3.html" class="">3. Архитектура LoRA</a><a href="lecture4.html" class="">4. Варианты и развитие LoRA</a><a href="lecture5.html" class="">5. Практика донастройки с PEFT и Hugging Face</a><a href="lecture6.html" class="active">6. Донастройка LLM: инструкции, диалоги, RLHF</a><a href="lecture7.html" class="">7. Мульти-LoRA, слияние и деплой</a><a href="lecture8.html" class="">8. Продвинутые темы и перспективы</a></aside><article class="content lecture"><div class="breadcrumbs"><a href="../index.html">Курс</a><span>Лекция 6</span></div><h1>Лекция 6. Донастройка LLM: инструкции, диалоги, RLHF</h1><div class="lecture-progress" data-lecture-id="6">
-  <div><strong>Лекция 6 из 8</strong><span> · 75% маршрута LoRA-инженера</span></div>
-  <div class="thin-progress"><i style="width:75%"></i></div>
+  <div><strong>Лекция 6 из 8</strong><span data-lecture-progress-text>Прогресс курса обновится после мини-теста</span></div>
+  <div class="lecture-progress__bar"><i class="lecture-progress__fill" data-progress-bar style="width:0%"></i></div>
 </div><figure class="lecture-visual" aria-label="Диалоговые данные">
   <svg viewBox="0 0 720 220" role="img" aria-labelledby="lectureVisualTitle6">
     <title id="lectureVisualTitle6">Диалоговые данные</title>
@@ -73,7 +73,31 @@
 
 
 
-<section class="skill-card">
+<section class="code-runner" data-runner-id="lecture-6">
+  <h2>Создать сообщения для SFT</h2>
+  <p>Создайте массив messages в формате system/user/assistant.</p>
+  <textarea class="code-runner__editor" spellcheck="false" placeholder="Напишите JavaScript-код здесь..."></textarea>
+  <div class="code-runner__actions">
+    <button class="code-runner__run button" type="button">Запустить код</button>
+    <button class="code-runner__clear button secondary" type="button">Очистить</button>
+    <button class="code-runner__solution-btn button secondary" type="button">Показать решение</button>
+    <button class="code-runner__copy button secondary" type="button">Скопировать решение</button>
+  </div>
+  <pre class="code-runner__output" aria-live="polite">Вывод появится здесь.</pre>
+  <pre class="code-runner__solution" hidden><code>const messages = [
+  { role: &quot;system&quot;, content: &quot;Объясняй LoRA простым языком.&quot; },
+  { role: &quot;user&quot;, content: &quot;Почему LoRA экономит память?&quot; },
+  { role: &quot;assistant&quot;, content: &quot;Потому что обучаются только компактные матрицы A и B.&quot; }
+];
+
+console.log(messages);</code></pre>
+</section><section class="mini-test" data-lecture-id="6">
+  <h2>Мини-тест для зачета лекции</h2>
+  <p>Ответьте на 3 вопроса. Лекция засчитывается при результате минимум 2 из 3.</p>
+  <div class="mini-test__question" data-answer="0"><h3>1. Что важно для SFT данных?</h3><label class="mini-test__option"><input type="radio" name="lecture6_q1" value="0"> Корректные роли и шаблон</label><label class="mini-test__option"><input type="radio" name="lecture6_q1" value="1"> Цвет кнопок</label><label class="mini-test__option"><input type="radio" name="lecture6_q1" value="2"> Размер README</label><label class="mini-test__option"><input type="radio" name="lecture6_q1" value="3"> Случайные ответы</label></div><div class="mini-test__question" data-answer="0"><h3>2. Что такое system/user/assistant?</h3><label class="mini-test__option"><input type="radio" name="lecture6_q2" value="0"> Роли сообщений в диалоге</label><label class="mini-test__option"><input type="radio" name="lecture6_q2" value="1"> Типы GPU</label><label class="mini-test__option"><input type="radio" name="lecture6_q2" value="2"> Названия CSS классов</label><label class="mini-test__option"><input type="radio" name="lecture6_q2" value="3"> Виды dropout</label></div><div class="mini-test__question" data-answer="0"><h3>3. Почему плохие инструкции вредят?</h3><label class="mini-test__option"><input type="radio" name="lecture6_q3" value="0"> Модель учит шум и противоречия</label><label class="mini-test__option"><input type="radio" name="lecture6_q3" value="1"> Они ускоряют обучение</label><label class="mini-test__option"><input type="radio" name="lecture6_q3" value="2"> Они уменьшают loss всегда</label><label class="mini-test__option"><input type="radio" name="lecture6_q3" value="3"> Они отключают LoRA</label></div>
+  <button class="mini-test__button" type="button">Проверить мини-тест</button>
+  <div class="mini-test__result" aria-live="polite"></div>
+</section><section class="skill-card">
   <div class="skill-card__mark">6</div>
   <div><h2>Ты прокачал навык</h2><p>Теперь ты понимаешь, как готовить инструкции, диалоги и роли system/user/assistant для донастройки LLM.</p><p class="skill-card__motivation">Модель учит не намерения автора датасета, а конкретные токены — формат имеет значение.</p><a class="button accent" href="../practicals/practical6.html">Перейти к практике</a></div>
 </section><div class="pager"><a class="button" href="lecture5.html">← Предыдущая лекция</a><a class="button secondary" href="../index.html">К оглавлению</a><a class="button" href="lecture7.html">Следующая лекция →</a></div></article></main></body></html>
