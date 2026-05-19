@@ -26,7 +26,7 @@ function shuffle(items) {
 }
 
 function initReveal() {
-  const items = document.querySelectorAll('.home section, .content, .lora-stage, .card, .tab-shell, .game-panel');
+  const items = document.querySelectorAll('.home section, .lora-stage, .card, .tab-shell, .game-panel, .game-hero');
   if (!items.length) return;
   items.forEach((item) => item.classList.add('reveal'));
   const observer = new IntersectionObserver((entries) => {

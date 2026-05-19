@@ -10,6 +10,9 @@
   --primary-2: #1095c1;
   --accent: #f59e0b;
   --rose: #e85d75;
+  --leaf: #19a66a;
+  --field: #d8a441;
+  --earth: #8b5a2b;
   --bad: #dc2626;
   --good: #15803d;
   --code: #eef2ff;
@@ -30,6 +33,9 @@
   --primary-2: #55d4dc;
   --accent: #fbbf24;
   --rose: #fb7185;
+  --leaf: #34d399;
+  --field: #d6a43a;
+  --earth: #9a6a3a;
   --code: #202a40;
   --shadow: 0 22px 80px rgba(0, 0, 0, 0.35);
   --soft-shadow: 0 12px 34px rgba(0, 0, 0, 0.25);
@@ -47,6 +53,7 @@ body {
   margin: 0;
   background:
     radial-gradient(circle at 10% 8%, rgba(56, 88, 233, 0.18), transparent 30vw),
+    radial-gradient(circle at 18% 84%, rgba(25, 166, 106, 0.14), transparent 24vw),
     radial-gradient(circle at 90% 16%, rgba(245, 158, 11, 0.20), transparent 28vw),
     linear-gradient(135deg, var(--bg), var(--bg-2));
   background-size: 130% 130%;
@@ -67,6 +74,25 @@ body::before {
   background-size: 42px 42px;
   mask-image: linear-gradient(to bottom, black, transparent 78%);
   animation: matrix-drift 24s linear infinite;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto 0 0;
+  z-index: -1;
+  height: 34vh;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      104deg,
+      transparent 0 34px,
+      color-mix(in srgb, var(--field) 18%, transparent) 34px 38px,
+      transparent 38px 74px
+    ),
+    linear-gradient(to top, color-mix(in srgb, var(--leaf) 10%, transparent), transparent);
+  opacity: 0.72;
+  mask-image: linear-gradient(to top, black, transparent);
 }
 
 a {
@@ -90,6 +116,21 @@ a:hover {
   border-bottom: 1px solid var(--line);
   box-shadow: 0 8px 30px rgba(20, 29, 54, 0.06);
   backdrop-filter: blur(16px);
+}
+
+.top-nav::before {
+  content: "LoRA";
+  display: inline-grid;
+  place-items: center;
+  min-width: 54px;
+  height: 32px;
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 900;
+  background:
+    linear-gradient(135deg, var(--leaf), var(--primary)),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.22) 0 4px, transparent 4px 8px);
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--leaf) 24%, transparent);
 }
 
 .top-nav a {
@@ -159,6 +200,21 @@ a:hover {
   letter-spacing: 0.08em;
 }
 
+.section-heading .eyebrow::before,
+.hero .eyebrow::before,
+.calculator-card .eyebrow::before,
+.wow-strip .eyebrow::before,
+.game-hero .eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 8px;
+  border-radius: 1px 9px 1px 9px;
+  background: linear-gradient(135deg, var(--leaf), var(--accent));
+  transform: rotate(-18deg);
+}
+
 .lora-stage {
   position: relative;
   min-height: 430px;
@@ -171,6 +227,7 @@ a:hover {
   border-radius: var(--radius);
   background:
     linear-gradient(145deg, color-mix(in srgb, var(--panel-solid) 78%, transparent), color-mix(in srgb, var(--panel-solid) 42%, transparent)),
+    repeating-linear-gradient(112deg, transparent 0 24px, color-mix(in srgb, var(--field) 14%, transparent) 24px 28px),
     radial-gradient(circle at 30% 25%, rgba(85, 212, 220, 0.22), transparent 38%),
     radial-gradient(circle at 74% 72%, rgba(245, 158, 11, 0.22), transparent 34%);
   box-shadow: var(--shadow);
@@ -200,7 +257,7 @@ a:hover {
 }
 
 .base-matrix {
-  background: linear-gradient(145deg, #3858e9, #1095c1);
+  background: linear-gradient(145deg, #3858e9, var(--leaf));
 }
 
 .factor-b {
@@ -217,7 +274,7 @@ a:hover {
 }
 
 .result-matrix {
-  background: linear-gradient(145deg, #182052, #6f4de2);
+  background: linear-gradient(145deg, #182052, var(--earth));
 }
 
 .operator {
@@ -328,11 +385,40 @@ a:hover {
 }
 
 .content {
+  position: relative;
+  overflow: hidden;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--soft-shadow);
   backdrop-filter: blur(14px);
+}
+
+.content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--leaf), var(--field), var(--primary));
+}
+
+.lecture section {
+  position: relative;
+  padding-left: 18px;
+}
+
+.lecture section::before {
+  content: "";
+  position: absolute;
+  top: 0.8em;
+  left: 0;
+  width: 4px;
+  height: calc(100% - 1.6em);
+  border-radius: 999px;
+  background: linear-gradient(var(--leaf), var(--field), transparent);
+  opacity: 0.72;
 }
 
 .lecture h1,
@@ -367,12 +453,25 @@ a:hover {
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.card strong::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  margin-right: 8px;
+  border-radius: 8px 0 8px 0;
+  background: linear-gradient(180deg, var(--leaf), var(--field));
+  vertical-align: -2px;
+}
+
 .card::after {
   content: "";
   position: absolute;
   inset: auto -20% -50% 34%;
   height: 86px;
-  background: linear-gradient(90deg, rgba(56, 88, 233, 0.16), rgba(245, 158, 11, 0.18));
+  background:
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--earth) 10%, transparent) 0 10px, transparent 10px 18px),
+    linear-gradient(90deg, rgba(56, 88, 233, 0.12), rgba(25, 166, 106, 0.16), rgba(245, 158, 11, 0.18));
   transform: rotate(-8deg);
   transition: transform 0.28s ease, opacity 0.28s ease;
 }
@@ -391,10 +490,10 @@ a:hover {
 }
 
 .card:hover {
-  border-color: color-mix(in srgb, var(--primary) 62%, var(--line));
+  border-color: color-mix(in srgb, var(--leaf) 48%, var(--primary));
   box-shadow: var(--shadow);
   text-decoration: none;
-  transform: translateY(-3px);
+  transform: translateY(-4px) rotateX(1deg);
 }
 
 .card:hover::before,
@@ -428,7 +527,7 @@ a:hover {
   padding: 9px 16px;
   border-radius: var(--radius);
   border: 1px solid var(--primary);
-  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  background: linear-gradient(135deg, var(--primary), var(--primary-2), var(--leaf));
   color: #fff;
   font-weight: 820;
   text-decoration: none;
@@ -447,7 +546,7 @@ a:hover {
 }
 
 .button.accent {
-  background: linear-gradient(135deg, var(--accent), #ffcf66);
+  background: linear-gradient(135deg, var(--accent), #ffcf66, color-mix(in srgb, var(--leaf) 36%, #ffcf66));
   border-color: var(--accent);
   color: #211403;
 }
