@@ -146,6 +146,7 @@ function initCommandPalette() {
     ['Карта курса', `${root}index.html#course-map`],
     ['Визуализации', `${root}index.html#visual-lab`],
     ['Мини-игра', `${root}game.html`],
+    ['Об авторах', `${root}authors.html`],
     ['Итоговый тест', `${root}test.html`],
     ...Array.from({ length: 8 }, (_, i) => [`Лекция ${i + 1}`, `${root}lectures/lecture${i + 1}.html`]),
     ...Array.from({ length: 8 }, (_, i) => [`Практика ${i + 1}`, `${root}practicals/practical${i + 1}.html`])
@@ -344,6 +345,88 @@ function initPeterFarmGame() {
   game.querySelector('[data-game-reset]').click();
 }
 
+function initCourseProgress() {
+  const total = 8;
+  const readVisited = () => {
+    try {
+      return JSON.parse(localStorage.getItem('loraCourseVisitedLectures') || '[]');
+    } catch {
+      return [];
+    }
+  };
+  const match = location.pathname.match(/lecture(\d+)\.html$/);
+  if (match) {
+    const id = Number(match[1]);
+    const visited = readVisited();
+    if (!visited.includes(id)) {
+      visited.push(id);
+      localStorage.setItem('loraCourseVisitedLectures', JSON.stringify(visited.sort((a, b) => a - b)));
+    }
+  }
+  const visited = readVisited()
+    .filter((id) => Number.isInteger(id) && id >= 1 && id <= total);
+  const count = new Set(visited).size;
+  const pct = Math.round(count / total * 100);
+  document.querySelectorAll('[data-progress-count]').forEach((node) => {
+    node.textContent = `${count} из ${total} лекций`;
+  });
+  document.querySelectorAll('[data-progress-message]').forEach((node) => {
+    node.textContent = `Ты прошёл ${pct}% маршрута LoRA-инженера`;
+  });
+  document.querySelectorAll('[data-progress-bar]').forEach((node) => {
+    node.style.width = `${pct}%`;
+  });
+}
+
+function initInlineChecks() {
+  document.querySelectorAll('.inline-check').forEach((box) => {
+    const button = box.querySelector('.inline-check__button');
+    const answer = box.querySelector('.inline-check__answer');
+    if (!button || !answer) return;
+    button.addEventListener('click', () => {
+      const hidden = answer.hidden;
+      answer.hidden = !hidden;
+      button.textContent = hidden ? 'Скрыть ответ' : 'Показать ответ';
+    });
+  });
+}
+
+function initCodePractice() {
+  document.querySelectorAll('.code-practice').forEach((box, index) => {
+    const id = box.dataset.practiceId || `practice-${index}`;
+    const editor = box.querySelector('.code-practice__editor');
+    const solution = box.querySelector('.code-practice__solution');
+    const solutionBtn = box.querySelector('.code-practice__solution-btn');
+    const copyBtn = box.querySelector('.code-practice__copy');
+    const clearBtn = box.querySelector('.code-practice__clear');
+    if (!editor) return;
+    const key = `loraCourseCode:${id}`;
+    editor.value = localStorage.getItem(key) || '';
+    editor.addEventListener('input', () => localStorage.setItem(key, editor.value));
+    solutionBtn?.addEventListener('click', () => {
+      if (!solution) return;
+      const hidden = solution.hidden;
+      solution.hidden = !hidden;
+      solutionBtn.textContent = hidden ? 'Скрыть решение' : 'Показать решение';
+    });
+    copyBtn?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(editor.value);
+        copyBtn.textContent = 'Скопировано';
+        setTimeout(() => { copyBtn.textContent = 'Скопировать код'; }, 1400);
+      } catch {
+        editor.select();
+        document.execCommand('copy');
+      }
+    });
+    clearBtn?.addEventListener('click', () => {
+      editor.value = '';
+      localStorage.removeItem(key);
+      editor.focus();
+    });
+  });
+}
+
 function renderQuiz() {
   const el = document.getElementById('quiz');
   const dataEl = document.getElementById('quiz-data');
@@ -479,5 +562,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initCommandPalette();
   initStudyJokes();
   initPeterFarmGame();
+  initCourseProgress();
+  initInlineChecks();
+  initCodePractice();
   renderQuiz();
 });

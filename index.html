@@ -18,6 +18,7 @@
     <a href="#course-map">Карта курса</a>
     <a href="#visual-lab">Визуализации</a>
     <a href="game.html">Мини-игра</a>
+    <a href="authors.html">Об авторах</a>
     <a href="test.html">Итоговый тест</a>
     <button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button>
   </nav>
@@ -55,9 +56,18 @@
   <main class="home">
     <section class="stats-strip" aria-label="Состав курса">
       <div><strong>8</strong><span>лекций</span></div>
-      <div><strong>160</strong><span>практических пунктов</span></div>
+      <div><strong>8</strong><span>практических тренировок</span></div>
       <div><strong>36</strong><span>вопросов теста</span></div>
       <div><strong>5</strong><span>типов заданий</span></div>
+    </section>
+
+    <section class="course-progress-card" id="courseProgress">
+      <div>
+        <p class="eyebrow">Прогресс</p>
+        <h2>Прогресс курса: <span data-progress-count>0 из 8 лекций</span></h2>
+        <p data-progress-message>Ты прошёл 0% маршрута LoRA-инженера</p>
+      </div>
+      <div class="course-progress-card__meter"><i data-progress-bar style="width:0%"></i></div>
     </section>
 
     <section id="course-map">
@@ -83,14 +93,14 @@
         <h2>Практические задания</h2>
       </div>
       <div class="grid practice-grid">
-        <a class="card compact-card" href="practicals/practical1.html"><strong>Практика 1</strong><span>20 упражнений</span></a>
-        <a class="card compact-card" href="practicals/practical2.html"><strong>Практика 2</strong><span>20 упражнений</span></a>
-        <a class="card compact-card" href="practicals/practical3.html"><strong>Практика 3</strong><span>20 упражнений</span></a>
-        <a class="card compact-card" href="practicals/practical4.html"><strong>Практика 4</strong><span>20 упражнений</span></a>
-        <a class="card compact-card" href="practicals/practical5.html"><strong>Практика 5</strong><span>20 упражнений</span></a>
-        <a class="card compact-card" href="practicals/practical6.html"><strong>Практика 6</strong><span>20 упражнений</span></a>
-        <a class="card compact-card" href="practicals/practical7.html"><strong>Практика 7</strong><span>20 упражнений</span></a>
-        <a class="card compact-card" href="practicals/practical8.html"><strong>Практика 8</strong><span>20 упражнений</span></a>
+        <a class="card compact-card" href="practicals/practical1.html"><strong>Практика 1</strong><span>Короткая тренировка</span></a>
+        <a class="card compact-card" href="practicals/practical2.html"><strong>Практика 2</strong><span>Короткая тренировка</span></a>
+        <a class="card compact-card" href="practicals/practical3.html"><strong>Практика 3</strong><span>Короткая тренировка</span></a>
+        <a class="card compact-card" href="practicals/practical4.html"><strong>Практика 4</strong><span>Короткая тренировка</span></a>
+        <a class="card compact-card" href="practicals/practical5.html"><strong>Практика 5</strong><span>Короткая тренировка</span></a>
+        <a class="card compact-card" href="practicals/practical6.html"><strong>Практика 6</strong><span>Короткая тренировка</span></a>
+        <a class="card compact-card" href="practicals/practical7.html"><strong>Практика 7</strong><span>Короткая тренировка</span></a>
+        <a class="card compact-card" href="practicals/practical8.html"><strong>Практика 8</strong><span>Короткая тренировка</span></a>
       </div>
     </section>
 
