@@ -1,1 +1,185 @@
-<!doctype html><html lang="ru"><head><title>LoRA-адаптеры и эффективная донастройка</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script defer src="js/main.js"></script></head><body><nav class="top-nav"><a href="index.html">Оглавление</a><a href="test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav><header class="hero"><div><p class="eyebrow">Учебный курс</p><h1>LoRA-адаптеры и эффективная донастройка нейросетевых моделей</h1><p>Полный статический курс о PEFT, низкоранговых разложениях, LoRA, QLoRA, SFT, мультиадаптерах и деплое. Все материалы работают локально и на GitHub Pages.</p><a class="button" href="lectures/lecture1.html">Начать курс</a></div></header><main class="home"><section><h2>Лекции</h2><div class="grid"><a class="card" href="lectures/lecture1.html"><strong>Лекция 1</strong><span>Введение в трансферное обучение и донастройку</span></a><a class="card" href="lectures/lecture2.html"><strong>Лекция 2</strong><span>Математические основы низкоранговых разложений</span></a><a class="card" href="lectures/lecture3.html"><strong>Лекция 3</strong><span>Архитектура LoRA</span></a><a class="card" href="lectures/lecture4.html"><strong>Лекция 4</strong><span>Варианты и развитие LoRA</span></a><a class="card" href="lectures/lecture5.html"><strong>Лекция 5</strong><span>Практика донастройки с PEFT и Hugging Face</span></a><a class="card" href="lectures/lecture6.html"><strong>Лекция 6</strong><span>Донастройка LLM: инструкции, диалоги, RLHF</span></a><a class="card" href="lectures/lecture7.html"><strong>Лекция 7</strong><span>Мульти-LoRA, слияние и деплой</span></a><a class="card" href="lectures/lecture8.html"><strong>Лекция 8</strong><span>Продвинутые темы и перспективы</span></a></div></section><section><h2>Практические задания</h2><div class="grid"><a class="card" href="practicals/practical1.html"><strong>Практика 1</strong><span>20 упражнений по теме лекции</span></a><a class="card" href="practicals/practical2.html"><strong>Практика 2</strong><span>20 упражнений по теме лекции</span></a><a class="card" href="practicals/practical3.html"><strong>Практика 3</strong><span>20 упражнений по теме лекции</span></a><a class="card" href="practicals/practical4.html"><strong>Практика 4</strong><span>20 упражнений по теме лекции</span></a><a class="card" href="practicals/practical5.html"><strong>Практика 5</strong><span>20 упражнений по теме лекции</span></a><a class="card" href="practicals/practical6.html"><strong>Практика 6</strong><span>20 упражнений по теме лекции</span></a><a class="card" href="practicals/practical7.html"><strong>Практика 7</strong><span>20 упражнений по теме лекции</span></a><a class="card" href="practicals/practical8.html"><strong>Практика 8</strong><span>20 упражнений по теме лекции</span></a></div></section><section class="test-callout"><h2>Итоговая проверка</h2><p>36 вопросов пяти типов: одиночный выбор, множественный выбор, ввод ответа, сопоставление и упорядочивание.</p><a class="button accent" href="test.html">Открыть тест</a></section></main></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+  <title>LoRA-адаптеры и эффективная донастройка</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script defer src="js/main.js"></script>
+</head>
+<body>
+  <nav class="top-nav">
+    <a href="index.html">Оглавление</a>
+    <a href="#course-map">Карта курса</a>
+    <a href="#visual-lab">Визуализации</a>
+    <a href="test.html">Итоговый тест</a>
+    <button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button>
+  </nav>
+
+  <header class="hero hero-lab">
+    <div class="hero-copy">
+      <p class="eyebrow">Учебный курс</p>
+      <h1>LoRA-адаптеры и эффективная донастройка нейросетевых моделей</h1>
+      <p>Курс о PEFT, низкоранговых разложениях, LoRA, QLoRA, SFT, мультиадаптерах и деплое. Материалы работают как локально, так и на GitHub Pages.</p>
+      <div class="hero-actions">
+        <a class="button" href="lectures/lecture1.html">Начать курс</a>
+        <a class="button secondary" href="#visual-lab">Открыть визуализации</a>
+      </div>
+    </div>
+    <div class="lora-stage" aria-label="Визуальная схема LoRA">
+      <div class="matrix base-matrix">
+        <span>W₀</span>
+        <small>замороженная база</small>
+      </div>
+      <div class="operator">+</div>
+      <div class="adapter-stack">
+        <div class="matrix factor-b"><span>B</span><small>d × r</small></div>
+        <div class="matrix factor-a"><span>A</span><small>r × k</small></div>
+      </div>
+      <div class="operator">=</div>
+      <div class="matrix result-matrix">
+        <span>W₀ + BA</span>
+        <small>адаптированный слой</small>
+      </div>
+      <div class="signal-line"></div>
+    </div>
+  </header>
+
+  <main class="home">
+    <section class="stats-strip" aria-label="Состав курса">
+      <div><strong>8</strong><span>лекций</span></div>
+      <div><strong>160</strong><span>практических пунктов</span></div>
+      <div><strong>36</strong><span>вопросов теста</span></div>
+      <div><strong>5</strong><span>типов заданий</span></div>
+    </section>
+
+    <section id="course-map">
+      <div class="section-heading">
+        <p class="eyebrow">Маршрут</p>
+        <h2>Оглавление курса</h2>
+      </div>
+      <div class="grid course-grid">
+        <a class="card lesson-card" href="lectures/lecture1.html"><strong>Лекция 1</strong><span>Введение в трансферное обучение и донастройку</span></a>
+        <a class="card lesson-card" href="lectures/lecture2.html"><strong>Лекция 2</strong><span>Математические основы низкоранговых разложений</span></a>
+        <a class="card lesson-card" href="lectures/lecture3.html"><strong>Лекция 3</strong><span>Архитектура LoRA</span></a>
+        <a class="card lesson-card" href="lectures/lecture4.html"><strong>Лекция 4</strong><span>Варианты и развитие LoRA</span></a>
+        <a class="card lesson-card" href="lectures/lecture5.html"><strong>Лекция 5</strong><span>Практика донастройки с PEFT и Hugging Face</span></a>
+        <a class="card lesson-card" href="lectures/lecture6.html"><strong>Лекция 6</strong><span>Донастройка LLM: инструкции, диалоги, RLHF</span></a>
+        <a class="card lesson-card" href="lectures/lecture7.html"><strong>Лекция 7</strong><span>Мульти-LoRA, слияние и деплой</span></a>
+        <a class="card lesson-card" href="lectures/lecture8.html"><strong>Лекция 8</strong><span>Продвинутые темы и перспективы</span></a>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <p class="eyebrow">Тренажер</p>
+        <h2>Практические задания</h2>
+      </div>
+      <div class="grid practice-grid">
+        <a class="card compact-card" href="practicals/practical1.html"><strong>Практика 1</strong><span>20 упражнений</span></a>
+        <a class="card compact-card" href="practicals/practical2.html"><strong>Практика 2</strong><span>20 упражнений</span></a>
+        <a class="card compact-card" href="practicals/practical3.html"><strong>Практика 3</strong><span>20 упражнений</span></a>
+        <a class="card compact-card" href="practicals/practical4.html"><strong>Практика 4</strong><span>20 упражнений</span></a>
+        <a class="card compact-card" href="practicals/practical5.html"><strong>Практика 5</strong><span>20 упражнений</span></a>
+        <a class="card compact-card" href="practicals/practical6.html"><strong>Практика 6</strong><span>20 упражнений</span></a>
+        <a class="card compact-card" href="practicals/practical7.html"><strong>Практика 7</strong><span>20 упражнений</span></a>
+        <a class="card compact-card" href="practicals/practical8.html"><strong>Практика 8</strong><span>20 упражнений</span></a>
+      </div>
+    </section>
+
+    <section id="visual-lab" class="visual-lab">
+      <div class="section-heading">
+        <p class="eyebrow">Лаборатория</p>
+        <h2>Интерактивные вкладки</h2>
+      </div>
+      <div class="tab-shell">
+        <div class="tab-list" role="tablist" aria-label="Визуальные разделы курса">
+          <button class="tab-button active" type="button" data-tab="map">Карта курса</button>
+          <button class="tab-button" type="button" data-tab="methods">Методы PEFT</button>
+          <button class="tab-button" type="button" data-tab="pipeline">Пайплайн</button>
+          <button class="tab-button" type="button" data-tab="deploy">Деплой</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-map">
+          <div class="route-line">
+            <div><b>1-2</b><span>математика и transfer learning</span></div>
+            <div><b>3-4</b><span>LoRA, QLoRA, DoRA, AdaLoRA</span></div>
+            <div><b>5-6</b><span>PEFT, SFT, диалоги, предпочтения</span></div>
+            <div><b>7-8</b><span>serving, diffusion, ViT, тренды</span></div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-methods">
+          <div class="method-matrix">
+            <div><strong>LoRA</strong><span>лучший старт для большинства LLM-задач</span></div>
+            <div><strong>QLoRA</strong><span>когда GPU-память важнее скорости</span></div>
+            <div><strong>DoRA</strong><span>когда нужна емкость ближе к full fine-tuning</span></div>
+            <div><strong>AdaLoRA</strong><span>когда бюджет ранга нужно распределять по слоям</span></div>
+            <div><strong>DPO/ORPO</strong><span>когда есть пары предпочтений</span></div>
+            <div><strong>Multi-LoRA</strong><span>когда одна база обслуживает много доменов</span></div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-pipeline">
+          <ol class="pipeline-list">
+            <li><span>Данные</span><p>Очистка, шаблон чата, маска loss, train/validation/test.</p></li>
+            <li><span>Адаптер</span><p>Выбор r, alpha, target modules, dropout и режима QLoRA.</p></li>
+            <li><span>Обучение</span><p>LR, warmup, gradient accumulation, checkpointing, мониторинг.</p></li>
+            <li><span>Оценка</span><p>Eval loss, доменные метрики, ручная рубрикация, сравнение с базой.</p></li>
+          </ol>
+        </div>
+
+        <div class="tab-panel" id="tab-deploy">
+          <div class="deploy-board">
+            <article><h3>Adapter-first</h3><p>Хранить базу отдельно, переключать адаптеры на inference.</p></article>
+            <article><h3>Merge-and-unload</h3><p>Слить $W_0 + BA$ и развернуть как обычную модель.</p></article>
+            <article><h3>Serving pool</h3><p>Использовать vLLM, LoRAX или S-LoRA для множества адаптеров.</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="calculator-section">
+      <div class="calculator-card">
+        <div>
+          <p class="eyebrow">Калькулятор</p>
+          <h2>Сколько параметров добавляет LoRA</h2>
+          <p>Для слоя размером <code>d_out × d_in</code> адаптер хранит <code>r × (d_out + d_in)</code> параметров вместо полной матрицы.</p>
+        </div>
+        <form class="lora-calculator" id="loraCalculator">
+          <label>d_out<input type="number" name="dout" value="4096" min="1"></label>
+          <label>d_in<input type="number" name="din" value="4096" min="1"></label>
+          <label>rank r<input type="number" name="rank" value="16" min="1"></label>
+          <output id="loraCalcResult">131 072 параметра, 0.78% от полной матрицы</output>
+        </form>
+      </div>
+    </section>
+
+    <section class="timeline-section">
+      <div class="section-heading">
+        <p class="eyebrow">Эволюция</p>
+        <h2>Как развивалась идея адаптеров</h2>
+      </div>
+      <div class="timeline">
+        <div><time>2019-2020</time><strong>Adapters, prefix tuning, prompt tuning</strong><span>Первые массовые PEFT-подходы.</span></div>
+        <div><time>2021</time><strong>LoRA</strong><span>Низкоранговая поправка к матрицам трансформера.</span></div>
+        <div><time>2023</time><strong>QLoRA</strong><span>4-битная база, NF4, double quantization.</span></div>
+        <div><time>2024+</time><strong>DoRA, rsLoRA, GaLore</strong><span>Стабилизация, декомпозиции и экономия памяти оптимизатора.</span></div>
+      </div>
+    </section>
+
+    <section class="test-callout">
+      <div>
+        <h2>Итоговая проверка</h2>
+        <p>36 вопросов пяти типов: одиночный выбор, множественный выбор, ввод ответа, сопоставление и упорядочивание.</p>
+      </div>
+      <a class="button accent" href="test.html">Открыть тест</a>
+    </section>
+  </main>
+</body>
+</html>
