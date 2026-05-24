@@ -13,7 +13,7 @@
   <script defer src="js/main.js"></script>
 </head>
 <body>
-  <nav class="top-nav"><a href="index.html">Содержание</a><a href="index.html#course-map">К курсу</a><a href="index.html#visual-lab">Визуализации</a><a href="game.html">LoRA Quest</a><a href="authors.html">Об авторах</a><a href="test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <nav class="top-nav"><a class="brand-link" href="index.html" aria-label="Вернуться на главную страницу">LoRA</a><a href="index.html">Содержание</a><a href="index.html#course-map">К курсу</a><a href="index.html#visual-lab">Визуализации</a><a href="game.html">LoRA Quest</a><a href="authors.html">Об авторах</a><a href="test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
   <main class="game-page">
     <section class="game-hero">
       <div>
@@ -55,6 +55,15 @@
       <div class="game-actions" aria-label="Действия уровня"></div>
       <div class="quest-report" hidden></div>
       <div class="game-log" aria-live="polite"></div>
+    </section>
+    <section class="return-home" aria-labelledby="return-home-title">
+      <div class="return-home-card">
+        <div>
+          <h2 id="return-home-title">Готово?</h2>
+          <p>Вернитесь на главный экран, чтобы выбрать следующую лекцию, практику или тренировку.</p>
+        </div>
+        <div class="return-home-actions"><a class="return-home-button" href="index.html" aria-label="Вернуться на главную страницу">На главный экран</a></div>
+      </div>
     </section>
   </main>
 </body>

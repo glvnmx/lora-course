@@ -13,7 +13,7 @@
   <script defer src="../js/main.js"></script>
 </head>
 <body>
-  <nav class="top-nav"><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Quest</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <nav class="top-nav"><a class="brand-link" href="../index.html" aria-label="Вернуться на главную страницу">LoRA</a><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Quest</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
   <main class="layout">
     <aside class="sidebar"><h3>Практики</h3><a href="practical1.html" class=""><small>1.</small> оценка стоимости LoRA вместо full fine-tuning</a><a href="practical2.html" class=""><small>2.</small> выбор PEFT-подхода для задачи</a><a href="practical3.html" class=""><small>3.</small> расчёт rank, alpha и параметров LoRA</a><a href="practical4.html" class=""><small>4.</small> выбор target_modules в transformer-модели</a><a href="practical5.html" class=""><small>5.</small> настройка LoraConfig и SFT-пайплайна</a><a href="practical6.html" class=""><small>6.</small> QLoRA при ограниченной GPU-памяти</a><a href="practical7.html" class="active"><small>7.</small> сравнение базовой модели и LoRA-адаптера</a><a href="practical8.html" class=""><small>8.</small> Финальная: мини-пайплайн LoRA-адаптера</a></aside>
     <article class="content practice-page">
@@ -72,6 +72,15 @@ config = LoraConfig(
     task_type=&quot;CAUSAL_LM&quot;,
 )
 print(lora_params(4096, 4096, config.r, modules=2))</code></pre>
+      </section>
+      <section class="return-home" aria-labelledby="return-home-title">
+        <div class="return-home-card">
+          <div>
+            <h2 id="return-home-title">Готово?</h2>
+            <p>Вернитесь на главный экран, чтобы выбрать следующую лекцию, практику или тренировку.</p>
+          </div>
+          <div class="return-home-actions"><a class="return-home-button" href="../index.html" aria-label="Вернуться на главную страницу">На главный экран</a></div>
+        </div>
       </section>
     </article>
   </main>

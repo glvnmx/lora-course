@@ -3603,3 +3603,347 @@ code,
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Final accessibility, navigation and responsive overflow fixes */
+.top-nav::before {
+  content: none;
+}
+
+.brand-link {
+  flex: 0 0 auto;
+  min-width: 62px;
+  height: 38px;
+  display: inline-grid !important;
+  place-items: center;
+  padding: 0 16px !important;
+  border-radius: 999px;
+  color: #fff !important;
+  font-weight: 900 !important;
+  background:
+    linear-gradient(135deg, var(--primary), var(--primary-2) 52%, var(--matrix)),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0 4px, transparent 4px 8px);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--primary) 24%, transparent);
+}
+
+.brand-link:hover,
+.brand-link:focus-visible {
+  color: #fff !important;
+  text-decoration: none;
+  filter: saturate(1.08) brightness(1.04);
+}
+
+.home,
+.layout,
+.content,
+.game-page,
+.card,
+.stats-strip > *,
+.learning-route > *,
+.course-progress-card,
+.sidebar,
+.lecture section,
+.practice-page,
+.practice-tasks,
+.practice-task,
+.practice-task *,
+.question,
+.question *,
+.mini-test,
+.mini-test *,
+.code-practice,
+.code-runner,
+.config-studio,
+.config-studio *,
+.game-panel,
+.game-panel *,
+.author-card,
+.return-home,
+.return-home * {
+  min-width: 0;
+}
+
+.content,
+.practice-task,
+.question,
+.mini-test__question,
+.inline-check,
+.code-practice,
+.code-runner,
+.config-studio__modules,
+.action-card,
+.adapter-node,
+.level-map button,
+.return-home-card {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+}
+
+pre,
+code,
+kbd,
+samp,
+table,
+.code-editor-shell,
+.code-runner__output,
+.code-runner__solution,
+.code-practice__solution,
+.hljs {
+  max-width: 100%;
+}
+
+pre,
+.code-editor-shell,
+.code-runner__output,
+.code-runner__solution,
+.code-practice__solution,
+table {
+  overflow-x: auto;
+}
+
+code,
+kbd,
+samp {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+pre code,
+.code-editor-shell code,
+.hljs {
+  white-space: pre;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.practice-task label,
+.question label,
+.option,
+.mini-test__option,
+.module-picker label,
+.config-studio__modules label,
+.config-studio__toggle {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.practice-task input,
+.question input,
+.mini-test__option input,
+.module-picker input {
+  flex: 0 0 auto;
+}
+
+.practice-task textarea,
+.code-practice__editor,
+.code-runner__editor,
+.text-answer,
+select,
+input,
+textarea {
+  max-width: 100%;
+}
+
+.return-home {
+  margin: clamp(26px, 4vw, 42px) 0 0;
+}
+
+.return-home-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: clamp(18px, 3vw, 24px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--surface-glass-strong) 74%, transparent), color-mix(in srgb, var(--surface-glass) 82%, transparent));
+  box-shadow: var(--soft-shadow);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.18);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.18);
+}
+
+.return-home-card h2 {
+  margin: 0 0 4px;
+  font-size: clamp(1.25rem, 2vw, 1.55rem);
+}
+
+.return-home-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.return-home-actions {
+  flex: 0 0 auto;
+}
+
+.return-home-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  max-width: 100%;
+  padding: 10px 18px;
+  border: 1px solid color-mix(in srgb, var(--primary) 48%, var(--glass-border));
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: #fff;
+  font-weight: 820;
+  text-decoration: none;
+  box-shadow: 0 14px 32px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.return-home-button:hover,
+.return-home-button:focus-visible {
+  color: #fff;
+  text-decoration: none;
+  filter: saturate(1.06) brightness(1.03);
+}
+
+[data-theme="dark"] {
+  --line: rgba(255, 255, 255, 0.10);
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --glass-shadow: 0 28px 90px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.045);
+  --soft-shadow: 0 16px 48px rgba(0, 0, 0, 0.28);
+}
+
+[data-theme="dark"] .top-nav,
+[data-theme="dark"] .card,
+[data-theme="dark"] .content,
+[data-theme="dark"] .sidebar,
+[data-theme="dark"] .practice-task,
+[data-theme="dark"] .question,
+[data-theme="dark"] .mini-test,
+[data-theme="dark"] .mini-test__question,
+[data-theme="dark"] .inline-check,
+[data-theme="dark"] .code-runner,
+[data-theme="dark"] .code-practice,
+[data-theme="dark"] .config-studio__modules,
+[data-theme="dark"] .game-panel,
+[data-theme="dark"] .game-hero,
+[data-theme="dark"] .game-meter,
+[data-theme="dark"] .adapter-board,
+[data-theme="dark"] .adapter-node,
+[data-theme="dark"] .action-card,
+[data-theme="dark"] .level-map button,
+[data-theme="dark"] .author-card,
+[data-theme="dark"] .return-home-card,
+[data-theme="dark"] .tab-shell,
+[data-theme="dark"] .calculator-card,
+[data-theme="dark"] .test-callout,
+[data-theme="dark"] .course-progress-card,
+[data-theme="dark"] .lecture-progress,
+[data-theme="dark"] .skill-card {
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: var(--soft-shadow);
+}
+
+[data-theme="dark"] .practice-task label,
+[data-theme="dark"] .mini-test__option,
+[data-theme="dark"] .module-picker label,
+[data-theme="dark"] .config-studio__grid label,
+[data-theme="dark"] .config-studio__toggle,
+[data-theme="dark"] .config-studio input,
+[data-theme="dark"] .config-studio select,
+[data-theme="dark"] .practice-task textarea,
+[data-theme="dark"] .code-editor-shell {
+  border-color: rgba(255, 255, 255, 0.07);
+  box-shadow: none;
+}
+
+[data-theme="dark"] .card:hover,
+[data-theme="dark"] .practice-task label:hover,
+[data-theme="dark"] .action-card:hover,
+[data-theme="dark"] .level-map button.active,
+[data-theme="dark"] .adapter-node.active {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+@media (max-width: 860px) {
+  .layout {
+    width: min(100% - 16px, 1320px);
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .content {
+    width: 100%;
+    border-right: 1px solid var(--glass-border);
+    border-left: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+  }
+}
+
+@media (max-width: 640px) {
+  .top-nav {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .brand-link {
+    min-width: 58px;
+    height: 36px;
+    padding: 0 14px !important;
+  }
+
+  .practice-task,
+  .question,
+  .mini-test,
+  .code-practice,
+  .code-runner {
+    padding: 16px;
+  }
+
+  .practice-task__meta {
+    align-items: flex-start;
+  }
+
+  .code-editor-shell {
+    grid-template-columns: 38px minmax(0, 1fr);
+  }
+
+  .return-home-card {
+    display: grid;
+  }
+
+  .return-home-actions,
+  .return-home-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .home,
+  .game-page {
+    width: min(100% - 16px, 1320px);
+  }
+
+  .content {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .practice-task,
+  .question,
+  .mini-test__question,
+  .code-practice,
+  .code-runner {
+    padding: 14px;
+  }
+}
+
+
+@media (max-width: 900px) {
+  .top-nav {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+
+  .theme-toggle {
+    margin-left: 0;
+  }
+}

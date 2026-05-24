@@ -13,7 +13,7 @@
   <script defer src="../js/main.js"></script>
 </head>
 <body>
-  <nav class="top-nav"><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Quest</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <nav class="top-nav"><a class="brand-link" href="../index.html" aria-label="Вернуться на главную страницу">LoRA</a><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Quest</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
   <main class="layout">
     <aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class="active"><small>1.</small> Дорогая донастройка и роль LoRA</a><a href="lecture2.html" class=""><small>2.</small> PEFT и популярность LoRA</a><a href="lecture3.html" class=""><small>3.</small> Rank, alpha и scaling</a><a href="lecture4.html" class=""><small>4.</small> Target modules в transformer</a><a href="lecture5.html" class=""><small>5.</small> Python, PEFT и LoraConfig</a><a href="lecture6.html" class=""><small>6.</small> QLoRA и память GPU</a><a href="lecture7.html" class=""><small>7.</small> Eval, сравнение с базой и ошибки</a><a href="lecture8.html" class=""><small>8.</small> Merge, storage и deployment</a></aside>
     <article class="content lecture">
@@ -49,6 +49,15 @@ print(params)
 print(f&quot;{ratio:.2%}&quot;)</code></pre>
       </section>
       <section class="mini-test" data-lecture-id="1"><h2>Мини-проверка</h2><p>Ответьте на 3 вопроса. Лекция засчитывается при результате минимум 2 из 3.</p><div class="mini-test__question" data-answer="0"><h3>1. Что обычно замораживается при LoRA?</h3><label class="mini-test__option"><input type="radio" name="lecture1_q1" value="0"> Базовые веса модели</label><label class="mini-test__option"><input type="radio" name="lecture1_q1" value="1"> Все обучающие данные</label><label class="mini-test__option"><input type="radio" name="lecture1_q1" value="2"> Только токенизатор</label></div><div class="mini-test__question" data-answer="0"><h3>2. Зачем PEFT ограничивает обучаемые параметры?</h3><label class="mini-test__option"><input type="radio" name="lecture1_q2" value="0"> Чтобы снизить память и стоимость экспериментов</label><label class="mini-test__option"><input type="radio" name="lecture1_q2" value="1"> Чтобы запретить validation</label><label class="mini-test__option"><input type="radio" name="lecture1_q2" value="2"> Чтобы удалить transformer-блоки</label></div><div class="mini-test__question" data-answer="0"><h3>3. Главная практическая выгода LoRA?</h3><label class="mini-test__option"><input type="radio" name="lecture1_q3" value="0"> Компактный адаптер для отдельной задачи</label><label class="mini-test__option"><input type="radio" name="lecture1_q3" value="1"> Обязательное обучение с нуля</label><label class="mini-test__option"><input type="radio" name="lecture1_q3" value="2"> Замена Python на HTML</label></div><button class="mini-test__button button" type="button">Проверить лекцию</button><p class="mini-test__result" aria-live="polite"></p></section>
+      <section class="return-home" aria-labelledby="return-home-title">
+        <div class="return-home-card">
+          <div>
+            <h2 id="return-home-title">Готово?</h2>
+            <p>Вернитесь на главный экран, чтобы выбрать следующую лекцию, практику или тренировку.</p>
+          </div>
+          <div class="return-home-actions"><a class="return-home-button" href="../index.html" aria-label="Вернуться на главную страницу">На главный экран</a></div>
+        </div>
+      </section>
     </article>
   </main>
 </body>
