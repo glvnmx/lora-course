@@ -1860,3 +1860,1308 @@ select {
 .python-runner {
   background: linear-gradient(145deg, color-mix(in srgb, var(--panel) 90%, var(--primary) 5%), color-mix(in srgb, var(--panel) 90%, var(--primary-2) 5%));
 }
+
+/* Premium Liquid Glass redesign layer */
+:root {
+  --bg: #f5f8ff;
+  --bg-deep: #e8f1ff;
+  --bg-2: var(--bg-deep);
+  --surface-glass: rgba(255, 255, 255, 0.58);
+  --surface-glass-strong: rgba(255, 255, 255, 0.78);
+  --panel: var(--surface-glass);
+  --panel-solid: #ffffff;
+  --text: #111827;
+  --muted: #5f6f89;
+  --line: rgba(25, 39, 74, 0.14);
+  --primary: #2563eb;
+  --primary-2: #06b6d4;
+  --accent: #f59e0b;
+  --success: #10b981;
+  --danger: #ef4444;
+  --leaf: var(--success);
+  --matrix: #14d7b3;
+  --rose: #8b5cf6;
+  --bad: var(--danger);
+  --good: #059669;
+  --ink: #111827;
+  --code: rgba(235, 242, 255, 0.82);
+  --glass-blur: 22px;
+  --glass-border: rgba(255, 255, 255, 0.68);
+  --glass-shadow: 0 24px 80px rgba(15, 23, 42, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.62);
+  --shadow: var(--glass-shadow);
+  --soft-shadow: 0 14px 44px rgba(15, 23, 42, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.44);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 28px;
+  --radius: var(--radius-md);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.2, 0.9, 0.2, 1.08);
+  --container: min(100% - clamp(28px, 5vw, 96px), 1320px);
+  --section-gap: clamp(48px, 7vw, 104px);
+}
+
+[data-theme="dark"] {
+  --bg: #080d18;
+  --bg-deep: #101827;
+  --bg-2: var(--bg-deep);
+  --surface-glass: rgba(16, 24, 39, 0.62);
+  --surface-glass-strong: rgba(18, 27, 44, 0.84);
+  --panel: var(--surface-glass);
+  --panel-solid: #111827;
+  --text: #f3f7ff;
+  --muted: #aab8d0;
+  --line: rgba(189, 211, 255, 0.16);
+  --primary: #78a6ff;
+  --primary-2: #38d5f2;
+  --accent: #fbbf24;
+  --success: #34d399;
+  --danger: #fb7185;
+  --leaf: var(--success);
+  --matrix: #5eead4;
+  --rose: #a78bfa;
+  --bad: var(--danger);
+  --good: #34d399;
+  --ink: #020617;
+  --code: rgba(15, 23, 42, 0.88);
+  --glass-border: rgba(221, 232, 255, 0.2);
+  --glass-shadow: 0 28px 90px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --soft-shadow: 0 16px 48px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+html {
+  overflow-x: hidden;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-width: 320px;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 8% 2%, color-mix(in srgb, var(--primary) 22%, transparent), transparent min(36vw, 520px)),
+    radial-gradient(circle at 82% 10%, color-mix(in srgb, var(--rose) 22%, transparent), transparent min(34vw, 500px)),
+    radial-gradient(circle at 20% 90%, color-mix(in srgb, var(--matrix) 18%, transparent), transparent min(36vw, 560px)),
+    linear-gradient(135deg, var(--bg), var(--bg-deep) 48%, color-mix(in srgb, var(--bg) 76%, var(--primary-2)));
+  color: var(--text);
+  font: 16px/1.72 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+body::before {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--primary-2) 13%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--primary) 10%, transparent) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--matrix) 14%, transparent) 0 1px, transparent 1.5px);
+  background-size: 46px 46px, 46px 46px, 138px 138px;
+  opacity: 0.72;
+  mask-image: linear-gradient(to bottom, black 0%, black 42%, transparent 86%);
+}
+
+body::after {
+  height: 34vh;
+  background:
+    radial-gradient(circle at 76% 100%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 36%),
+    linear-gradient(to top, color-mix(in srgb, var(--primary-2) 13%, transparent), transparent);
+}
+
+::selection {
+  color: #06111f;
+  background: color-mix(in srgb, var(--matrix) 52%, white);
+}
+
+a,
+button,
+input,
+textarea,
+select,
+summary,
+[draggable="true"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+.sortable li:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 86%, white);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.18em;
+}
+
+.top-nav {
+  top: 10px;
+  width: min(calc(100% - 24px), 1480px);
+  margin: 10px auto 0;
+  padding: 10px clamp(10px, 1.7vw, 18px);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--surface-glass-strong) 88%, transparent), color-mix(in srgb, var(--surface-glass) 84%, transparent));
+  box-shadow: var(--soft-shadow);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.25);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.25);
+}
+
+.top-nav a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
+  border-radius: 999px;
+  color: color-mix(in srgb, var(--text) 88%, var(--primary));
+  font-size: clamp(0.88rem, 0.8vw, 0.98rem);
+  font-weight: 760;
+  white-space: nowrap;
+}
+
+.top-nav a:hover {
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 9%, transparent);
+}
+
+.top-nav::before {
+  min-width: 62px;
+  height: 38px;
+  border-radius: 999px;
+  background:
+    linear-gradient(135deg, var(--primary), var(--primary-2) 52%, var(--matrix)),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0 4px, transparent 4px 8px);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--primary) 28%, transparent);
+}
+
+.theme-toggle,
+.inline-check__button,
+.mini-test__button {
+  min-width: 44px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.theme-toggle {
+  border-radius: 50%;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--surface-glass-strong) 90%, white), color-mix(in srgb, var(--surface-glass) 72%, transparent));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.home,
+.content,
+.game-page {
+  width: var(--container);
+  max-width: none;
+}
+
+.home {
+  padding: clamp(22px, 4vw, 52px) 0;
+}
+
+.home section {
+  margin: var(--section-gap) 0;
+}
+
+.hero {
+  width: var(--container);
+  min-height: min(820px, calc(100svh - 72px));
+  margin: 0 auto;
+  padding: clamp(42px, 7vw, 104px) 0 clamp(34px, 5vw, 76px);
+}
+
+.hero-lab {
+  grid-template-columns: minmax(0, 1.04fr) minmax(340px, 0.84fr);
+  gap: clamp(28px, 5vw, 74px);
+}
+
+.hero-copy {
+  max-width: 920px;
+}
+
+.hero h1 {
+  max-width: 13.5em;
+  font-size: clamp(2.55rem, 6.2vw, 6.8rem);
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.hero p {
+  max-width: 78ch;
+  font-size: clamp(1rem, 1.2vw, 1.2rem);
+}
+
+.hero-value {
+  max-width: 64ch !important;
+  margin: 0 0 18px;
+  color: color-mix(in srgb, var(--text) 90%, var(--primary-2)) !important;
+  font-size: clamp(1.08rem, 1.8vw, 1.42rem) !important;
+  font-weight: 780;
+  line-height: 1.38;
+}
+
+.eyebrow {
+  color: color-mix(in srgb, var(--accent) 88%, var(--primary-2));
+  letter-spacing: 0.1em;
+}
+
+.hero-actions {
+  gap: 12px;
+}
+
+.button {
+  min-height: 44px;
+  padding: 11px 18px;
+  border: 1px solid color-mix(in srgb, var(--primary) 62%, white);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.38), transparent 34%),
+    linear-gradient(135deg, var(--primary), var(--primary-2) 58%, var(--matrix));
+  box-shadow: 0 16px 36px color-mix(in srgb, var(--primary) 24%, transparent);
+  transition: transform 0.22s var(--ease-spring), box-shadow 0.22s var(--ease-out), filter 0.22s var(--ease-out);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 48px color-mix(in srgb, var(--primary) 32%, transparent);
+}
+
+.button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.button.secondary {
+  border-color: var(--glass-border);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--surface-glass-strong) 84%, white), color-mix(in srgb, var(--surface-glass) 72%, transparent));
+  color: var(--primary);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.48), 0 12px 28px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.button.accent {
+  border-color: color-mix(in srgb, var(--accent) 76%, white);
+  background: linear-gradient(135deg, var(--accent), #ffd166 48%, var(--matrix));
+  color: #161006;
+}
+
+.lora-stage {
+  isolation: isolate;
+  min-height: clamp(360px, 36vw, 540px);
+  padding: clamp(18px, 2.4vw, 34px);
+  border-color: var(--glass-border);
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(circle at 18% 20%, color-mix(in srgb, var(--primary-2) 34%, transparent), transparent 32%),
+    radial-gradient(circle at 84% 78%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 34%),
+    linear-gradient(145deg, color-mix(in srgb, var(--surface-glass-strong) 78%, transparent), color-mix(in srgb, var(--surface-glass) 52%, transparent)),
+    repeating-linear-gradient(112deg, transparent 0 24px, color-mix(in srgb, var(--matrix) 18%, transparent) 24px 27px);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.25);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.25);
+}
+
+.lora-stage::before,
+.card::before,
+.tab-shell::after,
+.calculator-card::after,
+.adapter-lab::after,
+.game-panel::after,
+.author-card::after,
+.content::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.36), transparent 34%),
+    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.3), transparent 26%);
+  opacity: 0.66;
+}
+
+.tab-shell > *,
+.calculator-card > *,
+.adapter-lab > *,
+.game-panel > *,
+.author-card > *,
+.content > * {
+  position: relative;
+  z-index: 1;
+}
+
+.card::before {
+  background:
+    radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.42), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.26), transparent 36%);
+  opacity: 0;
+}
+
+.matrix {
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 50px rgba(2, 6, 23, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.matrix span {
+  letter-spacing: 0;
+}
+
+.operator {
+  position: relative;
+  z-index: 1;
+  color: var(--primary-2);
+  text-shadow: 0 0 24px color-mix(in srgb, var(--primary-2) 52%, transparent);
+}
+
+.signal-line {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--primary-2), var(--matrix), var(--accent), transparent);
+  background-size: 220px 100%;
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--matrix) 72%, transparent));
+}
+
+.stats-strip,
+.learning-route,
+.course-grid,
+.practice-grid,
+.route-line,
+.method-matrix,
+.deploy-board,
+.authors-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+}
+
+.stats-strip {
+  gap: clamp(12px, 2vw, 20px);
+}
+
+.stats-strip div,
+.learning-route div,
+.card,
+.tab-shell,
+.calculator-card,
+.test-callout,
+.adapter-lab,
+.wow-strip,
+.game-panel,
+.game-hero,
+.course-progress-card,
+.lecture-progress,
+.inline-check,
+.code-practice,
+.code-runner,
+.author-card,
+.question,
+.practice-task,
+.lesson-summary,
+.sidebar,
+.content {
+  border-color: var(--glass-border);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--surface-glass-strong) 86%, transparent), color-mix(in srgb, var(--surface-glass) 76%, transparent));
+  box-shadow: var(--soft-shadow);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.18);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.18);
+}
+
+.stats-strip div {
+  min-height: 116px;
+  padding: clamp(16px, 2vw, 24px);
+  border-radius: var(--radius-lg);
+}
+
+.stats-strip strong {
+  color: var(--primary);
+  font-size: clamp(1.8rem, 3vw, 2.55rem);
+}
+
+.learning-route {
+  display: grid;
+  gap: clamp(12px, 2vw, 18px);
+  counter-reset: route;
+}
+
+.learning-route div {
+  position: relative;
+  min-height: 132px;
+  padding: 22px 20px 20px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+}
+
+.learning-route div::before {
+  counter-increment: route;
+  content: counter(route);
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 14px;
+  border-radius: 50%;
+  color: #06111f;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--matrix), var(--accent));
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--matrix) 28%, transparent);
+}
+
+.learning-route div::after {
+  content: "";
+  position: absolute;
+  right: -32px;
+  bottom: -42px;
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--primary-2) 18%, transparent), transparent 68%);
+}
+
+.learning-route strong,
+.learning-route span {
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+
+.learning-route span {
+  margin-top: 6px;
+  color: var(--muted);
+}
+
+.section-heading {
+  align-items: end;
+  margin-bottom: clamp(18px, 3vw, 28px);
+}
+
+.section-heading h2,
+.calculator-card h2,
+.test-callout h2,
+.content h1 {
+  letter-spacing: 0;
+}
+
+.grid {
+  gap: clamp(14px, 2vw, 22px);
+}
+
+.card {
+  min-height: 176px;
+  padding: clamp(18px, 2vw, 24px);
+  border-radius: var(--radius-lg);
+  transition: transform 0.22s var(--ease-spring), border-color 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out);
+}
+
+.card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.card::after {
+  inset: auto -20% -46% 22%;
+  height: 118px;
+  background:
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--matrix) 18%, transparent) 0 8px, transparent 8px 16px),
+    linear-gradient(90deg, color-mix(in srgb, var(--primary) 13%, transparent), color-mix(in srgb, var(--matrix) 16%, transparent), color-mix(in srgb, var(--accent) 18%, transparent));
+  opacity: 0.82;
+}
+
+.card:hover {
+  border-color: color-mix(in srgb, var(--matrix) 54%, var(--primary));
+  transform: translateY(-5px);
+  box-shadow: var(--glass-shadow);
+}
+
+.lesson-card small,
+.compact-card small,
+.sidebar small {
+  color: color-mix(in srgb, var(--primary-2) 80%, var(--muted));
+}
+
+.compact-card {
+  min-height: 148px;
+}
+
+.tab-shell,
+.calculator-card,
+.test-callout {
+  border-radius: var(--radius-xl);
+}
+
+.tab-shell {
+  padding: clamp(14px, 2vw, 22px);
+}
+
+.tab-list {
+  gap: 6px;
+  padding: 6px;
+  border-color: var(--glass-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-glass-strong) 56%, transparent);
+}
+
+.tab-button {
+  min-height: 44px;
+  border-radius: 999px;
+  transition: background 0.2s var(--ease-out), color 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+}
+
+.tab-button:hover {
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+.tab-button.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  box-shadow: 0 12px 26px color-mix(in srgb, var(--primary) 22%, transparent);
+}
+
+.route-line div,
+.method-matrix div,
+.deploy-board article,
+.pipeline-list li,
+.wow-strip article {
+  border-color: var(--glass-border);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface-glass-strong) 64%, transparent);
+}
+
+.calculator-card {
+  grid-template-columns: minmax(0, 1fr) minmax(min(100%, 330px), 0.82fr);
+  padding: clamp(20px, 3vw, 36px);
+}
+
+.lora-calculator input,
+.text-answer,
+select,
+.practice-task textarea,
+.code-runner__editor,
+.code-practice__editor,
+.command-box input {
+  min-height: 44px;
+  border-color: color-mix(in srgb, var(--line) 78%, var(--glass-border));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--panel-solid) 72%, transparent);
+  color: var(--text);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.26);
+}
+
+.lora-calculator input:focus,
+.text-answer:focus,
+select:focus,
+.practice-task textarea:focus,
+.code-runner__editor:focus,
+.code-practice__editor:focus,
+.command-box input:focus {
+  border-color: var(--primary-2);
+}
+
+.lora-calculator output {
+  color: #06111f;
+  background: linear-gradient(135deg, var(--matrix), var(--primary-2), var(--accent));
+  box-shadow: 0 14px 32px color-mix(in srgb, var(--primary-2) 24%, transparent);
+}
+
+.adapter-lab {
+  position: relative;
+  grid-template-columns: minmax(260px, 0.82fr) minmax(280px, 1fr);
+  padding: clamp(20px, 3vw, 34px);
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+}
+
+.adapter-lab::before {
+  content: "";
+  position: absolute;
+  inset: -35% auto auto -20%;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--matrix) 24%, transparent), transparent 68%);
+  animation: lab-pulse 9s var(--ease-out) infinite alternate;
+}
+
+.lab-controls,
+.lab-metrics {
+  position: relative;
+  z-index: 1;
+}
+
+.lab-controls input[type="range"] {
+  width: 100%;
+  min-height: 44px;
+  accent-color: var(--primary-2);
+}
+
+.lab-toggle {
+  min-height: 54px;
+  border-radius: var(--radius-lg);
+}
+
+.lab-meter b,
+.course-progress-card__meter,
+.lecture-progress div:last-child,
+.progress > div {
+  background: color-mix(in srgb, var(--line) 76%, transparent);
+  box-shadow: inset 0 1px 8px rgba(2, 6, 23, 0.1);
+}
+
+.lab-meter i,
+.game-meter i,
+.course-progress-card__meter i,
+.lecture-progress i,
+.progress i {
+  background: linear-gradient(90deg, var(--matrix), var(--primary-2), var(--accent));
+  box-shadow: 0 0 18px color-mix(in srgb, var(--matrix) 42%, transparent);
+}
+
+.course-progress-card {
+  position: relative;
+  overflow: hidden;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.58fr);
+  padding: clamp(20px, 3vw, 32px);
+  border-radius: var(--radius-xl);
+}
+
+.course-progress-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--matrix) 10%, transparent), transparent 44%),
+    radial-gradient(circle at 92% 18%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 28%);
+  pointer-events: none;
+}
+
+.course-progress-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.layout {
+  width: var(--container);
+  max-width: 1440px;
+  grid-template-columns: minmax(230px, 300px) minmax(0, 1fr);
+  gap: clamp(18px, 2.4vw, 34px);
+  padding: clamp(22px, 3.2vw, 48px) 0;
+}
+
+.sidebar {
+  top: 88px;
+  max-height: calc(100svh - 112px);
+  overflow: auto;
+  border-radius: var(--radius-xl);
+}
+
+.sidebar h3 {
+  margin: 0 0 12px;
+}
+
+.sidebar a {
+  min-height: 44px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border-radius: var(--radius-md);
+  line-height: 1.35;
+}
+
+.sidebar a.active,
+.sidebar a:hover {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 13%, transparent), color-mix(in srgb, var(--matrix) 10%, transparent));
+}
+
+.content {
+  max-width: none;
+  padding: clamp(22px, 3.2vw, 46px);
+  border-radius: var(--radius-xl);
+}
+
+.lecture,
+.practice-page,
+.test-page {
+  max-width: min(100%, 980px);
+}
+
+.lecture > p,
+.lecture section:not(.code-runner):not(.mini-test):not(.lesson-summary) p,
+.lesson-summary,
+.lecture-lead {
+  max-width: 82ch;
+}
+
+.lecture section {
+  padding-left: clamp(14px, 2vw, 24px);
+}
+
+.lecture section::before {
+  width: 3px;
+  background: linear-gradient(var(--matrix), var(--primary-2), transparent);
+}
+
+.lecture h1,
+.content h1 {
+  font-size: clamp(2rem, 4vw, 4.2rem);
+  line-height: 1.05;
+}
+
+.lecture h2,
+.practice-page h2,
+.test-page h2 {
+  margin-top: 1.45em;
+  line-height: 1.18;
+}
+
+.lecture-lead {
+  font-size: clamp(1.04rem, 1.3vw, 1.2rem);
+  color: color-mix(in srgb, var(--muted) 86%, var(--text));
+}
+
+pre,
+.code-editor-shell {
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--primary-2) 24%, var(--line));
+  background: #0b1220;
+  box-shadow: 0 18px 44px rgba(2, 6, 23, 0.18);
+}
+
+pre {
+  padding: 16px;
+}
+
+pre code,
+.code-editor-gutter,
+.code-editor-shell .code-runner__editor,
+.code-editor-shell .code-practice__editor {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+.practice-tasks {
+  gap: clamp(14px, 2vw, 20px);
+}
+
+.practice-task {
+  position: relative;
+  padding: clamp(18px, 2.4vw, 26px);
+  border-radius: var(--radius-lg);
+}
+
+.practice-task__meta span {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+}
+
+.practice-task__meta b {
+  color: color-mix(in srgb, var(--primary-2) 72%, var(--text));
+}
+
+.practice-task label,
+.option,
+.mini-test__option {
+  min-height: 44px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--code) 54%, transparent);
+}
+
+.practice-task label:hover,
+.option:hover,
+.mini-test__option:hover {
+  border-color: color-mix(in srgb, var(--primary-2) 26%, var(--line));
+  background: color-mix(in srgb, var(--primary-2) 10%, var(--code));
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+}
+
+.mini-test,
+.code-runner,
+.code-practice {
+  border-radius: var(--radius-xl);
+}
+
+.mini-test__question {
+  border-radius: var(--radius-lg);
+}
+
+.mini-test__result,
+.result,
+.inline-check__answer {
+  border-radius: var(--radius-lg);
+}
+
+.progress {
+  top: 82px;
+  padding: 14px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface-glass-strong) 82%, transparent);
+  box-shadow: var(--soft-shadow);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+.question {
+  padding: clamp(18px, 2.2vw, 26px);
+  border-radius: var(--radius-xl);
+}
+
+.match-row {
+  grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
+}
+
+.sortable {
+  max-width: 760px;
+}
+
+.sortable li {
+  min-height: 44px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--panel-solid) 78%, transparent);
+  box-shadow: var(--soft-shadow);
+}
+
+.sortable li.dragging {
+  opacity: 0.72;
+  transform: scale(0.99);
+}
+
+.correct {
+  border-color: var(--success) !important;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--surface-glass-strong) 78%, var(--success) 13%), color-mix(in srgb, var(--surface-glass) 78%, var(--success) 9%)) !important;
+}
+
+.wrong {
+  border-color: var(--danger) !important;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--surface-glass-strong) 78%, var(--danger) 14%), color-mix(in srgb, var(--surface-glass) 78%, var(--danger) 9%)) !important;
+}
+
+.game-page {
+  padding: clamp(24px, 4vw, 58px) 0 clamp(54px, 7vw, 96px);
+}
+
+.game-hero,
+.game-panel {
+  border-radius: var(--radius-xl);
+}
+
+.game-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+  padding: clamp(22px, 3vw, 38px);
+}
+
+.peter-badge {
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.48), transparent 32%),
+    linear-gradient(135deg, var(--accent), #ffd166 58%, var(--matrix));
+}
+
+.game-panel {
+  padding: clamp(18px, 2.6vw, 32px);
+}
+
+.game-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+}
+
+.farm-field {
+  min-height: clamp(280px, 32vw, 420px);
+  grid-template-columns: repeat(4, minmax(52px, 1fr));
+  border-color: color-mix(in srgb, var(--matrix) 28%, var(--line));
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(circle at 20% 18%, color-mix(in srgb, var(--matrix) 20%, transparent), transparent 34%),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--primary-2) 8%, transparent) 0 1px, transparent 1px 48px),
+    repeating-linear-gradient(0deg, color-mix(in srgb, var(--primary) 7%, transparent) 0 1px, transparent 1px 48px),
+    color-mix(in srgb, var(--panel-solid) 58%, transparent);
+}
+
+.plot {
+  min-height: clamp(58px, 7vw, 84px);
+  border-radius: var(--radius-md);
+  background:
+    radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.26), transparent 28%),
+    linear-gradient(145deg, #26364f, #0f172a);
+  color: color-mix(in srgb, var(--muted) 78%, white);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 12px 28px rgba(2, 6, 23, 0.18);
+}
+
+.plot.grown {
+  background:
+    radial-gradient(circle at 50% 26%, color-mix(in srgb, var(--matrix) 92%, white) 0 10px, transparent 12px),
+    radial-gradient(circle at 50% 54%, color-mix(in srgb, var(--primary-2) 74%, transparent), transparent 44%),
+    linear-gradient(145deg, #0f766e, #111827);
+  color: #f8ffff;
+  box-shadow: 0 0 26px color-mix(in srgb, var(--matrix) 28%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.game-actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+}
+
+.action-card {
+  min-height: 136px;
+  border-color: var(--glass-border);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--surface-glass-strong) 82%, transparent), color-mix(in srgb, var(--surface-glass) 74%, transparent));
+  box-shadow: var(--soft-shadow);
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--matrix) 40%, var(--line));
+}
+
+.game-log {
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--code) 82%, transparent);
+}
+
+.authors-section {
+  margin-top: clamp(24px, 4vw, 52px);
+}
+
+.authors-grid {
+  gap: clamp(14px, 2vw, 22px);
+}
+
+.author-card {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(20px, 2.4vw, 30px);
+  border-radius: var(--radius-xl);
+}
+
+.author-card svg {
+  width: 88px;
+  height: 88px;
+  filter: drop-shadow(0 18px 24px color-mix(in srgb, var(--primary) 16%, transparent));
+}
+
+.author-card svg circle {
+  fill: color-mix(in srgb, var(--matrix) 16%, var(--panel-solid));
+  stroke: color-mix(in srgb, var(--matrix) 78%, var(--primary-2));
+}
+
+.author-card svg path,
+.author-card svg rect {
+  fill: none;
+  stroke: var(--primary);
+}
+
+.command-palette {
+  background: rgba(2, 6, 23, 0.48);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.command-box {
+  border-color: var(--glass-border);
+  border-radius: var(--radius-xl);
+  background: var(--surface-glass-strong);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+.command-results a {
+  min-height: 44px;
+  border-radius: var(--radius-md);
+}
+
+.achievement-toast {
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(circle at 10% 0%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 38%),
+    var(--surface-glass-strong);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .top-nav,
+  .stats-strip div,
+  .learning-route div,
+  .card,
+  .tab-shell,
+  .calculator-card,
+  .test-callout,
+  .adapter-lab,
+  .wow-strip,
+  .game-panel,
+  .game-hero,
+  .course-progress-card,
+  .lecture-progress,
+  .inline-check,
+  .code-practice,
+  .code-runner,
+  .author-card,
+  .question,
+  .practice-task,
+  .lesson-summary,
+  .sidebar,
+  .content,
+  .command-box {
+    background: var(--panel-solid);
+  }
+}
+
+@keyframes lab-pulse {
+  from {
+    transform: translate3d(0, 0, 0) scale(0.95);
+    opacity: 0.55;
+  }
+
+  to {
+    transform: translate3d(18px, 16px, 0) scale(1.08);
+    opacity: 0.82;
+  }
+}
+
+@media (min-width: 1600px) {
+  :root {
+    --container: min(100% - 160px, 1540px);
+  }
+
+  .course-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .practice-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .lecture,
+  .practice-page,
+  .test-page {
+    max-width: 1060px;
+  }
+}
+
+@media (min-width: 2200px) {
+  :root {
+    --container: min(100% - 280px, 1680px);
+  }
+
+  .hero h1 {
+    font-size: clamp(4.8rem, 4.2vw, 7.4rem);
+  }
+}
+
+@media (max-width: 1180px) {
+  .hero-lab,
+  .calculator-card,
+  .adapter-lab,
+  .game-layout,
+  .game-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    min-height: auto;
+  }
+
+  .lora-stage {
+    width: min(100%, 760px);
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 980px) {
+  :root {
+    --container: min(100% - 32px, 900px);
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: relative;
+    top: 0;
+    max-height: none;
+  }
+
+  .sidebar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+    gap: 8px;
+  }
+
+  .sidebar h3 {
+    grid-column: 1 / -1;
+  }
+
+  .content {
+    border-radius: var(--radius-xl);
+  }
+
+  .top-nav {
+    justify-content: flex-start;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .top-nav::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  :root {
+    --container: min(100% - 24px, 680px);
+    --section-gap: 44px;
+  }
+
+  .top-nav {
+    top: 6px;
+    width: min(calc(100% - 12px), 680px);
+    margin-top: 6px;
+    border-radius: var(--radius-lg);
+  }
+
+  .top-nav::before {
+    min-width: 54px;
+  }
+
+  .hero {
+    padding-top: 34px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.25rem, 13vw, 4.2rem);
+  }
+
+  .lora-stage {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .operator {
+    line-height: 1;
+  }
+
+  .matrix {
+    min-height: 118px;
+  }
+
+  .factor-a,
+  .factor-b {
+    min-height: 96px;
+    margin-top: 0;
+  }
+
+  .signal-line {
+    display: none;
+  }
+
+  .section-heading,
+  .test-callout,
+  .game-top {
+    display: grid;
+    align-items: start;
+  }
+
+  .pipeline-list li,
+  .match-row {
+    grid-template-columns: 1fr;
+  }
+
+  .tab-list {
+    border-radius: var(--radius-lg);
+  }
+
+  .tab-button {
+    flex: 1 1 auto;
+  }
+
+  .content {
+    padding: 22px 16px;
+  }
+
+  .lecture section {
+    padding-left: 14px;
+  }
+
+  .code-editor-shell {
+    grid-template-columns: 38px minmax(0, 1fr);
+  }
+
+  .game-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  :root {
+    --container: min(100% - 20px, 390px);
+  }
+
+  body {
+    font-size: 15.5px;
+  }
+
+  .hero-actions,
+  .code-runner__actions,
+  .code-practice__actions,
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .button {
+    width: 100%;
+  }
+
+  .stats-strip,
+  .learning-route,
+  .course-grid,
+  .practice-grid,
+  .authors-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .farm-field {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .command-results a {
+    display: grid;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

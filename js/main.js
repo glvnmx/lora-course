@@ -41,7 +41,7 @@ function initReveal() {
 }
 
 function initPointerGlow() {
-  document.querySelectorAll('.card, .button, .tab-shell, .game-panel').forEach((node) => {
+  document.querySelectorAll('.card, .button, .tab-shell, .game-panel, .adapter-lab, .calculator-card, .course-progress-card, .practice-task, .question, .author-card').forEach((node) => {
     node.addEventListener('pointermove', (event) => {
       const box = node.getBoundingClientRect();
       node.style.setProperty('--mx', `${event.clientX - box.left}px`);
@@ -171,6 +171,8 @@ function initCommandPalette() {
     palette.hidden = true;
   };
   document.addEventListener('keydown', (event) => {
+    const typing = event.target?.closest?.('input, textarea, select, [contenteditable="true"]');
+    if (typing) return;
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
       event.preventDefault();
       open();
