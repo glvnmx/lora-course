@@ -76,7 +76,6 @@ function initLoraCalculator() {
     const full = dout * din;
     const pct = full ? lora / full * 100 : 0;
     output.textContent = `${formatter.format(lora)} параметров, ${pct.toFixed(2)}% от полной матрицы`;
-    if (rank === 1703) unlockAchievement('peter');
   };
   form.addEventListener('input', update);
   update();
@@ -116,10 +115,9 @@ function initAdapterLab() {
 }
 
 const achievements = {
-  balanced: 'Собран сбалансированный адаптер',
-  peter: 'Петр одобряет rank 1703',
-  harvest: 'Собран царский урожай LoRA',
-  test: 'Тестовая дисциплина включена'
+  balanced: 'Сбалансирован rank, alpha и dropout',
+  lab: 'LoRA Lab: адаптер готов к оценке',
+  test: 'Итоговая проверка открыта'
 };
 
 function unlockAchievement(id) {
@@ -143,9 +141,9 @@ function initCommandPalette() {
   const root = nested ? '../' : '';
   const links = [
     ['Главная', `${root}index.html`],
-    ['Карта курса', `${root}index.html#course-map`],
+    ['Содержание курса', `${root}index.html#course-map`],
     ['Визуализации', `${root}index.html#visual-lab`],
-    ['Мини-игра', `${root}game.html`],
+    ['LoRA Lab', `${root}game.html`],
     ['Об авторах', `${root}authors.html`],
     ['Итоговый тест', `${root}test.html`],
     ...Array.from({ length: 8 }, (_, i) => [`Лекция ${i + 1}`, `${root}lectures/lecture${i + 1}.html`]),
@@ -185,136 +183,63 @@ function initCommandPalette() {
   input.addEventListener('input', render);
 }
 
-function initStudyJokes() {
-  const jokes = [
-    'LoRA вошла в слой тихо: база даже не проснулась.',
-    'Ранг 1 тоже ранг. Просто очень скромный.',
-    'Если loss падает слишком красиво, проверьте, не учит ли модель ответы из валидации.',
-    'QLoRA: когда видеокарта сказала «я маленькая, но гордая».',
-    'SVD разложило матрицу, но не вашу мотивацию.',
-    'Катастрофическое забывание: модель помнит всё, кроме того, зачем ее донастраивали.',
-    'Alpha высокий, самооценка адаптера тоже.',
-    'Поставили r=256. Теперь это почти full fine-tuning с чувством вины.',
-    'PEFT экономит память, но не экономит необходимость читать логи.',
-    'Если target_modules пустой, адаптер обучается силой намерения.',
-    'Double quantization: квантуем квантизацию, потому что можем.',
-    'SFT любит чистые данные. Грязные данные любят SFT еще сильнее.',
-    'DPO спросил: какой ответ лучше? Датасет пожал плечами.',
-    'Merge-and-unload: момент, когда адаптер съезжается с базой.',
-    'vLLM батчит запросы быстрее, чем мы выбираем гиперпараметры.',
-    'LoRA для Stable Diffusion: маленький файл, большие ожидания.',
-    'Переобучение начинается там, где заканчивается валидация.',
-    'Если eval loss молчит, посмотрите генерации. Они обычно разговорчивее.',
-    'Ранг низкий, ставки высокие.',
-    'Tokenizer не виноват. Хотя иногда виноват.',
-    'Chat template - это не украшение, а договор с моделью.',
-    'Gradient checkpointing: платим временем, покупаем память.',
-    'NF4 звучит как номер трассы, но спасает GPU-память.',
-    'AdaLoRA распределяет ранги так, как бюджет на конференции.',
-    'DoRA разделила величину и направление. Осталось разделить дедлайн и реальность.',
-    'Warmup нужен не только оптимизатору.',
-    'Если модель стала отвечать идеально одинаково, поздравляем: стиль победил смысл.',
-    'LoRA маленькая, но в production спрашивают с нее как со взрослой.',
-    'Сначала данные, потом гиперпараметры. Да, опять данные.',
-    'Матрица BA скромная, пока не умножишь на количество слоев.',
-    'TensorBoard показывает графики. Интерпретацию все еще придется делать людям.',
-    'ORPO пришел без reference model и попросил не драматизировать.',
-    'rsLoRA делит на корень, потому что ранг тоже хочет стабильности.',
-    'Adapter zoo звучит весело, пока не нужно версионировать 200 файлов.',
-    'Если ответы стали короче после DPO, это не всегда мудрость. Иногда это страх.',
-    'Слитая модель быстрее, но адаптер уже не вытащить без воспоминаний.',
-    'Главная метрика курса: меньше магии, больше проверяемых решений.',
-    'LoRA не чинит плохой датасет. Она просто быстрее показывает, что он плохой.',
-    'Случайная шутка прошла inference без батчинга.',
-    'Если вы это читаете, таймер работает.'
-  ];
-  let pool = shuffle(jokes);
-  let count = 0;
-  let timer;
-  const nextDelay = () => 60000 + Math.floor(Math.random() * 60000);
-  const show = () => {
-    if (document.hidden) {
-      timer = setTimeout(show, nextDelay());
-      return;
-    }
-    if (!pool.length) pool = shuffle(jokes);
-    const note = document.createElement('aside');
-    note.className = `study-joke variant-${1 + Math.floor(Math.random() * 3)}`;
-    note.style.left = `${8 + Math.random() * 72}vw`;
-    note.style.top = `${14 + Math.random() * 64}vh`;
-    count += 1;
-    note.innerHTML = `<button type="button" aria-label="Закрыть">×</button><strong>PEFT-пауза #${count}</strong><span>${pool.pop()}</span>`;
-    document.body.append(note);
-    const close = () => note.classList.add('leaving');
-    note.querySelector('button').addEventListener('click', close);
-    note.addEventListener('animationend', () => {
-      if (note.classList.contains('leaving')) note.remove();
-    });
-    setTimeout(close, 14000);
-    timer = setTimeout(show, nextDelay());
-  };
-  timer = setTimeout(show, nextDelay());
-  window.addEventListener('pagehide', () => clearTimeout(timer));
-}
-
 function initPeterFarmGame() {
   const game = document.getElementById('peterFarmGame');
   if (!game) return;
-  const field = game.querySelector('.farm-field');
+  const matrix = game.querySelector('.farm-field');
   const log = game.querySelector('.game-log');
-  const stats = { quality: 38, memory: 26, forgetting: 18, harvest: 22, turn: 0 };
+  const stats = { quality: 38, memory: 30, forgetting: 18, readiness: 24, turn: 0 };
   const actions = [
-    { name: 'Чистые данные', type: 'good', q: 13, h: 12, m: 3, f: -4, text: 'Петр велел переписать датасет без дублей.' },
-    { name: 'rank +8', type: 'rank', q: 12, h: 8, m: 12, f: 4, text: 'Ранг вырос, грядки стали умнее.' },
-    { name: 'NF4 квантизация', type: 'quant', q: 5, h: 6, m: -14, f: 1, text: 'Казна GPU вздохнула свободнее.' },
-    { name: 'Слишком большой alpha', type: 'risk', q: 6, h: -4, m: 6, f: 15, text: 'Адаптер кричит громче базовой модели.' },
-    { name: 'Валидация', type: 'eval', q: 7, h: 8, m: 1, f: -9, text: 'Ошибки найдены до царского смотра.' },
-    { name: 'Грязный CSV', type: 'bad', q: -10, h: -12, m: 1, f: 9, text: 'В датасете смешались рожь, ячмень и HTML.' }
+    { name: 'Очистить датасет', type: 'good', q: 13, ready: 12, m: 3, f: -5, text: 'Удалены дубли, роли сообщений и chat template проверены.' },
+    { name: 'Увеличить rank', type: 'rank', q: 11, ready: 8, m: 12, f: 5, text: 'Адаптер получил больше ёмкости, но вырос расход памяти.' },
+    { name: 'Включить QLoRA NF4', type: 'quant', q: 5, ready: 7, m: -16, f: 1, text: '4-битная база снизила GPU memory и сохранила обучаемый адаптер.' },
+    { name: 'Слишком высокий alpha', type: 'risk', q: 4, ready: -5, m: 5, f: 16, text: 'Вклад адаптера стал слишком сильным: forgetting score растёт.' },
+    { name: 'Validation review', type: 'eval', q: 8, ready: 10, m: 1, f: -10, text: 'Baseline и адаптер сравнены на контрольных prompts.' },
+    { name: 'Шумный train split', type: 'bad', q: -10, ready: -12, m: 1, f: 10, text: 'В данных найдены противоречивые ответы и утечка validation.' }
   ];
   const meters = {
     quality: game.querySelector('[data-game-meter="quality"] i'),
     memory: game.querySelector('[data-game-meter="memory"] i'),
     forgetting: game.querySelector('[data-game-meter="forgetting"] i'),
-    harvest: game.querySelector('[data-game-meter="harvest"] i')
+    readiness: game.querySelector('[data-game-meter="readiness"] i')
   };
   const values = {
     quality: game.querySelector('[data-game-value="quality"]'),
     memory: game.querySelector('[data-game-value="memory"]'),
     forgetting: game.querySelector('[data-game-value="forgetting"]'),
-    harvest: game.querySelector('[data-game-value="harvest"]')
+    readiness: game.querySelector('[data-game-value="readiness"]')
   };
   const clamp = (value) => Math.max(0, Math.min(100, value));
   const renderStats = () => {
     Object.keys(meters).forEach((key) => {
-      meters[key].style.width = `${stats[key]}%`;
-      values[key].textContent = `${stats[key]}%`;
+      if (!meters[key] || !values[key]) return;
+      meters[key].style.width = stats[key] + '%';
+      values[key].textContent = stats[key] + '%';
     });
   };
   const addLog = (text) => {
-    log.innerHTML = `<p>${text}</p>${log.innerHTML}`;
+    log.innerHTML = '<p>' + text + '</p>' + log.innerHTML;
   };
-  const plant = () => {
-    field.innerHTML = '';
-    const count = Math.max(6, Math.round(stats.harvest / 8));
-    for (let i = 0; i < 16; i += 1) {
-      const plot = document.createElement('button');
-      plot.type = 'button';
-      plot.className = i < count ? 'plot grown' : 'plot';
-      plot.textContent = i < count ? 'BA' : 'W₀';
-      field.append(plot);
+  const renderMatrix = () => {
+    matrix.innerHTML = '';
+    const active = Math.max(4, Math.round(stats.readiness / 7));
+    for (let idx = 0; idx < 16; idx += 1) {
+      const cell = document.createElement('button');
+      cell.type = 'button';
+      cell.className = idx < active ? 'plot grown' : 'plot';
+      cell.textContent = idx < active ? 'BA' : 'W0';
+      matrix.append(cell);
     }
   };
   const deal = () => {
     const tray = game.querySelector('.game-actions');
     const roundActions = shuffle(actions).slice(0, 3);
     tray.innerHTML = roundActions.map((action, index) => (
-      `<button type="button" class="action-card ${action.type}" data-action="${index}">
-        <strong>${action.name}</strong><span>${action.text}</span>
-      </button>`
+      '<button type="button" class="action-card ' + action.type + '" data-action="' + index + '">' +
+      '<strong>' + action.name + '</strong><span>' + action.text + '</span></button>'
     )).join('');
     tray.querySelectorAll('.action-card').forEach((button, index) => {
-      const action = roundActions[index];
-      button.addEventListener('click', () => applyAction(action));
+      button.addEventListener('click', () => applyAction(roundActions[index]));
     });
   };
   const applyAction = (action) => {
@@ -322,24 +247,24 @@ function initPeterFarmGame() {
     stats.quality = clamp(stats.quality + action.q);
     stats.memory = clamp(stats.memory + action.m);
     stats.forgetting = clamp(stats.forgetting + action.f);
-    stats.harvest = clamp(stats.harvest + action.h + Math.round(stats.quality / 18) - Math.round(stats.forgetting / 22));
+    stats.readiness = clamp(stats.readiness + action.ready + Math.round(stats.quality / 18) - Math.round(stats.forgetting / 22));
     renderStats();
-    plant();
-    addLog(`Ход ${stats.turn}: ${action.text}`);
-    if (stats.memory >= 92) addLog('GPU-казна почти пуста. Петр требует QLoRA.');
-    if (stats.forgetting >= 82) addLog('База забывает агрономию. Нужна валидация.');
-    if (stats.harvest >= 86 && stats.quality >= 76 && stats.memory < 90 && stats.forgetting < 70) {
-      addLog('Победа: адаптер обучен, урожай принят, база не сломана.');
-      unlockAchievement('harvest');
+    renderMatrix();
+    addLog('Ход ' + stats.turn + ': ' + action.text);
+    if (stats.memory >= 92) addLog('GPU memory почти исчерпана: уменьшите batch/rank или включите QLoRA.');
+    if (stats.forgetting >= 82) addLog('Forgetting score слишком высок: нужен eval, dropout или меньший alpha.');
+    if (stats.readiness >= 86 && stats.quality >= 76 && stats.memory < 90 && stats.forgetting < 70) {
+      addLog('Победа: адаптер готов к финальной оценке и сохранению.');
+      unlockAchievement('lab');
     }
     deal();
   };
   game.querySelector('[data-game-reset]').addEventListener('click', () => {
-    Object.assign(stats, { quality: 38, memory: 26, forgetting: 18, harvest: 22, turn: 0 });
+    Object.assign(stats, { quality: 38, memory: 30, forgetting: 18, readiness: 24, turn: 0 });
     log.innerHTML = '';
-    addLog('Петр I открыл сезон донастройки. Соберите урожай без переобучения.');
+    addLog('Запуск LoRA Lab: настройте адаптер без перерасхода памяти и переобучения.');
     renderStats();
-    plant();
+    renderMatrix();
     deal();
   });
   game.querySelector('[data-game-reset]').click();
@@ -418,6 +343,41 @@ function initInlineChecks() {
   });
 }
 
+function enhanceCodeEditor(editor) {
+  if (!editor || editor.closest('.code-editor-shell')) return;
+  const shell = document.createElement('div');
+  shell.className = 'code-editor-shell';
+  const gutter = document.createElement('pre');
+  gutter.className = 'code-editor-gutter';
+  editor.parentNode.insertBefore(shell, editor);
+  shell.append(gutter, editor);
+  const update = () => {
+    const lineCount = Math.max(1, editor.value.split('\n').length);
+    gutter.textContent = Array.from({ length: lineCount }, (_, i) => i + 1).join('\n');
+  };
+  editor.addEventListener('input', update);
+  editor.addEventListener('scroll', () => { gutter.scrollTop = editor.scrollTop; });
+  update();
+}
+
+function pseudoCheckPython(code) {
+  const linesCount = code.split('\n').length;
+  const signals = [
+    ['LoraConfig', /LoraConfig/.test(code)],
+    ['rank/r', /\br\s*=|rank/.test(code)],
+    ['target_modules', /target_modules/.test(code)],
+    ['Python-синтаксис', /def |from |import |print\(/.test(code)]
+  ];
+  const found = signals.filter(([, ok]) => ok).map(([name]) => name);
+  const missing = signals.filter(([, ok]) => !ok).map(([name]) => name);
+  return [
+    'Учебная проверка Python-кода выполнена в браузере без backend.',
+    'Строк: ' + linesCount + '. Найдено: ' + (found.length ? found.join(', ') : 'нет ключевых элементов') + '.',
+    missing.length ? 'Что можно добавить: ' + missing.join(', ') + '.' : 'Структура похожа на LoRA/PEFT-фрагмент.',
+    'Для реального обучения запустите код в Python-окружении с transformers, peft и torch.'
+  ].join('\n');
+}
+
 function initCodePractice() {
   document.querySelectorAll('.code-practice').forEach((box, index) => {
     const id = box.dataset.practiceId || `practice-${index}`;
@@ -428,7 +388,9 @@ function initCodePractice() {
     const clearBtn = box.querySelector('.code-practice__clear');
     if (!editor) return;
     const key = `loraCourseCode:${id}`;
-    editor.value = localStorage.getItem(key) || '';
+    const saved = localStorage.getItem(key);
+    if (saved !== null) editor.value = saved;
+    enhanceCodeEditor(editor);
     editor.addEventListener('input', () => localStorage.setItem(key, editor.value));
     solutionBtn?.addEventListener('click', () => {
       if (!solution) return;
@@ -449,6 +411,7 @@ function initCodePractice() {
     clearBtn?.addEventListener('click', () => {
       editor.value = '';
       localStorage.removeItem(key);
+      editor.dispatchEvent(new Event('input'));
       editor.focus();
     });
   });
@@ -466,52 +429,19 @@ function initCodeRunners() {
     const copyBtn = runner.querySelector('.code-runner__copy');
     if (!editor || !output) return;
     const key = `loraCourseRunner:${id}`;
-    editor.value = localStorage.getItem(key) || '';
+    const saved = localStorage.getItem(key);
+    if (saved !== null) editor.value = saved;
+    enhanceCodeEditor(editor);
     editor.addEventListener('input', () => localStorage.setItem(key, editor.value));
     const runCode = () => {
-      output.textContent = 'Выполнение...';
-      const workerSource = `
-        self.onmessage = (event) => {
-          const logs = [];
-          console.log = (...args) => logs.push(args.map((item) => {
-            try { return typeof item === 'string' ? item : JSON.stringify(item); }
-            catch { return String(item); }
-          }).join(' '));
-          try {
-            Function(event.data.code)();
-            self.postMessage({ output: logs.join('\\\\n') });
-          } catch (error) {
-            self.postMessage({ output: error.name + ': ' + error.message });
-          }
-        };
-      `;
-      const workerUrl = URL.createObjectURL(new Blob([workerSource], { type: 'application/javascript' }));
-      const worker = new Worker(workerUrl);
-      const timeout = setTimeout(() => {
-        output.textContent = 'Выполнение остановлено: превышен лимит времени.';
-        worker.terminate();
-        URL.revokeObjectURL(workerUrl);
-      }, 1200);
-      const cleanup = () => {
-        clearTimeout(timeout);
-        worker.terminate();
-        URL.revokeObjectURL(workerUrl);
-      };
-      worker.onmessage = (event) => {
-        output.textContent = event.data.output || 'Код выполнен без вывода.';
-        cleanup();
-      };
-      worker.onerror = (event) => {
-        output.textContent = `${event.message}`;
-        cleanup();
-      };
-      worker.postMessage({ code: editor.value });
+      output.textContent = pseudoCheckPython(editor.value);
     };
     runBtn?.addEventListener('click', runCode);
     clearBtn?.addEventListener('click', () => {
       editor.value = '';
       output.textContent = 'Вывод появится здесь.';
       localStorage.removeItem(key);
+      editor.dispatchEvent(new Event('input'));
       editor.focus();
     });
     solutionBtn?.addEventListener('click', () => {
@@ -671,7 +601,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initAdapterLab();
   initAchievements();
   initCommandPalette();
-  initStudyJokes();
   initPeterFarmGame();
   initCourseProgress();
   initMiniTests();

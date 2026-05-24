@@ -1,100 +1,55 @@
-<!doctype html><html lang="ru"><head><title>Лекция 1. Введение в трансферное обучение и донастройку</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script defer src="../js/main.js"></script></head><body><nav class="top-nav"><a href="../index.html">Оглавление</a><a href="../index.html#course-map">Карта курса</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">Мини-игра</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav><main class="layout"><aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class="active">1. Введение в трансферное обучение и донастройку</a><a href="lecture2.html" class="">2. Математические основы низкоранговых разложений</a><a href="lecture3.html" class="">3. Архитектура LoRA</a><a href="lecture4.html" class="">4. Варианты и развитие LoRA</a><a href="lecture5.html" class="">5. Практика донастройки с PEFT и Hugging Face</a><a href="lecture6.html" class="">6. Донастройка LLM: инструкции, диалоги, RLHF</a><a href="lecture7.html" class="">7. Мульти-LoRA, слияние и деплой</a><a href="lecture8.html" class="">8. Продвинутые темы и перспективы</a></aside><article class="content lecture"><div class="breadcrumbs"><a href="../index.html">Курс</a><span>Лекция 1</span></div><h1>Лекция 1. Введение в трансферное обучение и донастройку</h1><div class="lecture-progress" data-lecture-id="1">
-  <div><strong>Лекция 1 из 8</strong><span data-lecture-progress-text>Прогресс курса обновится после мини-теста</span></div>
-  <div class="lecture-progress__bar"><i class="lecture-progress__fill" data-progress-bar style="width:0%"></i></div>
-</div><figure class="lecture-visual" aria-label="Большая модель + LoRA-адаптер">
-  <svg viewBox="0 0 720 220" role="img" aria-labelledby="lectureVisualTitle1">
-    <title id="lectureVisualTitle1">Большая модель + LoRA-адаптер</title>
-    <defs><linearGradient id="lvGrad1" x1="0" x2="1"><stop offset="0" stop-color="var(--primary)"/><stop offset="0.52" stop-color="var(--leaf)"/><stop offset="1" stop-color="var(--accent)"/></linearGradient></defs>
-    <rect x="18" y="18" width="684" height="184" rx="18" fill="var(--panel-solid)" opacity="0.72"/>
-    <path d="M70 160 C180 70, 270 190, 380 98 S560 70, 650 148" fill="none" stroke="url(#lvGrad1)" stroke-width="10" stroke-linecap="round" opacity="0.82"/>
-    <g><rect x="70" y="62" width="112" height="64" rx="14" fill="url(#lvGrad1)" opacity="0.95"/><text x="126" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">Frozen W0</text><rect x="215" y="62" width="112" height="64" rx="14" fill="url(#lvGrad1)" opacity="0.87"/><text x="271" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">LoRA</text></g>
-  </svg>
-  <figcaption>Большая модель + LoRA-адаптер</figcaption>
-</figure><section><h2>Зачем нужна донастройка</h2><p>Предобученная модель хранит широкий статистический опыт, полученный на больших корпусах, но этот опыт редко совпадает с конкретной прикладной задачей. Донастройка связывает общую языковую или визуальную компетенцию с локальными требованиями: терминологией домена, форматом ответа, допустимыми действиями и метриками качества. В классическом трансферном обучении нижние уровни модели рассматривают как извлекатель универсальных признаков, а верхние уровни адаптируют к новой задаче. В современных трансформерах граница менее очевидна: внимание, MLP-блоки и нормализации распределяют знания по всей глубине. Поэтому донастройка стала не заменой обучения с нуля, а экономичным способом направить уже имеющуюся модель.</p><p>Для закрепления полезно рассматривать этот материал как связь между математическим ограничением и инженерным решением. Ограничение уменьшает пространство поиска, но не заменяет эксперимент: качество определяется данными, метриками, гиперпараметрами и тем, насколько выбранная схема соответствует будущему использованию модели.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Почему не всегда нужно обучать всю модель?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Потому что предобученная модель уже содержит общие знания, а для новой задачи часто достаточно небольшой управляемой поправки.</div>
-</div>
-<section><h2>Full fine-tuning и PEFT</h2><p>Полная донастройка обновляет все параметры модели. Это мощный, но дорогой режим: нужно хранить градиенты и состояния оптимизатора для миллиардов весов, подбирать малую скорость обучения и защищаться от деградации базовых возможностей. Parameter-efficient fine-tuning решает другую задачу: оставить большую часть модели замороженной и обучать небольшой набор дополнительных параметров или масок. Формально вместо обновления W во всех слоях мы вводим ограниченное семейство изменений $\Delta W(\theta)$ и оптимизируем только $\theta$. Ограничение уменьшает память, ускоряет эксперименты и позволяет хранить несколько адаптаций одной базовой модели.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Чем PEFT отличается от full fine-tuning?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Full fine-tuning обновляет все веса, а PEFT обучает небольшой набор параметров или адаптеров при замороженной базе.</div>
-</div>
-<section><h2>Катастрофическое забывание</h2><p>Катастрофическое забывание возникает, когда модель, обучаясь на новом распределении, теряет полезные навыки, освоенные ранее. Для LLM это проявляется как ухудшение общих инструкционных способностей, снижение устойчивости к многоязычным запросам или чрезмерное копирование формата обучающего датасета. Причина не только в размере шага оптимизации. Градиенты маленького датасета могут систематически двигать веса в направлении, которое хорошо объясняет локальные примеры, но разрушает широкую геометрию признаков. PEFT снижает риск, потому что замороженная основа остается неизменной, а новая информация добавляется как управляемая поправка.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Почему LoRA снижает риск катастрофического забывания?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Базовые веса остаются неизменными, поэтому новая задача добавляется через адаптер, а не переписывает всю модель.</div>
-</div>
-<section><h2>Обзор методов</h2><p>К PEFT относят адаптеры-бутылочные горлышки, prefix tuning, prompt tuning, IA3, BitFit, LoRA и их гибриды. Адаптеры вставляют небольшие MLP-модули между слоями. Prefix tuning добавляет обучаемые ключи и значения в механизм внимания. Prompt tuning оптимизирует непрерывные эмбеддинги подсказки. IA3 масштабирует каналы внимания и MLP. BitFit обучает только bias-параметры. LoRA отличается тем, что не меняет архитектурный поток данных после слияния: низкоранговая поправка может быть сложена с исходной матрицей и превращена в обычный линейный слой.</p></section>
-<section><h2>Когда PEFT оправдан</h2><p>PEFT особенно полезен, когда есть одна сильная базовая модель и много задач: клиентские стили, юридические поддомены, медицинские классификаторы, локальные языки, эксперименты с форматами диалогов. Вместо копирования всей модели для каждого сценария хранятся компактные адаптеры. Это упрощает A/B-тестирование, откат и аудит. Однако PEFT не является универсальной заменой full fine-tuning. Если задача требует радикально новой модальности, большой перестройки токенизатора или глубокого изменения рассуждений, низкоранговой поправки может не хватить. Практический вопрос всегда звучит так: какая минимальная обучаемая подмодель дает нужное качество без лишнего риска.</p></section>
-<section><h2>Итоги</h2><p>Донастройка соединяет предобученные знания с локальными требованиями. Полная донастройка максимизирует свободу, но требует больших ресурсов и аккуратной регуляризации. PEFT ограничивает пространство изменений и тем самым делает адаптацию дешевле, воспроизводимее и удобнее для деплоя. LoRA стала центральным методом PEFT благодаря простоте, хорошей инженерной совместимости и ясной математической интерпретации через низкий ранг обновления.</p></section>
-<p>В учебной работе важно не только знать название метода, но и уметь объяснить, какие параметры обучаются, какие остаются фиксированными, где появляется выигрыш по памяти и какие ошибки могут исказить вывод эксперимента.</p>
-<p>Типичная ошибка начинающих состоит в том, что они сравнивают методы при разных датасетах, шаблонах промпта или длинах последовательности. Корректное сравнение требует одинакового разбиения данных, одинаковой процедуры генерации и заранее выбранных метрик.</p>
-<p>Еще один практический критерий — стоимость владения. Маленький адаптер проще хранить, проверять и откатывать; большая слитая модель иногда быстрее на inference, но дороже в распространении и обслуживании.</p>
+<!doctype html>
+<html lang="ru">
+<head>
+  <title>Почему LoRA решает проблему дорогой донастройки</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script defer src="../js/main.js"></script>
+</head>
+<body>
+  <nav class="top-nav"><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Lab</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <main class="layout">
+    <aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class="active"><small>1.</small> Дорогая донастройка и роль LoRA</a><a href="lecture2.html" class=""><small>2.</small> PEFT и популярность LoRA</a><a href="lecture3.html" class=""><small>3.</small> Rank, alpha и scaling</a><a href="lecture4.html" class=""><small>4.</small> Target modules в transformer</a><a href="lecture5.html" class=""><small>5.</small> Python, PEFT и LoraConfig</a><a href="lecture6.html" class=""><small>6.</small> QLoRA и память GPU</a><a href="lecture7.html" class=""><small>7.</small> Eval, сравнение с базой и ошибки</a><a href="lecture8.html" class=""><small>8.</small> Merge, storage и deployment</a></aside>
+    <article class="content lecture">
+      <div class="breadcrumbs"><a href="../index.html">Курс</a><span>Лекция 1</span></div>
+      <p class="eyebrow">Лекция 1 из 8</p>
+      <h1>Почему LoRA решает проблему дорогой донастройки</h1>
+      <p class="lecture-lead">Разберёте, зачем вообще донастраивают большие модели, почему full fine-tuning быстро упирается в память и стоимость, и как LoRA позволяет обучать компактную поправку вместо всех весов.</p>
+      <div class="lecture-progress" data-lecture-id="1"><div><strong>Прогресс лекции</strong><span data-lecture-progress-text>Прогресс курса обновится после мини-теста</span></div><div><i data-progress-bar style="width:0%"></i></div></div>
+      <section><h2>Зачем нужна донастройка</h2><p>Предобученная модель уже умеет решать широкий набор задач, но обычно не знает ваш домен, формат ответа, внутренние термины и критерии качества. Донастройка связывает общие знания модели с конкретной прикладной задачей: поддержкой клиентов, классификацией, генерацией инструкций, извлечением данных или стилем ответов.</p></section>
+<section><h2>Почему full fine-tuning дорогой</h2><p>При полной донастройке обновляются миллиарды параметров. Нужно хранить веса, градиенты и состояния оптимизатора, а это резко увеличивает требования к GPU-памяти. Кроме того, полный fine-tuning сложнее версионировать: для каждой задачи появляется почти отдельная большая модель.</p></section>
+<section><h2>Идея PEFT</h2><p>Parameter-Efficient Fine-Tuning ограничивает число обучаемых параметров. Базовая модель остаётся замороженной, а обучается небольшой набор добавок. Это снижает стоимость экспериментов, ускоряет итерации и делает деплой удобнее, потому что один base model может обслуживать несколько адаптеров.</p></section>
+<section><h2>Почему именно LoRA</h2><p>LoRA добавляет к выбранным линейным слоям низкоранговую поправку. Вместо изменения полной матрицы W обучаются две маленькие матрицы A и B. Такой подход хорошо ложится на transformer-архитектуры, поддерживается Hugging Face PEFT и часто даёт качество, близкое к полной донастройке при намного меньшем числе обучаемых параметров.</p></section>
+      <section class="lesson-summary"><h2>Итоги лекции</h2><ul><li>Full fine-tuning обновляет все веса и поэтому требует много памяти.</li><li>PEFT обучает только небольшую часть параметров или внешние добавки.</li><li>LoRA хранит компактную низкоранговую поправку к выбранным слоям.</li><li>Практическая цель курса - научиться выбирать настройки и обучать собственный LoRA-адаптер.</li></ul></section>
+      <section class="code-runner python-runner" data-runner-id="lecture-1">
+        <div class="code-runner__head"><h2>Python-редактор</h2><span>учебный режим без backend</span></div>
+        <textarea class="code-runner__editor language-python" spellcheck="false" placeholder="Напишите Python-код здесь...">def lora_parameter_ratio(d_in, d_out, rank):
+    full = d_in * d_out
+    lora = rank * (d_in + d_out)
+    return lora, lora / full
 
+params, ratio = lora_parameter_ratio(4096, 4096, 16)
+print(params)
+print(f&quot;{ratio:.2%}&quot;)</textarea>
+        <div class="code-runner__actions"><button class="code-runner__run button" type="button">Проверить код</button><button class="code-runner__clear button secondary" type="button">Очистить</button><button class="code-runner__solution-btn button secondary" type="button">Показать пример</button><button class="code-runner__copy button secondary" type="button">Скопировать пример</button></div>
+        <pre class="code-runner__output" aria-live="polite">Результат проверки появится здесь.</pre>
+        <pre class="code-runner__solution" hidden><code class="language-python">def lora_parameter_ratio(d_in, d_out, rank):
+    full = d_in * d_out
+    lora = rank * (d_in + d_out)
+    return lora, lora / full
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="code-runner" data-runner-id="lecture-1">
-  <h2>Сравнить LoRA и full fine-tuning</h2>
-  <p>Напишите функцию, которая считает, во сколько раз LoRA легче full fine-tuning.</p>
-  <textarea class="code-runner__editor" spellcheck="false" placeholder="Напишите JavaScript-код здесь..."></textarea>
-  <div class="code-runner__actions">
-    <button class="code-runner__run button" type="button">Запустить код</button>
-    <button class="code-runner__clear button secondary" type="button">Очистить</button>
-    <button class="code-runner__solution-btn button secondary" type="button">Показать решение</button>
-    <button class="code-runner__copy button secondary" type="button">Скопировать решение</button>
-  </div>
-  <pre class="code-runner__output" aria-live="polite">Вывод появится здесь.</pre>
-  <pre class="code-runner__solution" hidden><code>function compressionRatio(fullParams, loraParams) {
-  return fullParams / loraParams;
-}
-
-const fullParams = 7000000000;
-const loraParams = 8000000;
-console.log(Math.round(compressionRatio(fullParams, loraParams))); // 875</code></pre>
-</section><section class="mini-test" data-lecture-id="1">
-  <h2>Мини-тест для зачета лекции</h2>
-  <p>Ответьте на 3 вопроса. Лекция засчитывается при результате минимум 2 из 3.</p>
-  <div class="mini-test__question" data-answer="0"><h3>1. Что является главной идеей PEFT?</h3><label class="mini-test__option"><input type="radio" name="lecture1_q1" value="0"> Обучать меньше параметров при сохранении базы</label><label class="mini-test__option"><input type="radio" name="lecture1_q1" value="1"> Удалять токенизатор</label><label class="mini-test__option"><input type="radio" name="lecture1_q1" value="2"> Всегда обучать всю модель</label><label class="mini-test__option"><input type="radio" name="lecture1_q1" value="3"> Заменять данные синтетикой</label></div><div class="mini-test__question" data-answer="0"><h3>2. Что делает LoRA?</h3><label class="mini-test__option"><input type="radio" name="lecture1_q2" value="0"> Добавляет низкоранговую поправку к весам</label><label class="mini-test__option"><input type="radio" name="lecture1_q2" value="1"> Удаляет attention</label><label class="mini-test__option"><input type="radio" name="lecture1_q2" value="2"> Обучает только temperature</label><label class="mini-test__option"><input type="radio" name="lecture1_q2" value="3"> Меняет HTML сайта</label></div><div class="mini-test__question" data-answer="0"><h3>3. Почему забывание меньше?</h3><label class="mini-test__option"><input type="radio" name="lecture1_q3" value="0"> Базовые веса заморожены</label><label class="mini-test__option"><input type="radio" name="lecture1_q3" value="1"> Модель не видит данные</label><label class="mini-test__option"><input type="radio" name="lecture1_q3" value="2"> Loss не считается</label><label class="mini-test__option"><input type="radio" name="lecture1_q3" value="3"> Нет оптимизатора</label></div>
-  <button class="mini-test__button" type="button">Проверить мини-тест</button>
-  <div class="mini-test__result" aria-live="polite"></div>
-</section><section class="skill-card">
-  <div class="skill-card__mark">1</div>
-  <div><h2>Ты прокачал навык</h2><p>Теперь ты понимаешь, зачем нужна донастройка, чем full fine-tuning отличается от PEFT и почему LoRA стала практичным способом адаптации моделей.</p><p class="skill-card__motivation">LoRA больше не выглядит как магическое слово из вакансий — теперь это понятная инженерная идея.</p><a class="button accent" href="../practicals/practical1.html">Перейти к практике</a></div>
-</section><div class="pager"><a class="button secondary" href="../index.html">К оглавлению</a><a class="button" href="lecture2.html">Следующая лекция →</a></div></article></main></body></html>
+params, ratio = lora_parameter_ratio(4096, 4096, 16)
+print(params)
+print(f&quot;{ratio:.2%}&quot;)</code></pre>
+      </section>
+      <section class="mini-test" data-lecture-id="1"><h2>Мини-проверка</h2><p>Ответьте на 3 вопроса. Лекция засчитывается при результате минимум 2 из 3.</p><div class="mini-test__question" data-answer="0"><h3>1. Что обычно замораживается при LoRA?</h3><label class="mini-test__option"><input type="radio" name="lecture1_q1" value="0"> Базовые веса модели</label><label class="mini-test__option"><input type="radio" name="lecture1_q1" value="1"> Все обучающие данные</label><label class="mini-test__option"><input type="radio" name="lecture1_q1" value="2"> Только токенизатор</label></div><div class="mini-test__question" data-answer="0"><h3>2. Зачем PEFT ограничивает обучаемые параметры?</h3><label class="mini-test__option"><input type="radio" name="lecture1_q2" value="0"> Чтобы снизить память и стоимость экспериментов</label><label class="mini-test__option"><input type="radio" name="lecture1_q2" value="1"> Чтобы запретить validation</label><label class="mini-test__option"><input type="radio" name="lecture1_q2" value="2"> Чтобы удалить transformer-блоки</label></div><div class="mini-test__question" data-answer="0"><h3>3. Главная практическая выгода LoRA?</h3><label class="mini-test__option"><input type="radio" name="lecture1_q3" value="0"> Компактный адаптер для отдельной задачи</label><label class="mini-test__option"><input type="radio" name="lecture1_q3" value="1"> Обязательное обучение с нуля</label><label class="mini-test__option"><input type="radio" name="lecture1_q3" value="2"> Замена Python на HTML</label></div><button class="mini-test__button button" type="button">Проверить лекцию</button><p class="mini-test__result" aria-live="polite"></p></section>
+    </article>
+  </main>
+</body>
+</html>

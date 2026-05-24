@@ -1,103 +1,53 @@
-<!doctype html><html lang="ru"><head><title>Лекция 6. Донастройка LLM: инструкции, диалоги, RLHF</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script defer src="../js/main.js"></script></head><body><nav class="top-nav"><a href="../index.html">Оглавление</a><a href="../index.html#course-map">Карта курса</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">Мини-игра</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav><main class="layout"><aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class="">1. Введение в трансферное обучение и донастройку</a><a href="lecture2.html" class="">2. Математические основы низкоранговых разложений</a><a href="lecture3.html" class="">3. Архитектура LoRA</a><a href="lecture4.html" class="">4. Варианты и развитие LoRA</a><a href="lecture5.html" class="">5. Практика донастройки с PEFT и Hugging Face</a><a href="lecture6.html" class="active">6. Донастройка LLM: инструкции, диалоги, RLHF</a><a href="lecture7.html" class="">7. Мульти-LoRA, слияние и деплой</a><a href="lecture8.html" class="">8. Продвинутые темы и перспективы</a></aside><article class="content lecture"><div class="breadcrumbs"><a href="../index.html">Курс</a><span>Лекция 6</span></div><h1>Лекция 6. Донастройка LLM: инструкции, диалоги, RLHF</h1><div class="lecture-progress" data-lecture-id="6">
-  <div><strong>Лекция 6 из 8</strong><span data-lecture-progress-text>Прогресс курса обновится после мини-теста</span></div>
-  <div class="lecture-progress__bar"><i class="lecture-progress__fill" data-progress-bar style="width:0%"></i></div>
-</div><figure class="lecture-visual" aria-label="Диалоговые данные">
-  <svg viewBox="0 0 720 220" role="img" aria-labelledby="lectureVisualTitle6">
-    <title id="lectureVisualTitle6">Диалоговые данные</title>
-    <defs><linearGradient id="lvGrad6" x1="0" x2="1"><stop offset="0" stop-color="var(--primary)"/><stop offset="0.52" stop-color="var(--leaf)"/><stop offset="1" stop-color="var(--accent)"/></linearGradient></defs>
-    <rect x="18" y="18" width="684" height="184" rx="18" fill="var(--panel-solid)" opacity="0.72"/>
-    <path d="M70 160 C180 70, 270 190, 380 98 S560 70, 650 148" fill="none" stroke="url(#lvGrad6)" stroke-width="10" stroke-linecap="round" opacity="0.82"/>
-    <g><rect x="70" y="62" width="112" height="64" rx="14" fill="url(#lvGrad6)" opacity="0.95"/><text x="126" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">system</text><rect x="215" y="62" width="112" height="64" rx="14" fill="url(#lvGrad6)" opacity="0.87"/><text x="271" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">user</text><rect x="360" y="62" width="112" height="64" rx="14" fill="url(#lvGrad6)" opacity="0.7899999999999999"/><text x="416" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">assistant</text></g>
-  </svg>
-  <figcaption>Диалоговые данные</figcaption>
-</figure><section><h2>SFT</h2><p>Supervised fine-tuning обучает модель воспроизводить желательные ответы на инструкции. В контексте LoRA это самый распространенный режим: база уже умеет генерировать язык, а адаптер корректирует стиль, формат и доменную точность. Датасет состоит из пар или диалогов, где важно явно отделить роли system, user и assistant. SFT хорошо работает, когда есть качественные демонстрации. Если ответы противоречивы, слишком длинны или содержат скрытые рассуждения неподходящего формата, модель перенимает эти дефекты.</p><p>Для закрепления полезно рассматривать этот материал как связь между математическим ограничением и инженерным решением. Ограничение уменьшает пространство поиска, но не заменяет эксперимент: качество определяется данными, метриками, гиперпараметрами и тем, насколько выбранная схема соответствует будущему использованию модели.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Почему формат данных важен для SFT?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Модель учит последовательность токенов, поэтому роли, шаблон чата и маска loss напрямую влияют на поведение.</div>
-</div>
-<section><h2>Форматы данных</h2><p>Alpaca-формат хранит instruction, optional input и output. ShareGPT представляет диалог как список сообщений с ролями. ChatML использует специальные маркеры ролей и границы сообщений. У каждой модели может быть собственный chat template, заданный в токенизаторе. Нельзя механически смешивать форматы: модель учит не абстрактную инструкцию, а конкретную последовательность токенов. Перед обучением нужно распечатать несколько готовых строк после применения шаблона и убедиться, что ответ ассистента расположен именно там, где ожидается loss.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Что такое роли system/user/assistant?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Это структурные части диалога: инструкция системы, запрос пользователя и целевой ответ ассистента.</div>
-</div>
-<section><h2>TRL SFTTrainer</h2><p>`SFTTrainer` из TRL упрощает упаковку примеров, применение шаблона и обучение causal LM. Он удобен, но не освобождает от проверки масок, packing и длины. Packing повышает эффективность, объединяя короткие примеры в одну последовательность, но может усложнить анализ ошибок. Для диалоговых задач важно не терять EOS между примерами. При LoRA тренер получает уже PEFT-модель или сам создает ее из `peft_config`, в зависимости от версии API.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Почему плохие инструкции ухудшают модель?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Модель перенимает противоречия, шум и неверный стиль из обучающих примеров.</div>
-</div>
-<section><h2>RLHF и предпочтения</h2><p>RLHF обычно включает SFT, обучение reward model и оптимизацию политики, например PPO. Это мощно, но дорого и нестабильно. Для многих проектов предпочтительнее методы прямой оптимизации предпочтений: DPO и ORPO. Они используют пары выбранный/отвергнутый ответ и обучают модель увеличивать относительную вероятность лучшего ответа. LoRA хорошо сочетается с DPO, потому что позволяет дешево пробовать разные preference датасеты и коэффициенты регуляризации относительно reference model.</p></section>
-<section><h2>DPO и ORPO</h2><p>DPO формулирует preference learning как логистическую задачу над разностью log-probabilities выбранного и отвергнутого ответа, с параметром beta. ORPO объединяет SFT-подобную цель и штраф за нежелательные ответы без отдельной reference model. В обоих случаях качество пар критично. Если отвергнутый ответ отличается только длиной или стилем, модель может выучить поверхностный признак. Если пары отражают реальные человеческие предпочтения, адаптер корректирует поведение точнее, чем обычный SFT.</p></section>
-<section><h2>Оценка диалоговой модели</h2><p>Оценивать LLM после SFT нужно не только loss. Используют наборы инструкций, ручную рубрикацию, pairwise сравнение, доменные тесты, проверку отказов и устойчивость к jailbreak. Для LoRA полезно сравнивать базу, SFT-адаптер и preference-адаптер на одинаковых промптах. Иногда адаптер улучшает формат, но ухудшает фактическую точность; иногда DPO делает ответы приятнее, но короче и менее полными. Поэтому метрика должна отражать будущий сценарий использования.</p></section>
-<p>В учебной работе важно не только знать название метода, но и уметь объяснить, какие параметры обучаются, какие остаются фиксированными, где появляется выигрыш по памяти и какие ошибки могут исказить вывод эксперимента.</p>
-<p>Типичная ошибка начинающих состоит в том, что они сравнивают методы при разных датасетах, шаблонах промпта или длинах последовательности. Корректное сравнение требует одинакового разбиения данных, одинаковой процедуры генерации и заранее выбранных метрик.</p>
-<p>Еще один практический критерий — стоимость владения. Маленький адаптер проще хранить, проверять и откатывать; большая слитая модель иногда быстрее на inference, но дороже в распространении и обслуживании.</p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="code-runner" data-runner-id="lecture-6">
-  <h2>Создать сообщения для SFT</h2>
-  <p>Создайте массив messages в формате system/user/assistant.</p>
-  <textarea class="code-runner__editor" spellcheck="false" placeholder="Напишите JavaScript-код здесь..."></textarea>
-  <div class="code-runner__actions">
-    <button class="code-runner__run button" type="button">Запустить код</button>
-    <button class="code-runner__clear button secondary" type="button">Очистить</button>
-    <button class="code-runner__solution-btn button secondary" type="button">Показать решение</button>
-    <button class="code-runner__copy button secondary" type="button">Скопировать решение</button>
-  </div>
-  <pre class="code-runner__output" aria-live="polite">Вывод появится здесь.</pre>
-  <pre class="code-runner__solution" hidden><code>const messages = [
-  { role: &quot;system&quot;, content: &quot;Объясняй LoRA простым языком.&quot; },
-  { role: &quot;user&quot;, content: &quot;Почему LoRA экономит память?&quot; },
-  { role: &quot;assistant&quot;, content: &quot;Потому что обучаются только компактные матрицы A и B.&quot; }
-];
-
-console.log(messages);</code></pre>
-</section><section class="mini-test" data-lecture-id="6">
-  <h2>Мини-тест для зачета лекции</h2>
-  <p>Ответьте на 3 вопроса. Лекция засчитывается при результате минимум 2 из 3.</p>
-  <div class="mini-test__question" data-answer="0"><h3>1. Что важно для SFT данных?</h3><label class="mini-test__option"><input type="radio" name="lecture6_q1" value="0"> Корректные роли и шаблон</label><label class="mini-test__option"><input type="radio" name="lecture6_q1" value="1"> Цвет кнопок</label><label class="mini-test__option"><input type="radio" name="lecture6_q1" value="2"> Размер README</label><label class="mini-test__option"><input type="radio" name="lecture6_q1" value="3"> Случайные ответы</label></div><div class="mini-test__question" data-answer="0"><h3>2. Что такое system/user/assistant?</h3><label class="mini-test__option"><input type="radio" name="lecture6_q2" value="0"> Роли сообщений в диалоге</label><label class="mini-test__option"><input type="radio" name="lecture6_q2" value="1"> Типы GPU</label><label class="mini-test__option"><input type="radio" name="lecture6_q2" value="2"> Названия CSS классов</label><label class="mini-test__option"><input type="radio" name="lecture6_q2" value="3"> Виды dropout</label></div><div class="mini-test__question" data-answer="0"><h3>3. Почему плохие инструкции вредят?</h3><label class="mini-test__option"><input type="radio" name="lecture6_q3" value="0"> Модель учит шум и противоречия</label><label class="mini-test__option"><input type="radio" name="lecture6_q3" value="1"> Они ускоряют обучение</label><label class="mini-test__option"><input type="radio" name="lecture6_q3" value="2"> Они уменьшают loss всегда</label><label class="mini-test__option"><input type="radio" name="lecture6_q3" value="3"> Они отключают LoRA</label></div>
-  <button class="mini-test__button" type="button">Проверить мини-тест</button>
-  <div class="mini-test__result" aria-live="polite"></div>
-</section><section class="skill-card">
-  <div class="skill-card__mark">6</div>
-  <div><h2>Ты прокачал навык</h2><p>Теперь ты понимаешь, как готовить инструкции, диалоги и роли system/user/assistant для донастройки LLM.</p><p class="skill-card__motivation">Модель учит не намерения автора датасета, а конкретные токены — формат имеет значение.</p><a class="button accent" href="../practicals/practical6.html">Перейти к практике</a></div>
-</section><div class="pager"><a class="button" href="lecture5.html">← Предыдущая лекция</a><a class="button secondary" href="../index.html">К оглавлению</a><a class="button" href="lecture7.html">Следующая лекция →</a></div></article></main></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+  <title>QLoRA: обучение адаптера при ограниченной памяти</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script defer src="../js/main.js"></script>
+</head>
+<body>
+  <nav class="top-nav"><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Lab</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <main class="layout">
+    <aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class=""><small>1.</small> Дорогая донастройка и роль LoRA</a><a href="lecture2.html" class=""><small>2.</small> PEFT и популярность LoRA</a><a href="lecture3.html" class=""><small>3.</small> Rank, alpha и scaling</a><a href="lecture4.html" class=""><small>4.</small> Target modules в transformer</a><a href="lecture5.html" class=""><small>5.</small> Python, PEFT и LoraConfig</a><a href="lecture6.html" class="active"><small>6.</small> QLoRA и память GPU</a><a href="lecture7.html" class=""><small>7.</small> Eval, сравнение с базой и ошибки</a><a href="lecture8.html" class=""><small>8.</small> Merge, storage и deployment</a></aside>
+    <article class="content lecture">
+      <div class="breadcrumbs"><a href="../index.html">Курс</a><span>Лекция 6</span></div>
+      <p class="eyebrow">Лекция 6 из 8</p>
+      <h1>QLoRA: обучение адаптера при ограниченной памяти</h1>
+      <p class="lecture-lead">Разберёте, как 4-битная база, NF4, double quantization и paged optimizers позволяют обучать LoRA-адаптеры на более скромных GPU.</p>
+      <div class="lecture-progress" data-lecture-id="6"><div><strong>Прогресс лекции</strong><span data-lecture-progress-text>Прогресс курса обновится после мини-теста</span></div><div><i data-progress-bar style="width:0%"></i></div></div>
+      <section><h2>Что меняет QLoRA</h2><p>QLoRA хранит базовую модель в 4-битном виде, а обучает LoRA-адаптеры в более удобной точности. Градиенты не обновляют квантизованные веса базы, поэтому основная экономия памяти сохраняется во время обучения.</p></section>
+<section><h2>NF4 и double quantization</h2><p>NF4 - формат 4-битной квантизации, рассчитанный на распределение весов нейросетей. Double quantization дополнительно сжимает scale-константы. Вместе эти техники уменьшают footprint базы и позволяют запускать модели, которые иначе не помещаются на GPU.</p></section>
+<section><h2>Paged optimizers и checkpointing</h2><p>Paged optimizers помогают сглаживать пики памяти, а gradient checkpointing уменьшает память активаций ценой дополнительного времени. В QLoRA это часто приемлемый trade-off: обучение медленнее, зато вообще помещается в доступную память.</p></section>
+<section><h2>Когда QLoRA не идеальна</h2><p>Квантизация может немного замедлить обучение и усложнить окружение. Для production inference иногда адаптер сливают в более удобный формат или используют отдельный adapter-first serving. Решение зависит от GPU-бюджета, latency и требований к качеству.</p></section>
+      <section class="lesson-summary"><h2>Итоги лекции</h2><ul><li>QLoRA сочетает 4-битную базу и обучаемые LoRA-адаптеры.</li><li>NF4 и double quantization снижают расход памяти.</li><li>Gradient checkpointing и paged optimizers помогают пережить длинные последовательности.</li><li>QLoRA выбирают, когда память важнее максимальной скорости обучения.</li></ul></section>
+      <section class="code-runner python-runner" data-runner-id="lecture-6">
+        <div class="code-runner__head"><h2>Python-редактор</h2><span>учебный режим без backend</span></div>
+        <textarea class="code-runner__editor language-python" spellcheck="false" placeholder="Напишите Python-код здесь...">qlora_config = {
+    &quot;load_in_4bit&quot;: True,
+    &quot;bnb_4bit_quant_type&quot;: &quot;nf4&quot;,
+    &quot;bnb_4bit_use_double_quant&quot;: True,
+    &quot;target_modules&quot;: [&quot;q_proj&quot;, &quot;v_proj&quot;],
+}
+print(qlora_config)</textarea>
+        <div class="code-runner__actions"><button class="code-runner__run button" type="button">Проверить код</button><button class="code-runner__clear button secondary" type="button">Очистить</button><button class="code-runner__solution-btn button secondary" type="button">Показать пример</button><button class="code-runner__copy button secondary" type="button">Скопировать пример</button></div>
+        <pre class="code-runner__output" aria-live="polite">Результат проверки появится здесь.</pre>
+        <pre class="code-runner__solution" hidden><code class="language-python">qlora_config = {
+    &quot;load_in_4bit&quot;: True,
+    &quot;bnb_4bit_quant_type&quot;: &quot;nf4&quot;,
+    &quot;bnb_4bit_use_double_quant&quot;: True,
+    &quot;target_modules&quot;: [&quot;q_proj&quot;, &quot;v_proj&quot;],
+}
+print(qlora_config)</code></pre>
+      </section>
+      <section class="mini-test" data-lecture-id="6"><h2>Мини-проверка</h2><p>Ответьте на 3 вопроса. Лекция засчитывается при результате минимум 2 из 3.</p><div class="mini-test__question" data-answer="0"><h3>1. Что характерно для QLoRA?</h3><label class="mini-test__option"><input type="radio" name="lecture6_q1" value="0"> 4-битная база плюс LoRA</label><label class="mini-test__option"><input type="radio" name="lecture6_q1" value="1"> Удаление attention</label><label class="mini-test__option"><input type="radio" name="lecture6_q1" value="2"> Обучение только CSS</label></div><div class="mini-test__question" data-answer="0"><h3>2. Какой формат квантизации часто связан с QLoRA?</h3><label class="mini-test__option"><input type="radio" name="lecture6_q2" value="0"> NF4</label><label class="mini-test__option"><input type="radio" name="lecture6_q2" value="1"> JPEG</label><label class="mini-test__option"><input type="radio" name="lecture6_q2" value="2"> HTML5</label></div><div class="mini-test__question" data-answer="0"><h3>3. Главный плюс gradient checkpointing?</h3><label class="mini-test__option"><input type="radio" name="lecture6_q3" value="0"> Меньше память активаций</label><label class="mini-test__option"><input type="radio" name="lecture6_q3" value="1"> Больше случайного шума в данных</label><label class="mini-test__option"><input type="radio" name="lecture6_q3" value="2"> Отключение eval</label></div><button class="mini-test__button button" type="button">Проверить лекцию</button><p class="mini-test__result" aria-live="polite"></p></section>
+    </article>
+  </main>
+</body>
+</html>

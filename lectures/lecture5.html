@@ -1,105 +1,59 @@
-<!doctype html><html lang="ru"><head><title>Лекция 5. Практика донастройки с PEFT и Hugging Face</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script defer src="../js/main.js"></script></head><body><nav class="top-nav"><a href="../index.html">Оглавление</a><a href="../index.html#course-map">Карта курса</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">Мини-игра</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav><main class="layout"><aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class="">1. Введение в трансферное обучение и донастройку</a><a href="lecture2.html" class="">2. Математические основы низкоранговых разложений</a><a href="lecture3.html" class="">3. Архитектура LoRA</a><a href="lecture4.html" class="">4. Варианты и развитие LoRA</a><a href="lecture5.html" class="active">5. Практика донастройки с PEFT и Hugging Face</a><a href="lecture6.html" class="">6. Донастройка LLM: инструкции, диалоги, RLHF</a><a href="lecture7.html" class="">7. Мульти-LoRA, слияние и деплой</a><a href="lecture8.html" class="">8. Продвинутые темы и перспективы</a></aside><article class="content lecture"><div class="breadcrumbs"><a href="../index.html">Курс</a><span>Лекция 5</span></div><h1>Лекция 5. Практика донастройки с PEFT и Hugging Face</h1><div class="lecture-progress" data-lecture-id="5">
-  <div><strong>Лекция 5 из 8</strong><span data-lecture-progress-text>Прогресс курса обновится после мини-теста</span></div>
-  <div class="lecture-progress__bar"><i class="lecture-progress__fill" data-progress-bar style="width:0%"></i></div>
-</div><figure class="lecture-visual" aria-label="Pipeline PEFT">
-  <svg viewBox="0 0 720 220" role="img" aria-labelledby="lectureVisualTitle5">
-    <title id="lectureVisualTitle5">Pipeline PEFT</title>
-    <defs><linearGradient id="lvGrad5" x1="0" x2="1"><stop offset="0" stop-color="var(--primary)"/><stop offset="0.52" stop-color="var(--leaf)"/><stop offset="1" stop-color="var(--accent)"/></linearGradient></defs>
-    <rect x="18" y="18" width="684" height="184" rx="18" fill="var(--panel-solid)" opacity="0.72"/>
-    <path d="M70 160 C180 70, 270 190, 380 98 S560 70, 650 148" fill="none" stroke="url(#lvGrad5)" stroke-width="10" stroke-linecap="round" opacity="0.82"/>
-    <g><rect x="70" y="62" width="112" height="64" rx="14" fill="url(#lvGrad5)" opacity="0.95"/><text x="126" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">Data</text><rect x="215" y="62" width="112" height="64" rx="14" fill="url(#lvGrad5)" opacity="0.87"/><text x="271" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">PEFT</text><rect x="360" y="62" width="112" height="64" rx="14" fill="url(#lvGrad5)" opacity="0.7899999999999999"/><text x="416" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">Train</text><rect x="505" y="62" width="112" height="64" rx="14" fill="url(#lvGrad5)" opacity="0.71"/><text x="561" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">Adapter</text></g>
-  </svg>
-  <figcaption>Pipeline PEFT</figcaption>
-</figure><section><h2>Библиотеки</h2><p>Практический стек донастройки обычно включает `transformers`, `peft`, `trl`, `datasets`, `accelerate` и `bitsandbytes`. `transformers` загружает модель и токенизатор, `peft` внедряет адаптеры, `trl` предоставляет тренеры для SFT и preference optimization, `bitsandbytes` включает 8- и 4-битную загрузку. Важное инженерное правило: версии библиотек должны быть согласованы. Ошибки CUDA, несовместимость `flash_attention`, отличия шаблонов чата и изменение API тренеров часто выглядят как проблемы обучения, хотя являются проблемами окружения.</p><p>Для закрепления полезно рассматривать этот материал как связь между математическим ограничением и инженерным решением. Ограничение уменьшает пространство поиска, но не заменяет эксперимент: качество определяется данными, метриками, гиперпараметрами и тем, насколько выбранная схема соответствует будущему использованию модели.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Что делает библиотека PEFT?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Она внедряет и управляет адаптерами вроде LoRA поверх моделей transformers.</div>
-</div>
-<section><h2>LoraConfig</h2><p>`LoraConfig` описывает, какие модули адаптировать и как масштабировать поправку. Типичные поля: `r`, `lora_alpha`, `target_modules`, `lora_dropout`, `bias`, `task_type`. Для causal language modeling используют `TaskType.CAUSAL_LM`. Если модель имеет нестандартные имена слоев, их нужно найти через `named_modules()`. Ошибка в target_modules может привести к тому, что адаптеры не вставятся или вставятся не туда. Перед обучением полезно вывести число trainable parameters и убедиться, что оно составляет доли процента или несколько процентов от базы.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Почему важно правильно выбрать target_modules?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Если выбрать не те модули, адаптер будет учить слабые или вообще нерелевантные места модели.</div>
-</div>
-<section><h2>Данные и токенизация</h2><p>Качество данных важнее тонкой настройки r. Нужно удалить дубликаты, нормализовать формат, проверить языки, длины, токсичные или противоречивые инструкции. Для SFT примеры преобразуют в единый текстовый шаблон, затем токенизируют с truncation и padding. Особое внимание уделяют labels: часто loss считают только на ответе ассистента, а не на всей подсказке. Если обучать модель предсказывать системный prompt и пользовательский ввод, она может хуже следовать инструкциям и копировать вход.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Зачем нужен validation-набор?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Он показывает, улучшается ли модель на новых примерах, а не просто запоминает train-данные.</div>
-</div>
-<section><h2>TrainingArguments</h2><p>Ключевые параметры обучения: learning rate, batch size, gradient accumulation, warmup ratio, scheduler, max steps или epochs, weight decay, fp16/bf16, gradient checkpointing и max sequence length. Для LoRA learning rate часто выше, чем при full fine-tuning, например $1e^{-4}$ или $2e^{-4}$, но это зависит от данных. Малые датасеты требуют ранней остановки и регулярной оценки. Большие датасеты упираются в throughput и память. Важно логировать не только train loss, но и eval loss, длины ответов, примеры генераций и доменные метрики.</p></section>
-<section><h2>Мониторинг</h2><p>W&B и TensorBoard помогают увидеть переобучение, нестабильность и ошибки пайплайна. Ровное падение train loss без улучшения eval метрики часто означает, что модель учит формат или шум. Резкие всплески loss могут быть связаны с слишком длинными примерами, неправильным dtype, outlier batch или завышенным LR. Полезно сохранять checkpoints адаптера, а не всей модели. Это ускоряет эксперименты и делает артефакты маленькими.</p></section>
-<section><h2>Минимальный код</h2><p>Минимальный цикл выглядит так: загрузить токенизатор, загрузить модель с нужной точностью, создать `LoraConfig`, применить `get_peft_model`, подготовить датасет, запустить `Trainer` или `SFTTrainer`, сохранить адаптер через `save_pretrained`. После обучения адаптер можно загрузить через `PeftModel.from_pretrained`. Для QLoRA добавляют `BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4")`. Этот код короткий, но должен сопровождаться проверками данных и генераций.</p></section>
-<p>В учебной работе важно не только знать название метода, но и уметь объяснить, какие параметры обучаются, какие остаются фиксированными, где появляется выигрыш по памяти и какие ошибки могут исказить вывод эксперимента.</p>
-<p>Типичная ошибка начинающих состоит в том, что они сравнивают методы при разных датасетах, шаблонах промпта или длинах последовательности. Корректное сравнение требует одинакового разбиения данных, одинаковой процедуры генерации и заранее выбранных метрик.</p>
-<p>Еще один практический критерий — стоимость владения. Маленький адаптер проще хранить, проверять и откатывать; большая слитая модель иногда быстрее на inference, но дороже в распространении и обслуживании.</p>
+<!doctype html>
+<html lang="ru">
+<head>
+  <title>Настройка LoRA-адаптера в Hugging Face PEFT</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script defer src="../js/main.js"></script>
+</head>
+<body>
+  <nav class="top-nav"><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Lab</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <main class="layout">
+    <aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class=""><small>1.</small> Дорогая донастройка и роль LoRA</a><a href="lecture2.html" class=""><small>2.</small> PEFT и популярность LoRA</a><a href="lecture3.html" class=""><small>3.</small> Rank, alpha и scaling</a><a href="lecture4.html" class=""><small>4.</small> Target modules в transformer</a><a href="lecture5.html" class="active"><small>5.</small> Python, PEFT и LoraConfig</a><a href="lecture6.html" class=""><small>6.</small> QLoRA и память GPU</a><a href="lecture7.html" class=""><small>7.</small> Eval, сравнение с базой и ошибки</a><a href="lecture8.html" class=""><small>8.</small> Merge, storage и deployment</a></aside>
+    <article class="content lecture">
+      <div class="breadcrumbs"><a href="../index.html">Курс</a><span>Лекция 5</span></div>
+      <p class="eyebrow">Лекция 5 из 8</p>
+      <h1>Настройка LoRA-адаптера в Hugging Face PEFT</h1>
+      <p class="lecture-lead">Соберёте практический пайплайн: загрузка модели, LoraConfig, подключение адаптера, обучение через SFTTrainer и сохранение результата.</p>
+      <div class="lecture-progress" data-lecture-id="5"><div><strong>Прогресс лекции</strong><span data-lecture-progress-text>Прогресс курса обновится после мини-теста</span></div><div><i data-progress-bar style="width:0%"></i></div></div>
+      <section><h2>Базовый стек</h2><p>Практический LoRA-пайплайн обычно строится на transformers, peft, datasets, trl и accelerate. transformers загружает модель и токенизатор, peft внедряет адаптер, trl даёт SFTTrainer, а datasets помогает готовить train/eval splits.</p></section>
+<section><h2>LoraConfig</h2><p>Ключевые параметры: r, lora_alpha, lora_dropout, target_modules, bias и task_type. Для causal language modeling обычно используют task_type=&quot;CAUSAL_LM&quot;. Конфиг должен отражать задачу и ограничения памяти, а не просто копировать случайный пример.</p></section>
+<section><h2>Подготовка датасета</h2><p>Для SFT важны чистые пары instruction/answer или диалоги с ролями. Нужно убрать дубликаты, проверить длины, привести формат к chat template и выделить validation split. Плохой датасет LoRA обучит быстро, но результат будет плохим так же быстро.</p></section>
+<section><h2>Сохранение адаптера</h2><p>После обучения обычно сохраняют только adapter_config.json и adapter_model.safetensors. Это небольшой артефакт, который можно загрузить поверх той же базовой модели или слить с ней для простого inference.</p></section>
+      <section class="lesson-summary"><h2>Итоги лекции</h2><ul><li>PEFT подключает LoRA через LoraConfig и get_peft_model.</li><li>Важные параметры: r, alpha, dropout и target_modules.</li><li>Датасет для SFT должен быть чистым, согласованным и иметь validation split.</li><li>Сохраняют адаптер отдельно от базовой модели, чтобы упростить хранение и деплой.</li></ul></section>
+      <section class="code-runner python-runner" data-runner-id="lecture-5">
+        <div class="code-runner__head"><h2>Python-редактор</h2><span>учебный режим без backend</span></div>
+        <textarea class="code-runner__editor language-python" spellcheck="false" placeholder="Напишите Python-код здесь...">from peft import LoraConfig
 
+config = LoraConfig(
+    r=16,
+    lora_alpha=32,
+    lora_dropout=0.05,
+    target_modules=[&quot;q_proj&quot;, &quot;v_proj&quot;],
+    task_type=&quot;CAUSAL_LM&quot;,
+)
+print(config.r, config.target_modules)</textarea>
+        <div class="code-runner__actions"><button class="code-runner__run button" type="button">Проверить код</button><button class="code-runner__clear button secondary" type="button">Очистить</button><button class="code-runner__solution-btn button secondary" type="button">Показать пример</button><button class="code-runner__copy button secondary" type="button">Скопировать пример</button></div>
+        <pre class="code-runner__output" aria-live="polite">Результат проверки появится здесь.</pre>
+        <pre class="code-runner__solution" hidden><code class="language-python">from peft import LoraConfig
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="code-runner" data-runner-id="lecture-5">
-  <h2>Создать PEFT-подобный конфиг</h2>
-  <p>Создайте JS-объект loraConfig и выведите его.</p>
-  <textarea class="code-runner__editor" spellcheck="false" placeholder="Напишите JavaScript-код здесь..."></textarea>
-  <div class="code-runner__actions">
-    <button class="code-runner__run button" type="button">Запустить код</button>
-    <button class="code-runner__clear button secondary" type="button">Очистить</button>
-    <button class="code-runner__solution-btn button secondary" type="button">Показать решение</button>
-    <button class="code-runner__copy button secondary" type="button">Скопировать решение</button>
-  </div>
-  <pre class="code-runner__output" aria-live="polite">Вывод появится здесь.</pre>
-  <pre class="code-runner__solution" hidden><code>const loraConfig = {
-  r: 8,
-  loraAlpha: 16,
-  targetModules: [&quot;q_proj&quot;, &quot;v_proj&quot;],
-  loraDropout: 0.05,
-  taskType: &quot;CAUSAL_LM&quot;
-};
-
-console.log(loraConfig);</code></pre>
-</section><section class="mini-test" data-lecture-id="5">
-  <h2>Мини-тест для зачета лекции</h2>
-  <p>Ответьте на 3 вопроса. Лекция засчитывается при результате минимум 2 из 3.</p>
-  <div class="mini-test__question" data-answer="0"><h3>1. Что задает LoraConfig?</h3><label class="mini-test__option"><input type="radio" name="lecture5_q1" value="0"> Параметры и целевые модули адаптера</label><label class="mini-test__option"><input type="radio" name="lecture5_q1" value="1"> Тему сайта</label><label class="mini-test__option"><input type="radio" name="lecture5_q1" value="2"> GitHub Pages</label><label class="mini-test__option"><input type="radio" name="lecture5_q1" value="3"> Размер монитора</label></div><div class="mini-test__question" data-answer="0"><h3>2. Почему target_modules важны?</h3><label class="mini-test__option"><input type="radio" name="lecture5_q2" value="0"> Они определяют, где будет обучаться адаптер</label><label class="mini-test__option"><input type="radio" name="lecture5_q2" value="1"> Они удаляют модель</label><label class="mini-test__option"><input type="radio" name="lecture5_q2" value="2"> Они задают CSS</label><label class="mini-test__option"><input type="radio" name="lecture5_q2" value="3"> Они включают CDN</label></div><div class="mini-test__question" data-answer="0"><h3>3. Зачем validation-набор?</h3><label class="mini-test__option"><input type="radio" name="lecture5_q3" value="0"> Проверять обобщение и переобучение</label><label class="mini-test__option"><input type="radio" name="lecture5_q3" value="1"> Хранить токен</label><label class="mini-test__option"><input type="radio" name="lecture5_q3" value="2"> Рисовать SVG</label><label class="mini-test__option"><input type="radio" name="lecture5_q3" value="3"> Сжимать веса</label></div>
-  <button class="mini-test__button" type="button">Проверить мини-тест</button>
-  <div class="mini-test__result" aria-live="polite"></div>
-</section><section class="skill-card">
-  <div class="skill-card__mark">5</div>
-  <div><h2>Ты прокачал навык</h2><p>Теперь ты понимаешь, как собрать практический pipeline донастройки через PEFT, transformers и Hugging Face-инструменты.</p><p class="skill-card__motivation">Хорошая конфигурация начинается не с магического rank, а с чистых данных и проверяемой цели.</p><a class="button accent" href="../practicals/practical5.html">Перейти к практике</a></div>
-</section><div class="pager"><a class="button" href="lecture4.html">← Предыдущая лекция</a><a class="button secondary" href="../index.html">К оглавлению</a><a class="button" href="lecture6.html">Следующая лекция →</a></div></article></main></body></html>
+config = LoraConfig(
+    r=16,
+    lora_alpha=32,
+    lora_dropout=0.05,
+    target_modules=[&quot;q_proj&quot;, &quot;v_proj&quot;],
+    task_type=&quot;CAUSAL_LM&quot;,
+)
+print(config.r, config.target_modules)</code></pre>
+      </section>
+      <section class="mini-test" data-lecture-id="5"><h2>Мини-проверка</h2><p>Ответьте на 3 вопроса. Лекция засчитывается при результате минимум 2 из 3.</p><div class="mini-test__question" data-answer="0"><h3>1. Какая библиотека Hugging Face отвечает за LoRA-адаптеры?</h3><label class="mini-test__option"><input type="radio" name="lecture5_q1" value="0"> peft</label><label class="mini-test__option"><input type="radio" name="lecture5_q1" value="1"> matplotlib</label><label class="mini-test__option"><input type="radio" name="lecture5_q1" value="2"> flask</label></div><div class="mini-test__question" data-answer="0"><h3>2. Что задаёт lora_dropout?</h3><label class="mini-test__option"><input type="radio" name="lecture5_q2" value="0"> Регуляризацию ветки адаптера</label><label class="mini-test__option"><input type="radio" name="lecture5_q2" value="1"> Порт сервера</label><label class="mini-test__option"><input type="radio" name="lecture5_q2" value="2"> Размер HTML</label></div><div class="mini-test__question" data-answer="0"><h3>3. Что важно сохранить вместе с адаптером?</h3><label class="mini-test__option"><input type="radio" name="lecture5_q3" value="0"> Совместимую базовую модель и конфиг</label><label class="mini-test__option"><input type="radio" name="lecture5_q3" value="1"> Случайный скриншот</label><label class="mini-test__option"><input type="radio" name="lecture5_q3" value="2"> Только CSS</label></div><button class="mini-test__button button" type="button">Проверить лекцию</button><p class="mini-test__result" aria-live="polite"></p></section>
+    </article>
+  </main>
+</body>
+</html>

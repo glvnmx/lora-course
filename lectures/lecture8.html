@@ -1,106 +1,53 @@
-<!doctype html><html lang="ru"><head><title>Лекция 8. Продвинутые темы и перспективы</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script defer src="../js/main.js"></script></head><body><nav class="top-nav"><a href="../index.html">Оглавление</a><a href="../index.html#course-map">Карта курса</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">Мини-игра</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav><main class="layout"><aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class="">1. Введение в трансферное обучение и донастройку</a><a href="lecture2.html" class="">2. Математические основы низкоранговых разложений</a><a href="lecture3.html" class="">3. Архитектура LoRA</a><a href="lecture4.html" class="">4. Варианты и развитие LoRA</a><a href="lecture5.html" class="">5. Практика донастройки с PEFT и Hugging Face</a><a href="lecture6.html" class="">6. Донастройка LLM: инструкции, диалоги, RLHF</a><a href="lecture7.html" class="">7. Мульти-LoRA, слияние и деплой</a><a href="lecture8.html" class="active">8. Продвинутые темы и перспективы</a></aside><article class="content lecture"><div class="breadcrumbs"><a href="../index.html">Курс</a><span>Лекция 8</span></div><h1>Лекция 8. Продвинутые темы и перспективы</h1><div class="lecture-progress" data-lecture-id="8">
-  <div><strong>Лекция 8 из 8</strong><span data-lecture-progress-text>Прогресс курса обновится после мини-теста</span></div>
-  <div class="lecture-progress__bar"><i class="lecture-progress__fill" data-progress-bar style="width:0%"></i></div>
-</div><figure class="lecture-visual" aria-label="Карта развития LoRA">
-  <svg viewBox="0 0 720 220" role="img" aria-labelledby="lectureVisualTitle8">
-    <title id="lectureVisualTitle8">Карта развития LoRA</title>
-    <defs><linearGradient id="lvGrad8" x1="0" x2="1"><stop offset="0" stop-color="var(--primary)"/><stop offset="0.52" stop-color="var(--leaf)"/><stop offset="1" stop-color="var(--accent)"/></linearGradient></defs>
-    <rect x="18" y="18" width="684" height="184" rx="18" fill="var(--panel-solid)" opacity="0.72"/>
-    <path d="M70 160 C180 70, 270 190, 380 98 S560 70, 650 148" fill="none" stroke="url(#lvGrad8)" stroke-width="10" stroke-linecap="round" opacity="0.82"/>
-    <g><rect x="70" y="62" width="112" height="64" rx="14" fill="url(#lvGrad8)" opacity="0.95"/><text x="126" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">LLM</text><rect x="215" y="62" width="112" height="64" rx="14" fill="url(#lvGrad8)" opacity="0.87"/><text x="271" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">Diffusion</text><rect x="360" y="62" width="112" height="64" rx="14" fill="url(#lvGrad8)" opacity="0.7899999999999999"/><text x="416" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">Vision</text><rect x="505" y="62" width="112" height="64" rx="14" fill="url(#lvGrad8)" opacity="0.71"/><text x="561" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">Agents</text></g>
-  </svg>
-  <figcaption>Карта развития LoRA</figcaption>
-</figure><section><h2>Диффузионные модели</h2><p>LoRA широко используется для Stable Diffusion, Flux и других text-to-image моделей. Там адаптеры обучают стиль, персонажа, объект или композиционный прием, вставляя низкоранговые поправки в attention и иногда convolution-like проекции. Визуальная LoRA отличается от языковой оценкой: качество зависит от prompt sensitivity, переобучения на конкретные позы, совместимости с базовой моделью и sampler. Малый адаптер может добавить узнаваемый стиль, но при чрезмерном весе разрушить разнообразие генераций.</p><p>Для закрепления полезно рассматривать этот материал как связь между математическим ограничением и инженерным решением. Ограничение уменьшает пространство поиска, но не заменяет эксперимент: качество определяется данными, метриками, гиперпараметрами и тем, насколько выбранная схема соответствует будущему использованию модели.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Почему LoRA применяют не только в LLM?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Потому что attention- и линейные слои есть в vision, diffusion и мультимодальных моделях.</div>
-</div>
-<section><h2>Vision Transformers</h2><p>В ViT LoRA применяют к проекциям внимания и MLP, как в языковых трансформерах. Задачи включают классификацию, сегментацию, detection и мультимодальные модели. Особенность визуальных данных — сильная роль пространственных паттернов и аугментаций. Низкий ранг может хорошо адаптировать семантические признаки, но для задач, требующих точной локализации, иногда нужны адаптеры в нескольких уровнях или комбинация с lightweight heads.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Какие направления развития LoRA наиболее перспективны?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Квантизация, адаптивные ранги, мультимодальность, массовый serving и методы на предпочтениях.</div>
-</div>
-<section><h2>GaLore, LISA, Spectrum</h2><p>GaLore использует низкоранговую проекцию градиентов, уменьшая память оптимизатора при обучении больших моделей. LISA и близкие методы выбирают ограниченный набор слоев или параметров для обновления, исходя из важности и динамики обучения. Spectrum анализирует спектральные свойства слоев и предлагает выбирать модули для адаптации не только по именам, но и по ожидаемой полезности. Эти подходы показывают, что PEFT — более широкая область, чем LoRA: ограничивать можно веса, градиенты, слои, ранги и расписание обновлений.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Почему важно следить за новыми PEFT-подходами?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Ограничения железа, моделей и задач быстро меняются, а PEFT постоянно предлагает новые компромиссы.</div>
-</div>
-<section><h2>Тренды</h2><p>Текущая линия развития PEFT связана с более длинным контекстом, мультимодальностью, on-device обучением и массовым serving множества адаптеров. Растет интерес к адаптерам, которые можно безопасно комбинировать, к методам оценки интерференции и к обучению на предпочтениях без дорогих reward models. Для практиков важны не только новые формулы, но и надежные инструменты: совместимость с quantization, export, vLLM, TensorRT-LLM, OpenVINO и мобильными рантаймами.</p></section>
-<section><h2>Открытые проблемы</h2><p>Остаются вопросы теории: почему обновления часто низкоранговы, как ранг связан с задачей, где проходит граница между запоминанием и обобщением, как предсказывать оптимальные target_modules до обучения. Практические проблемы включают утечки данных, переобучение на стиле, сложность честной оценки диалогов и риск небезопасных адаптеров. Для мультимодальных моделей добавляется вопрос согласованности между текстовыми и визуальными представлениями.</p></section>
-<section><h2>Перспектива</h2><p>LoRA стала не конечной точкой, а инженерным стандартом, вокруг которого строятся новые методы. Ее ценность в ясном компромиссе: немного параметров, понятная линейная алгебра, совместимость с существующими трансформерами и возможность слияния. Будущее PEFT, вероятно, будет гибридным: адаптеры, квантизация, низкоранговые градиенты, выбор слоев и preference optimization будут сочетаться в одном pipeline под конкретные ограничения железа и качества.</p></section>
-<p>В учебной работе важно не только знать название метода, но и уметь объяснить, какие параметры обучаются, какие остаются фиксированными, где появляется выигрыш по памяти и какие ошибки могут исказить вывод эксперимента.</p>
-<p>Типичная ошибка начинающих состоит в том, что они сравнивают методы при разных датасетах, шаблонах промпта или длинах последовательности. Корректное сравнение требует одинакового разбиения данных, одинаковой процедуры генерации и заранее выбранных метрик.</p>
-<p>Еще один практический критерий — стоимость владения. Маленький адаптер проще хранить, проверять и откатывать; большая слитая модель иногда быстрее на inference, но дороже в распространении и обслуживании.</p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="code-runner" data-runner-id="lecture-8">
-  <h2>Спланировать LoRA-проект</h2>
-  <p>Создайте объект projectPlan с идеей мини-проекта применения LoRA.</p>
-  <textarea class="code-runner__editor" spellcheck="false" placeholder="Напишите JavaScript-код здесь..."></textarea>
-  <div class="code-runner__actions">
-    <button class="code-runner__run button" type="button">Запустить код</button>
-    <button class="code-runner__clear button secondary" type="button">Очистить</button>
-    <button class="code-runner__solution-btn button secondary" type="button">Показать решение</button>
-    <button class="code-runner__copy button secondary" type="button">Скопировать решение</button>
-  </div>
-  <pre class="code-runner__output" aria-live="polite">Вывод появится здесь.</pre>
-  <pre class="code-runner__solution" hidden><code>const projectPlan = {
-  domain: &quot;агрономические консультации&quot;,
-  model: &quot;LLM&quot;,
-  data: &quot;проверенные пары вопрос-ответ&quot;,
-  metric: &quot;экспертная оценка точности&quot;,
-  risk: &quot;галлюцинации вне домена&quot;
-};
-
-console.log(projectPlan);</code></pre>
-</section><section class="mini-test" data-lecture-id="8">
-  <h2>Мини-тест для зачета лекции</h2>
-  <p>Ответьте на 3 вопроса. Лекция засчитывается при результате минимум 2 из 3.</p>
-  <div class="mini-test__question" data-answer="0"><h3>1. Где еще применяют LoRA?</h3><label class="mini-test__option"><input type="radio" name="lecture8_q1" value="0"> Diffusion, vision и мультимодальные модели</label><label class="mini-test__option"><input type="radio" name="lecture8_q1" value="1"> Только в HTML</label><label class="mini-test__option"><input type="radio" name="lecture8_q1" value="2"> Только в Git</label><label class="mini-test__option"><input type="radio" name="lecture8_q1" value="3"> Только в CSS</label></div><div class="mini-test__question" data-answer="0"><h3>2. Что является перспективным направлением?</h3><label class="mini-test__option"><input type="radio" name="lecture8_q2" value="0"> Квантизация и адаптивные ранги</label><label class="mini-test__option"><input type="radio" name="lecture8_q2" value="1"> Удаление данных</label><label class="mini-test__option"><input type="radio" name="lecture8_q2" value="2"> Запрет адаптеров</label><label class="mini-test__option"><input type="radio" name="lecture8_q2" value="3"> Отключение тестов</label></div><div class="mini-test__question" data-answer="0"><h3>3. Почему следить за PEFT важно?</h3><label class="mini-test__option"><input type="radio" name="lecture8_q3" value="0"> Методы быстро меняют компромисс качества и ресурсов</label><label class="mini-test__option"><input type="radio" name="lecture8_q3" value="1"> Потому что rank всегда один</label><label class="mini-test__option"><input type="radio" name="lecture8_q3" value="2"> Потому что модели не меняются</label><label class="mini-test__option"><input type="radio" name="lecture8_q3" value="3"> Потому что eval не нужен</label></div>
-  <button class="mini-test__button" type="button">Проверить мини-тест</button>
-  <div class="mini-test__result" aria-live="polite"></div>
-</section><section class="skill-card">
-  <div class="skill-card__mark">8</div>
-  <div><h2>Ты прокачал навык</h2><p>Теперь ты видишь, как LoRA выходит за пределы LLM: diffusion, vision, agents и новые PEFT-подходы.</p><p class="skill-card__motivation">LoRA — не финальная точка, а удобная дверь в современную экономичную адаптацию моделей.</p><a class="button accent" href="../practicals/practical8.html">Перейти к практике</a></div>
-</section><div class="pager"><a class="button" href="lecture7.html">← Предыдущая лекция</a><a class="button secondary" href="../index.html">К оглавлению</a></div></article></main></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+  <title>Слияние, хранение и деплой LoRA-адаптеров</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script defer src="../js/main.js"></script>
+</head>
+<body>
+  <nav class="top-nav"><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Lab</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <main class="layout">
+    <aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class=""><small>1.</small> Дорогая донастройка и роль LoRA</a><a href="lecture2.html" class=""><small>2.</small> PEFT и популярность LoRA</a><a href="lecture3.html" class=""><small>3.</small> Rank, alpha и scaling</a><a href="lecture4.html" class=""><small>4.</small> Target modules в transformer</a><a href="lecture5.html" class=""><small>5.</small> Python, PEFT и LoraConfig</a><a href="lecture6.html" class=""><small>6.</small> QLoRA и память GPU</a><a href="lecture7.html" class=""><small>7.</small> Eval, сравнение с базой и ошибки</a><a href="lecture8.html" class="active"><small>8.</small> Merge, storage и deployment</a></aside>
+    <article class="content lecture">
+      <div class="breadcrumbs"><a href="../index.html">Курс</a><span>Лекция 8</span></div>
+      <p class="eyebrow">Лекция 8 из 8</p>
+      <h1>Слияние, хранение и деплой LoRA-адаптеров</h1>
+      <p class="lecture-lead">Разберёте два режима поставки адаптера: хранить отдельно и переключать на inference или слить с базой для простого деплоя. В конце соберёте карту мини-проекта LoRA.</p>
+      <div class="lecture-progress" data-lecture-id="8"><div><strong>Прогресс лекции</strong><span data-lecture-progress-text>Прогресс курса обновится после мини-теста</span></div><div><i data-progress-bar style="width:0%"></i></div></div>
+      <section><h2>Adapter-first</h2><p>В adapter-first подходе базовая модель загружается один раз, а адаптеры подключаются по задаче или пользователю. Это удобно для multi-tenant систем, A/B-тестов и быстрого отката. Важно фиксировать base model revision, tokenizer и совместимые target_modules.</p></section>
+<section><h2>Merge-and-unload</h2><p>Если нужен простой inference без отдельного adapter runtime, LoRA можно слить с базовыми весами: W = W0 + scaling * BA. После merge модель становится обычной, но гибкость переключения адаптеров теряется. Перед слиянием нужно проверить качество и совместимость.</p></section>
+<section><h2>Хранение артефактов</h2><p>Хороший адаптер хранится вместе с adapter_config, README/карточкой модели, описанием датасета, метриками, лицензией и инструкцией загрузки. Без этих метаданных через месяц будет сложно понять, с какой базой и задачей он совместим.</p></section>
+<section><h2>Деплой и мониторинг</h2><p>Для обслуживания множества адаптеров используют vLLM, LoRAX, S-LoRA и похожие системы. После деплоя нужны мониторинг latency, качества ответов, отказов загрузки адаптера и регрессионный набор prompt для новых версий.</p></section>
+      <section class="lesson-summary"><h2>Итоги лекции</h2><ul><li>Адаптер можно хранить отдельно и переключать на одной базе.</li><li>Merge-and-unload упрощает inference, но убирает гибкость отдельного адаптера.</li><li>Артефакт должен содержать конфиг, базовую модель, метрики и условия совместимости.</li><li>Production требует мониторинга качества, latency и регрессий.</li></ul></section>
+      <section class="code-runner python-runner" data-runner-id="lecture-8">
+        <div class="code-runner__head"><h2>Python-редактор</h2><span>учебный режим без backend</span></div>
+        <textarea class="code-runner__editor language-python" spellcheck="false" placeholder="Напишите Python-код здесь...">deployment_plan = {
+    &quot;base_model&quot;: &quot;mistral-7b-instruct&quot;,
+    &quot;adapter&quot;: &quot;support-lora-r16&quot;,
+    &quot;mode&quot;: &quot;adapter-first&quot;,
+    &quot;checks&quot;: [&quot;eval&quot;, &quot;latency&quot;, &quot;rollback&quot;],
+}
+print(deployment_plan)</textarea>
+        <div class="code-runner__actions"><button class="code-runner__run button" type="button">Проверить код</button><button class="code-runner__clear button secondary" type="button">Очистить</button><button class="code-runner__solution-btn button secondary" type="button">Показать пример</button><button class="code-runner__copy button secondary" type="button">Скопировать пример</button></div>
+        <pre class="code-runner__output" aria-live="polite">Результат проверки появится здесь.</pre>
+        <pre class="code-runner__solution" hidden><code class="language-python">deployment_plan = {
+    &quot;base_model&quot;: &quot;mistral-7b-instruct&quot;,
+    &quot;adapter&quot;: &quot;support-lora-r16&quot;,
+    &quot;mode&quot;: &quot;adapter-first&quot;,
+    &quot;checks&quot;: [&quot;eval&quot;, &quot;latency&quot;, &quot;rollback&quot;],
+}
+print(deployment_plan)</code></pre>
+      </section>
+      <section class="mini-test" data-lecture-id="8"><h2>Мини-проверка</h2><p>Ответьте на 3 вопроса. Лекция засчитывается при результате минимум 2 из 3.</p><div class="mini-test__question" data-answer="0"><h3>1. Что делает merge-and-unload?</h3><label class="mini-test__option"><input type="radio" name="lecture8_q1" value="0"> Сливает LoRA с базовыми весами</label><label class="mini-test__option"><input type="radio" name="lecture8_q1" value="1"> Удаляет tokenizer</label><label class="mini-test__option"><input type="radio" name="lecture8_q1" value="2"> Создаёт второй тест</label></div><div class="mini-test__question" data-answer="0"><h3>2. Что важно указать в карточке адаптера?</h3><label class="mini-test__option"><input type="radio" name="lecture8_q2" value="0"> Base model revision и метрики</label><label class="mini-test__option"><input type="radio" name="lecture8_q2" value="1"> Цвет кнопки</label><label class="mini-test__option"><input type="radio" name="lecture8_q2" value="2"> Случайный порт</label></div><div class="mini-test__question" data-answer="0"><h3>3. Когда полезен adapter-first?</h3><label class="mini-test__option"><input type="radio" name="lecture8_q3" value="0"> Когда нужно переключать несколько адаптеров</label><label class="mini-test__option"><input type="radio" name="lecture8_q3" value="1"> Когда нет базовой модели</label><label class="mini-test__option"><input type="radio" name="lecture8_q3" value="2"> Когда запрещён eval</label></div><button class="mini-test__button button" type="button">Проверить лекцию</button><p class="mini-test__result" aria-live="polite"></p></section>
+    </article>
+  </main>
+</body>
+</html>

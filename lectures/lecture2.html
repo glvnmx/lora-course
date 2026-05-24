@@ -1,100 +1,53 @@
-<!doctype html><html lang="ru"><head><title>Лекция 2. Математические основы низкоранговых разложений</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script defer src="../js/main.js"></script></head><body><nav class="top-nav"><a href="../index.html">Оглавление</a><a href="../index.html#course-map">Карта курса</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">Мини-игра</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav><main class="layout"><aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class="">1. Введение в трансферное обучение и донастройку</a><a href="lecture2.html" class="active">2. Математические основы низкоранговых разложений</a><a href="lecture3.html" class="">3. Архитектура LoRA</a><a href="lecture4.html" class="">4. Варианты и развитие LoRA</a><a href="lecture5.html" class="">5. Практика донастройки с PEFT и Hugging Face</a><a href="lecture6.html" class="">6. Донастройка LLM: инструкции, диалоги, RLHF</a><a href="lecture7.html" class="">7. Мульти-LoRA, слияние и деплой</a><a href="lecture8.html" class="">8. Продвинутые темы и перспективы</a></aside><article class="content lecture"><div class="breadcrumbs"><a href="../index.html">Курс</a><span>Лекция 2</span></div><h1>Лекция 2. Математические основы низкоранговых разложений</h1><div class="lecture-progress" data-lecture-id="2">
-  <div><strong>Лекция 2 из 8</strong><span data-lecture-progress-text>Прогресс курса обновится после мини-теста</span></div>
-  <div class="lecture-progress__bar"><i class="lecture-progress__fill" data-progress-bar style="width:0%"></i></div>
-</div><figure class="lecture-visual" aria-label="Матрица как произведение A и B">
-  <svg viewBox="0 0 720 220" role="img" aria-labelledby="lectureVisualTitle2">
-    <title id="lectureVisualTitle2">Матрица как произведение A и B</title>
-    <defs><linearGradient id="lvGrad2" x1="0" x2="1"><stop offset="0" stop-color="var(--primary)"/><stop offset="0.52" stop-color="var(--leaf)"/><stop offset="1" stop-color="var(--accent)"/></linearGradient></defs>
-    <rect x="18" y="18" width="684" height="184" rx="18" fill="var(--panel-solid)" opacity="0.72"/>
-    <path d="M70 160 C180 70, 270 190, 380 98 S560 70, 650 148" fill="none" stroke="url(#lvGrad2)" stroke-width="10" stroke-linecap="round" opacity="0.82"/>
-    <g><rect x="70" y="62" width="112" height="64" rx="14" fill="url(#lvGrad2)" opacity="0.95"/><text x="126" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">W</text><rect x="215" y="62" width="112" height="64" rx="14" fill="url(#lvGrad2)" opacity="0.87"/><text x="271" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">B</text><rect x="360" y="62" width="112" height="64" rx="14" fill="url(#lvGrad2)" opacity="0.7899999999999999"/><text x="416" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">A</text></g>
-  </svg>
-  <figcaption>Матрица как произведение A и B</figcaption>
-</figure><section><h2>Ранг и линейные преобразования</h2><p>Матрица линейного слоя задает преобразование между пространствами признаков. Ранг матрицы равен размерности образа, то есть числу независимых направлений, которые слой способен различать после преобразования. Если $W \in \mathbb{R}^{d_{out} \times d_{in}}$, то $rank(W) \le \min(d_{out}, d_{in})$. В нейронных сетях полный ранг не означает, что все направления одинаково важны. Часто спектр сингулярных значений быстро убывает: несколько главных направлений объясняют большую часть вариации, а остальные несут шум, редкие корреляции или избыточность.</p><p>Для закрепления полезно рассматривать этот материал как связь между математическим ограничением и инженерным решением. Ограничение уменьшает пространство поиска, но не заменяет эксперимент: качество определяется данными, метриками, гиперпараметрами и тем, насколько выбранная схема соответствует будущему использованию модели.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Что означает rank?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Rank — это размерность независимых направлений, через которые матрица реально преобразует пространство признаков.</div>
-</div>
-<section><h2>SVD</h2><p>Сингулярное разложение записывает матрицу как $W = U \Sigma V^T$, где столбцы $U$ и $V$ ортонормированы, а диагональ $\Sigma$ содержит неотрицательные сингулярные значения. Это разложение удобно тем, что отделяет направления входа, масштабы преобразования и направления выхода. Если оставить только первые r сингулярных значений, получится матрица $W_r = U_r \Sigma_r V_r^T$ ранга r. Такая аппроксимация хранит меньше параметров и сохраняет наиболее энергетически значимые компоненты линейного оператора.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Почему две маленькие матрицы могут заменить большую поправку?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Их произведение BA задает низкоранговую матрицу, которая приближает важные направления изменения весов.</div>
-</div>
-<section><h2>Теорема Эккарта-Янга</h2><p>Теорема Эккарта-Янга утверждает, что усеченное SVD дает лучшую аппроксимацию ранга r в спектральной и фробениусовой норме: $W_r = \arg\min_{rank(X)\le r} \|W-X\|_F$. Для LoRA важна не только сама теорема, но и интуиция: сложное изменение весов часто можно приблизить малым числом независимых направлений. Если градиенты донастройки лежат в подпространстве низкой размерности, нет необходимости обучать полный массив $d_{out}d_{in}$ параметров.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Как rank влияет на число параметров?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Чем выше rank, тем больше параметров в A и B: r умножается на сумму входной и выходной размерностей.</div>
-</div>
-<section><h2>Низкоранговая факторизация</h2><p>Матрицу ранга не выше r можно представить как произведение $B A$, где $B \in \mathbb{R}^{d_{out} \times r}$, а $A \in \mathbb{R}^{r \times d_{in}}$. Число параметров равно $r(d_{out}+d_{in})$, что намного меньше $d_{out}d_{in}$ при малом r. Важно, что факторизация не единственна: для любой обратимой матрицы $S$ произведение $(B S)(S^{-1} A)$ остается тем же. Поэтому оптимизация факторов имеет собственную геометрию и зависит от инициализации, масштаба и регуляризации.</p></section>
-<section><h2>Связь с трансформерами</h2><p>В трансформере крупные матрицы находятся в проекциях внимания $W_q, W_k, W_v, W_o$ и в FFN-слоях. Эти матрицы переводят скрытые состояния в подпространства запросов, ключей, значений и промежуточных признаков. Эмпирически многие задачи донастройки не требуют полного пересоздания этих преобразований. Достаточно добавить несколько направлений, которые усиливают нужные паттерны: стиль ответа, терминологию, формат разметки, специфическую связь между инструкцией и завершением.</p></section>
-<section><h2>Ограничения низкого ранга</h2><p>Низкий ранг является гипотезой, а не законом природы. Если задача требует независимых изменений во многих каналах, слишком малый r станет узким местом. Кроме того, малая фробениусова ошибка не гарантирует сохранения качества в нелинейной сети: важны распределение активаций, нормализации, attention-softmax и оптимизатор. Поэтому выбор ранга в LoRA должен проверяться экспериментально. Математика объясняет экономию параметров и дает язык анализа, но не отменяет валидацию на реальной метрике.</p></section>
-<p>В учебной работе важно не только знать название метода, но и уметь объяснить, какие параметры обучаются, какие остаются фиксированными, где появляется выигрыш по памяти и какие ошибки могут исказить вывод эксперимента.</p>
-<p>Типичная ошибка начинающих состоит в том, что они сравнивают методы при разных датасетах, шаблонах промпта или длинах последовательности. Корректное сравнение требует одинакового разбиения данных, одинаковой процедуры генерации и заранее выбранных метрик.</p>
-<p>Еще один практический критерий — стоимость владения. Маленький адаптер проще хранить, проверять и откатывать; большая слитая модель иногда быстрее на inference, но дороже в распространении и обслуживании.</p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="code-runner" data-runner-id="lecture-2">
-  <h2>Посчитать параметры LoRA</h2>
-  <p>Напишите функцию params = rank * (inputDim + outputDim).</p>
-  <textarea class="code-runner__editor" spellcheck="false" placeholder="Напишите JavaScript-код здесь..."></textarea>
-  <div class="code-runner__actions">
-    <button class="code-runner__run button" type="button">Запустить код</button>
-    <button class="code-runner__clear button secondary" type="button">Очистить</button>
-    <button class="code-runner__solution-btn button secondary" type="button">Показать решение</button>
-    <button class="code-runner__copy button secondary" type="button">Скопировать решение</button>
-  </div>
-  <pre class="code-runner__output" aria-live="polite">Вывод появится здесь.</pre>
-  <pre class="code-runner__solution" hidden><code>function loraParams(rank, inputDim, outputDim) {
-  return rank * (inputDim + outputDim);
+<!doctype html>
+<html lang="ru">
+<head>
+  <title>PEFT и LoRA: от общей идеи к рабочему методу</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script defer src="../js/main.js"></script>
+</head>
+<body>
+  <nav class="top-nav"><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Lab</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <main class="layout">
+    <aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class=""><small>1.</small> Дорогая донастройка и роль LoRA</a><a href="lecture2.html" class="active"><small>2.</small> PEFT и популярность LoRA</a><a href="lecture3.html" class=""><small>3.</small> Rank, alpha и scaling</a><a href="lecture4.html" class=""><small>4.</small> Target modules в transformer</a><a href="lecture5.html" class=""><small>5.</small> Python, PEFT и LoraConfig</a><a href="lecture6.html" class=""><small>6.</small> QLoRA и память GPU</a><a href="lecture7.html" class=""><small>7.</small> Eval, сравнение с базой и ошибки</a><a href="lecture8.html" class=""><small>8.</small> Merge, storage и deployment</a></aside>
+    <article class="content lecture">
+      <div class="breadcrumbs"><a href="../index.html">Курс</a><span>Лекция 2</span></div>
+      <p class="eyebrow">Лекция 2 из 8</p>
+      <h1>PEFT и LoRA: от общей идеи к рабочему методу</h1>
+      <p class="lecture-lead">Увидите, какие подходы входят в PEFT, чем LoRA отличается от prompt/prefix tuning и почему она стала стандартным стартом для прикладной донастройки LLM.</p>
+      <div class="lecture-progress" data-lecture-id="2"><div><strong>Прогресс лекции</strong><span data-lecture-progress-text>Прогресс курса обновится после мини-теста</span></div><div><i data-progress-bar style="width:0%"></i></div></div>
+      <section><h2>Что входит в PEFT</h2><p>К PEFT относятся adapters, prompt tuning, prefix tuning, IA3, LoRA, QLoRA и другие способы ограничить область обучения. Их объединяет идея: не менять всю модель, а добавить управляемый небольшой механизм адаптации.</p></section>
+<section><h2>LoRA среди PEFT-методов</h2><p>Prompt и prefix tuning меняют входной контекст или добавляют обучаемые префиксы. LoRA работает ближе к самим слоям модели: она добавляет обучаемую низкоранговую ветку к линейным проекциям. Поэтому LoRA часто стабильнее для доменных SFT-задач и проще сливается с базой после обучения.</p></section>
+<section><h2>Где LoRA особенно полезна</h2><p>LoRA подходит, когда нужно адаптировать LLM под формат ответов, терминологию, конкретный стиль, извлечение структурированных данных или небольшой доменный корпус. Метод также удобен для A/B-тестов: можно хранить несколько адаптеров и быстро переключать их без копирования всей модели.</p></section>
+<section><h2>Ограничения метода</h2><p>LoRA не исправляет плохой датасет и не гарантирует качество сама по себе. Если задача требует радикально новых знаний, очень большой доменной перестройки или строгих гарантий безопасности, нужны качественные данные, оценка, фильтрация и иногда более широкий fine-tuning.</p></section>
+      <section class="lesson-summary"><h2>Итоги лекции</h2><ul><li>PEFT - семейство методов экономной донастройки.</li><li>LoRA популярна из-за простоты, качества и хорошей поддержки в tooling.</li><li>Адаптер можно хранить отдельно, переключать и при необходимости сливать с базой.</li><li>Качество LoRA всё равно определяется данными, целевыми слоями и проверкой результата.</li></ul></section>
+      <section class="code-runner python-runner" data-runner-id="lecture-2">
+        <div class="code-runner__head"><h2>Python-редактор</h2><span>учебный режим без backend</span></div>
+        <textarea class="code-runner__editor language-python" spellcheck="false" placeholder="Напишите Python-код здесь...">peft_methods = {
+    &quot;LoRA&quot;: &quot;низкоранговая поправка к слоям&quot;,
+    &quot;QLoRA&quot;: &quot;LoRA поверх 4-битной базы&quot;,
+    &quot;Prefix tuning&quot;: &quot;обучаемые префиксы в attention&quot;,
 }
-
-console.log(loraParams(16, 4096, 4096)); // 131072</code></pre>
-</section><section class="mini-test" data-lecture-id="2">
-  <h2>Мини-тест для зачета лекции</h2>
-  <p>Ответьте на 3 вопроса. Лекция засчитывается при результате минимум 2 из 3.</p>
-  <div class="mini-test__question" data-answer="0"><h3>1. Что означает rank матрицы?</h3><label class="mini-test__option"><input type="radio" name="lecture2_q1" value="0"> Число независимых направлений преобразования</label><label class="mini-test__option"><input type="radio" name="lecture2_q1" value="1"> Размер датасета</label><label class="mini-test__option"><input type="radio" name="lecture2_q1" value="2"> Количество эпох</label><label class="mini-test__option"><input type="radio" name="lecture2_q1" value="3"> Длину токена</label></div><div class="mini-test__question" data-answer="0"><h3>2. Сколько параметров у LoRA-поправки?</h3><label class="mini-test__option"><input type="radio" name="lecture2_q2" value="0"> r * (d_out + d_in)</label><label class="mini-test__option"><input type="radio" name="lecture2_q2" value="1"> d_out * d_in * r</label><label class="mini-test__option"><input type="radio" name="lecture2_q2" value="2"> r / alpha</label><label class="mini-test__option"><input type="radio" name="lecture2_q2" value="3"> alpha + dropout</label></div><div class="mini-test__question" data-answer="0"><h3>3. Что делает SVD?</h3><label class="mini-test__option"><input type="radio" name="lecture2_q3" value="0"> Разлагает матрицу на направления и масштабы</label><label class="mini-test__option"><input type="radio" name="lecture2_q3" value="1"> Запускает inference</label><label class="mini-test__option"><input type="radio" name="lecture2_q3" value="2"> Сжимает CSS</label><label class="mini-test__option"><input type="radio" name="lecture2_q3" value="3"> Создает tokenizer</label></div>
-  <button class="mini-test__button" type="button">Проверить мини-тест</button>
-  <div class="mini-test__result" aria-live="polite"></div>
-</section><section class="skill-card">
-  <div class="skill-card__mark">2</div>
-  <div><h2>Ты прокачал навык</h2><p>Теперь ты видишь связь между rank, низкоранговыми разложениями и экономией параметров в адаптерах.</p><p class="skill-card__motivation">Когда матрица кажется огромной, ищи структуру: часто именно она делает обучение дешевле.</p><a class="button accent" href="../practicals/practical2.html">Перейти к практике</a></div>
-</section><div class="pager"><a class="button" href="lecture1.html">← Предыдущая лекция</a><a class="button secondary" href="../index.html">К оглавлению</a><a class="button" href="lecture3.html">Следующая лекция →</a></div></article></main></body></html>
+for name, idea in peft_methods.items():
+    print(f&quot;{name}: {idea}&quot;)</textarea>
+        <div class="code-runner__actions"><button class="code-runner__run button" type="button">Проверить код</button><button class="code-runner__clear button secondary" type="button">Очистить</button><button class="code-runner__solution-btn button secondary" type="button">Показать пример</button><button class="code-runner__copy button secondary" type="button">Скопировать пример</button></div>
+        <pre class="code-runner__output" aria-live="polite">Результат проверки появится здесь.</pre>
+        <pre class="code-runner__solution" hidden><code class="language-python">peft_methods = {
+    &quot;LoRA&quot;: &quot;низкоранговая поправка к слоям&quot;,
+    &quot;QLoRA&quot;: &quot;LoRA поверх 4-битной базы&quot;,
+    &quot;Prefix tuning&quot;: &quot;обучаемые префиксы в attention&quot;,
+}
+for name, idea in peft_methods.items():
+    print(f&quot;{name}: {idea}&quot;)</code></pre>
+      </section>
+      <section class="mini-test" data-lecture-id="2"><h2>Мини-проверка</h2><p>Ответьте на 3 вопроса. Лекция засчитывается при результате минимум 2 из 3.</p><div class="mini-test__question" data-answer="0"><h3>1. Какой метод относится к PEFT?</h3><label class="mini-test__option"><input type="radio" name="lecture2_q1" value="0"> LoRA</label><label class="mini-test__option"><input type="radio" name="lecture2_q1" value="1"> DNS</label><label class="mini-test__option"><input type="radio" name="lecture2_q1" value="2"> CSS reset</label></div><div class="mini-test__question" data-answer="0"><h3>2. Почему LoRA удобно версионировать?</h3><label class="mini-test__option"><input type="radio" name="lecture2_q2" value="0"> Адаптер намного меньше полной модели</label><label class="mini-test__option"><input type="radio" name="lecture2_q2" value="1"> Он всегда хранится в README</label><label class="mini-test__option"><input type="radio" name="lecture2_q2" value="2"> Он не зависит от базы</label></div><div class="mini-test__question" data-answer="0"><h3>3. Что LoRA не заменяет?</h3><label class="mini-test__option"><input type="radio" name="lecture2_q3" value="0"> Качественные данные и eval</label><label class="mini-test__option"><input type="radio" name="lecture2_q3" value="1"> Все веса модели</label><label class="mini-test__option"><input type="radio" name="lecture2_q3" value="2"> Имена target_modules</label></div><button class="mini-test__button button" type="button">Проверить лекцию</button><p class="mini-test__result" aria-live="polite"></p></section>
+    </article>
+  </main>
+</body>
+</html>

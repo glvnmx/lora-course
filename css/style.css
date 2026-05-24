@@ -11,8 +11,8 @@
   --accent: #f59e0b;
   --rose: #e85d75;
   --leaf: #19a66a;
-  --field: #d8a441;
-  --earth: #8b5a2b;
+  --matrix: #20c997;
+  --ink: #182052;
   --bad: #dc2626;
   --good: #15803d;
   --code: #eef2ff;
@@ -34,8 +34,8 @@
   --accent: #fbbf24;
   --rose: #fb7185;
   --leaf: #34d399;
-  --field: #d6a43a;
-  --earth: #9a6a3a;
+  --matrix: #55d4dc;
+  --ink: #0f172a;
   --code: #202a40;
   --shadow: 0 22px 80px rgba(0, 0, 0, 0.35);
   --soft-shadow: 0 12px 34px rgba(0, 0, 0, 0.25);
@@ -81,17 +81,10 @@ body::after {
   position: fixed;
   inset: auto 0 0;
   z-index: -1;
-  height: 34vh;
+  height: 28vh;
   pointer-events: none;
-  background:
-    repeating-linear-gradient(
-      104deg,
-      transparent 0 34px,
-      color-mix(in srgb, var(--field) 18%, transparent) 34px 38px,
-      transparent 38px 74px
-    ),
-    linear-gradient(to top, color-mix(in srgb, var(--leaf) 10%, transparent), transparent);
-  opacity: 0.72;
+  background: linear-gradient(to top, color-mix(in srgb, var(--primary-2) 12%, transparent), transparent);
+  opacity: 0.58;
   mask-image: linear-gradient(to top, black, transparent);
 }
 
@@ -227,7 +220,7 @@ a:hover {
   border-radius: var(--radius);
   background:
     linear-gradient(145deg, color-mix(in srgb, var(--panel-solid) 78%, transparent), color-mix(in srgb, var(--panel-solid) 42%, transparent)),
-    repeating-linear-gradient(112deg, transparent 0 24px, color-mix(in srgb, var(--field) 14%, transparent) 24px 28px),
+    repeating-linear-gradient(112deg, transparent 0 24px, color-mix(in srgb, var(--matrix) 14%, transparent) 24px 28px),
     radial-gradient(circle at 30% 25%, rgba(85, 212, 220, 0.22), transparent 38%),
     radial-gradient(circle at 74% 72%, rgba(245, 158, 11, 0.22), transparent 34%);
   box-shadow: var(--shadow);
@@ -274,7 +267,7 @@ a:hover {
 }
 
 .result-matrix {
-  background: linear-gradient(145deg, #182052, var(--earth));
+  background: linear-gradient(145deg, #182052, var(--ink));
 }
 
 .operator {
@@ -401,7 +394,7 @@ a:hover {
   right: 0;
   left: 0;
   height: 5px;
-  background: linear-gradient(90deg, var(--leaf), var(--field), var(--primary));
+  background: linear-gradient(90deg, var(--leaf), var(--matrix), var(--primary));
 }
 
 .lecture section {
@@ -417,7 +410,7 @@ a:hover {
   width: 4px;
   height: calc(100% - 1.6em);
   border-radius: 999px;
-  background: linear-gradient(var(--leaf), var(--field), transparent);
+  background: linear-gradient(var(--leaf), var(--matrix), transparent);
   opacity: 0.72;
 }
 
@@ -460,7 +453,7 @@ a:hover {
   height: 14px;
   margin-right: 8px;
   border-radius: 8px 0 8px 0;
-  background: linear-gradient(180deg, var(--leaf), var(--field));
+  background: linear-gradient(180deg, var(--leaf), var(--matrix));
   vertical-align: -2px;
 }
 
@@ -470,7 +463,7 @@ a:hover {
   inset: auto -20% -50% 34%;
   height: 86px;
   background:
-    repeating-linear-gradient(90deg, color-mix(in srgb, var(--earth) 10%, transparent) 0 10px, transparent 10px 18px),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--ink) 10%, transparent) 0 10px, transparent 10px 18px),
     linear-gradient(90deg, rgba(56, 88, 233, 0.12), rgba(25, 166, 106, 0.16), rgba(245, 158, 11, 0.18));
   transform: rotate(-8deg);
   transition: transform 0.28s ease, opacity 0.28s ease;
@@ -1182,7 +1175,7 @@ select {
   margin-top: -12px;
 }
 
-.game-meter.harvest i {
+.game-meter.readiness i {
   background: linear-gradient(90deg, #20c997, var(--accent));
 }
 
@@ -1307,7 +1300,7 @@ select {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background:
-    repeating-linear-gradient(112deg, transparent 0 24px, color-mix(in srgb, var(--field) 10%, transparent) 24px 28px),
+    repeating-linear-gradient(112deg, transparent 0 24px, color-mix(in srgb, var(--matrix) 10%, transparent) 24px 28px),
     color-mix(in srgb, var(--panel-solid) 72%, transparent);
   box-shadow: var(--soft-shadow);
 }
@@ -1550,82 +1543,6 @@ select {
   color: var(--muted);
 }
 
-.study-joke {
-  position: fixed;
-  z-index: 40;
-  width: min(320px, calc(100vw - 28px));
-  padding: 16px 42px 16px 16px;
-  border: 1px solid color-mix(in srgb, var(--accent) 54%, var(--line));
-  border-radius: var(--radius);
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--panel-solid) 92%, transparent), color-mix(in srgb, var(--panel-solid) 68%, transparent)),
-    radial-gradient(circle at 8% 20%, rgba(245, 158, 11, 0.22), transparent 44%),
-    radial-gradient(circle at 88% 78%, rgba(56, 88, 233, 0.20), transparent 42%);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(18px);
-  animation: joke-pop 0.34s ease both;
-}
-
-.study-joke.variant-2 {
-  border-color: color-mix(in srgb, var(--primary-2) 54%, var(--line));
-}
-
-.study-joke.variant-3 {
-  border-color: color-mix(in srgb, var(--rose) 54%, var(--line));
-}
-
-.study-joke.leaving {
-  animation: joke-out 0.28s ease both;
-}
-
-.study-joke strong,
-.study-joke span {
-  display: block;
-}
-
-.study-joke strong {
-  margin-bottom: 4px;
-  color: var(--accent);
-  font-size: 0.86rem;
-}
-
-.study-joke span {
-  color: var(--text);
-  line-height: 1.45;
-}
-
-.study-joke button {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  background: var(--panel);
-  color: var(--text);
-  cursor: pointer;
-}
-
-@keyframes joke-pop {
-  from {
-    opacity: 0;
-    transform: translateY(12px) scale(0.96);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes joke-out {
-  to {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.96);
-  }
-}
-
 @keyframes ambient-bg {
   from {
     background-position: 0% 0%;
@@ -1805,4 +1722,141 @@ select {
     padding-right: 16px;
     padding-left: 16px;
   }
+}
+
+
+.lesson-card small,
+.compact-card small,
+.sidebar small {
+  color: var(--muted);
+  font-weight: 820;
+}
+
+.lesson-card strong,
+.compact-card strong {
+  display: block;
+  margin: 4px 0 8px;
+  font-size: 1.05rem;
+}
+
+.lesson-card span,
+.compact-card span,
+.lecture-lead {
+  color: var(--muted);
+}
+
+.lecture-lead {
+  max-width: 860px;
+  font-size: 1.08rem;
+}
+
+.lesson-summary {
+  margin: 24px 0;
+  padding: 20px;
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, var(--line));
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--panel) 84%, var(--primary) 8%);
+}
+
+.lesson-summary h2 { margin-top: 0; }
+
+.practice-tasks {
+  display: grid;
+  gap: 14px;
+  margin: 24px 0;
+}
+
+.practice-task {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  box-shadow: var(--soft-shadow);
+}
+
+.practice-task__meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 820;
+}
+
+.practice-task__meta span {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+}
+
+.practice-task h3 { margin: 10px 0 12px; }
+
+.practice-task label {
+  display: block;
+  margin: 8px 0;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--code) 52%, transparent);
+}
+
+.practice-task textarea {
+  width: 100%;
+  min-height: 96px;
+  resize: vertical;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--code) 78%, var(--panel-solid));
+  color: var(--text);
+}
+
+.code-runner__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.code-runner__head span {
+  color: var(--muted);
+  font-weight: 760;
+}
+
+.code-editor-shell {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #0f172a;
+}
+
+.code-editor-gutter {
+  margin: 0;
+  padding: 14px 10px;
+  overflow: hidden;
+  color: #8ea0c5;
+  background: #111827;
+  text-align: right;
+  user-select: none;
+  font: 0.95rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.code-editor-shell .code-runner__editor,
+.code-editor-shell .code-practice__editor {
+  min-height: 260px;
+  border: 0;
+  border-radius: 0;
+  background: #0f172a;
+  color: #e5edf9;
+  outline: none;
+}
+
+.python-runner {
+  background: linear-gradient(145deg, color-mix(in srgb, var(--panel) 90%, var(--primary) 5%), color-mix(in srgb, var(--panel) 90%, var(--primary-2) 5%));
 }

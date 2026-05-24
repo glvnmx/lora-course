@@ -1,105 +1,49 @@
-<!doctype html><html lang="ru"><head><title>Лекция 7. Мульти-LoRA, слияние и деплой</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script><script defer src="../js/main.js"></script></head><body><nav class="top-nav"><a href="../index.html">Оглавление</a><a href="../index.html#course-map">Карта курса</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">Мини-игра</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav><main class="layout"><aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class="">1. Введение в трансферное обучение и донастройку</a><a href="lecture2.html" class="">2. Математические основы низкоранговых разложений</a><a href="lecture3.html" class="">3. Архитектура LoRA</a><a href="lecture4.html" class="">4. Варианты и развитие LoRA</a><a href="lecture5.html" class="">5. Практика донастройки с PEFT и Hugging Face</a><a href="lecture6.html" class="">6. Донастройка LLM: инструкции, диалоги, RLHF</a><a href="lecture7.html" class="active">7. Мульти-LoRA, слияние и деплой</a><a href="lecture8.html" class="">8. Продвинутые темы и перспективы</a></aside><article class="content lecture"><div class="breadcrumbs"><a href="../index.html">Курс</a><span>Лекция 7</span></div><h1>Лекция 7. Мульти-LoRA, слияние и деплой</h1><div class="lecture-progress" data-lecture-id="7">
-  <div><strong>Лекция 7 из 8</strong><span data-lecture-progress-text>Прогресс курса обновится после мини-теста</span></div>
-  <div class="lecture-progress__bar"><i class="lecture-progress__fill" data-progress-bar style="width:0%"></i></div>
-</div><figure class="lecture-visual" aria-label="База и несколько адаптеров">
-  <svg viewBox="0 0 720 220" role="img" aria-labelledby="lectureVisualTitle7">
-    <title id="lectureVisualTitle7">База и несколько адаптеров</title>
-    <defs><linearGradient id="lvGrad7" x1="0" x2="1"><stop offset="0" stop-color="var(--primary)"/><stop offset="0.52" stop-color="var(--leaf)"/><stop offset="1" stop-color="var(--accent)"/></linearGradient></defs>
-    <rect x="18" y="18" width="684" height="184" rx="18" fill="var(--panel-solid)" opacity="0.72"/>
-    <path d="M70 160 C180 70, 270 190, 380 98 S560 70, 650 148" fill="none" stroke="url(#lvGrad7)" stroke-width="10" stroke-linecap="round" opacity="0.82"/>
-    <g><rect x="70" y="62" width="112" height="64" rx="14" fill="url(#lvGrad7)" opacity="0.95"/><text x="126" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">Base</text><rect x="215" y="62" width="112" height="64" rx="14" fill="url(#lvGrad7)" opacity="0.87"/><text x="271" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">support</text><rect x="360" y="62" width="112" height="64" rx="14" fill="url(#lvGrad7)" opacity="0.7899999999999999"/><text x="416" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">sql</text><rect x="505" y="62" width="112" height="64" rx="14" fill="url(#lvGrad7)" opacity="0.71"/><text x="561" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="white">vision</text></g>
-  </svg>
-  <figcaption>База и несколько адаптеров</figcaption>
-</figure><section><h2>Хранение адаптеров</h2><p>LoRA-адаптер обычно состоит из конфигурации и небольших тензоров факторов. Его можно хранить отдельно от базовой модели, версионировать и загружать по требованию. Это удобно для мультиарендных систем: одна база обслуживает несколько доменов, а адаптер выбирается по пользователю или задаче. Важно фиксировать точную базовую модель, ревизию токенизатора и список target_modules. Адаптер, обученный для одной архитектуры или имен слоев, может не загрузиться в другую.</p><p>Для закрепления полезно рассматривать этот материал как связь между математическим ограничением и инженерным решением. Ограничение уменьшает пространство поиска, но не заменяет эксперимент: качество определяется данными, метриками, гиперпараметрами и тем, насколько выбранная схема соответствует будущему использованию модели.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Зачем хранить базу отдельно от адаптеров?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Так можно переиспользовать одну тяжелую модель и быстро переключать компактные доменные адаптеры.</div>
-</div>
-<section><h2>Переключение и стек</h2><p>PEFT позволяет загружать несколько адаптеров и переключать активный. Некоторые сценарии используют стек или композицию адаптеров: один отвечает за язык, другой за стиль, третий за домен. Композиция привлекательна, но не гарантирует линейного сложения навыков. Поправки могут конфликтовать в одних и тех же матрицах, усиливать нежелательные токены или менять калибровку. Поэтому мульти-LoRA требует тестов на интерференцию и понятной политики приоритета.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Когда лучше merge-and-unload?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Когда нужен простой и быстрый inference без отдельной ветви адаптера.</div>
-</div>
-<section><h2>Merge-and-unload</h2><p>Слияние добавляет $\Delta W$ к базовым весам и удаляет ветвь адаптера. Это снижает накладные расходы inference и упрощает деплой в системах, которые не поддерживают PEFT. Однако после слияния теряется легкое переключение адаптеров, а при квантизованной базе нужно учитывать точность операции. Часто используют два артефакта: неслитый адаптер для экспериментов и слитую модель для отдельного продакшн-эндпоинта.</p></section><div class="inline-check">
-  <h3>Проверь себя</h3>
-  <p>Что дает Multi-LoRA?</p>
-  <button class="inline-check__button" type="button">Показать ответ</button>
-  <div class="inline-check__answer" hidden>Возможность обслуживать разные задачи, клиентов или стили на одной базовой модели.</div>
-</div>
-<section><h2>Serving</h2><p>Для обслуживания LoRA применяют vLLM, LoRAX, S-LoRA и другие системы, которые умеют батчить запросы с разными адаптерами. Главная сложность — сохранить throughput, когда в одном батче разные пользователи требуют разные $A$ и $B$. Системы оптимизируют хранение адаптеров на GPU, кэширование, fused kernels и планирование батчей. Если адаптеров мало и трафик предсказуем, проще держать отдельные реплики. Если адаптеров сотни, нужна специализированная LoRA serving архитектура.</p></section>
-<section><h2>Версионирование</h2><p>Адаптер является модельным артефактом и требует метаданных: датасет, дата, commit кода, hyperparameters, базовая модель, eval-таблица, ограничения использования. Без этого невозможно понять, почему новая версия лучше или хуже. Для GitHub Pages курса достаточно описать принципы, но в производственной ML-системе адаптеры должны проходить тот же жизненный цикл, что и обычные модели: registry, staging, canary, rollback и мониторинг.</p></section>
-<section><h2>Безопасность деплоя</h2><p>Деплой адаптеров несет риск supply chain: небольшой файл может радикально изменить поведение большой модели. Нельзя подключать непроверенные адаптеры к чувствительным сервисам. Нужно ограничивать источники, проверять лицензии, выполнять eval на вредные инструкции, контролировать системные подсказки и логировать версию активного адаптера. LoRA облегчает распространение навыков, но ровно поэтому требует строгой дисциплины управления артефактами.</p></section>
-<p>В учебной работе важно не только знать название метода, но и уметь объяснить, какие параметры обучаются, какие остаются фиксированными, где появляется выигрыш по памяти и какие ошибки могут исказить вывод эксперимента.</p>
-<p>Типичная ошибка начинающих состоит в том, что они сравнивают методы при разных датасетах, шаблонах промпта или длинах последовательности. Корректное сравнение требует одинакового разбиения данных, одинаковой процедуры генерации и заранее выбранных метрик.</p>
-<p>Еще один практический критерий — стоимость владения. Маленький адаптер проще хранить, проверять и откатывать; большая слитая модель иногда быстрее на inference, но дороже в распространении и обслуживании.</p>
+<!doctype html>
+<html lang="ru">
+<head>
+  <title>Оценка качества и отладка LoRA-адаптера</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script defer src="../js/main.js"></script>
+</head>
+<body>
+  <nav class="top-nav"><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Lab</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <main class="layout">
+    <aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class=""><small>1.</small> Дорогая донастройка и роль LoRA</a><a href="lecture2.html" class=""><small>2.</small> PEFT и популярность LoRA</a><a href="lecture3.html" class=""><small>3.</small> Rank, alpha и scaling</a><a href="lecture4.html" class=""><small>4.</small> Target modules в transformer</a><a href="lecture5.html" class=""><small>5.</small> Python, PEFT и LoraConfig</a><a href="lecture6.html" class=""><small>6.</small> QLoRA и память GPU</a><a href="lecture7.html" class="active"><small>7.</small> Eval, сравнение с базой и ошибки</a><a href="lecture8.html" class=""><small>8.</small> Merge, storage и deployment</a></aside>
+    <article class="content lecture">
+      <div class="breadcrumbs"><a href="../index.html">Курс</a><span>Лекция 7</span></div>
+      <p class="eyebrow">Лекция 7 из 8</p>
+      <h1>Оценка качества и отладка LoRA-адаптера</h1>
+      <p class="lecture-lead">Научитесь сравнивать базовую модель и адаптер, следить за eval loss, проверять генерации и находить типичные ошибки LoRA-обучения.</p>
+      <div class="lecture-progress" data-lecture-id="7"><div><strong>Прогресс лекции</strong><span data-lecture-progress-text>Прогресс курса обновится после мини-теста</span></div><div><i data-progress-bar style="width:0%"></i></div></div>
+      <section><h2>Что сравнивать</h2><p>LoRA-адаптер нужно сравнивать не только с желаемым ответом, но и с базовой моделью. Иногда адаптер улучшает формат, но ухудшает фактическую точность; иногда падает eval loss, но реальные генерации становятся шаблонными.</p></section>
+<section><h2>Метрики и ручная проверка</h2><p>Для классификации можно использовать accuracy/F1, для генерации - доменные рубрики, LLM-as-judge с осторожностью, ручной review и набор контрольных prompt. Eval loss полезен, но не заменяет проверку поведения на реальных запросах.</p></section>
+<section><h2>Типичные ошибки</h2><p>Частые проблемы: слишком высокий learning rate, слишком большой rank, грязные данные, утечка validation в train, неверный chat template, неподходящие target_modules, слишком высокий alpha и отсутствие baseline.</p></section>
+<section><h2>Переобучение и forgetting</h2><p>Если адаптер слишком сильно подгоняется под маленький датасет, он может терять универсальность базы. Для контроля нужны validation split, ранняя остановка, dropout, ограничение rank и тесты на вне-доменных запросах.</p></section>
+      <section class="lesson-summary"><h2>Итоги лекции</h2><ul><li>Оценивать LoRA нужно относительно базовой модели и целевой задачи.</li><li>Eval loss полезен, но генерации и доменные метрики обязательны.</li><li>Ошибки чаще связаны с данными, шаблоном чата, LR, rank/alpha и target_modules.</li><li>Переобучение контролируют validation split, dropout, ранней остановкой и ручным review.</li></ul></section>
+      <section class="code-runner python-runner" data-runner-id="lecture-7">
+        <div class="code-runner__head"><h2>Python-редактор</h2><span>учебный режим без backend</span></div>
+        <textarea class="code-runner__editor language-python" spellcheck="false" placeholder="Напишите Python-код здесь...">def compare_scores(base, adapter):
+    delta = adapter[&quot;validation_score&quot;] - base[&quot;validation_score&quot;]
+    return {&quot;delta&quot;: round(delta, 3), &quot;better&quot;: delta &gt; 0}
 
+print(compare_scores({&quot;validation_score&quot;: 0.62}, {&quot;validation_score&quot;: 0.74}))</textarea>
+        <div class="code-runner__actions"><button class="code-runner__run button" type="button">Проверить код</button><button class="code-runner__clear button secondary" type="button">Очистить</button><button class="code-runner__solution-btn button secondary" type="button">Показать пример</button><button class="code-runner__copy button secondary" type="button">Скопировать пример</button></div>
+        <pre class="code-runner__output" aria-live="polite">Результат проверки появится здесь.</pre>
+        <pre class="code-runner__solution" hidden><code class="language-python">def compare_scores(base, adapter):
+    delta = adapter[&quot;validation_score&quot;] - base[&quot;validation_score&quot;]
+    return {&quot;delta&quot;: round(delta, 3), &quot;better&quot;: delta &gt; 0}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="code-runner" data-runner-id="lecture-7">
-  <h2>Описать несколько адаптеров</h2>
-  <p>Создайте объект adapters для одной базовой модели и нескольких LoRA-адаптеров.</p>
-  <textarea class="code-runner__editor" spellcheck="false" placeholder="Напишите JavaScript-код здесь..."></textarea>
-  <div class="code-runner__actions">
-    <button class="code-runner__run button" type="button">Запустить код</button>
-    <button class="code-runner__clear button secondary" type="button">Очистить</button>
-    <button class="code-runner__solution-btn button secondary" type="button">Показать решение</button>
-    <button class="code-runner__copy button secondary" type="button">Скопировать решение</button>
-  </div>
-  <pre class="code-runner__output" aria-live="polite">Вывод появится здесь.</pre>
-  <pre class="code-runner__solution" hidden><code>const baseModel = &quot;mistral-7b-instruct&quot;;
-const adapters = {
-  support: &quot;adapters/support-lora&quot;,
-  sql: &quot;adapters/sql-lora&quot;,
-  agro: &quot;adapters/agro-lora&quot;
-};
-
-console.log({ baseModel, adapters });</code></pre>
-</section><section class="mini-test" data-lecture-id="7">
-  <h2>Мини-тест для зачета лекции</h2>
-  <p>Ответьте на 3 вопроса. Лекция засчитывается при результате минимум 2 из 3.</p>
-  <div class="mini-test__question" data-answer="0"><h3>1. Зачем хранить базу отдельно?</h3><label class="mini-test__option"><input type="radio" name="lecture7_q1" value="0"> Чтобы переключать компактные адаптеры</label><label class="mini-test__option"><input type="radio" name="lecture7_q1" value="1"> Чтобы удалить модель</label><label class="mini-test__option"><input type="radio" name="lecture7_q1" value="2"> Чтобы не писать eval</label><label class="mini-test__option"><input type="radio" name="lecture7_q1" value="3"> Чтобы отключить inference</label></div><div class="mini-test__question" data-answer="0"><h3>2. Когда полезен merge-and-unload?</h3><label class="mini-test__option"><input type="radio" name="lecture7_q2" value="0"> Когда нужен простой быстрый inference</label><label class="mini-test__option"><input type="radio" name="lecture7_q2" value="1"> Когда нужно много адаптеров сразу</label><label class="mini-test__option"><input type="radio" name="lecture7_q2" value="2"> Когда нет весов</label><label class="mini-test__option"><input type="radio" name="lecture7_q2" value="3"> Когда меняется CSS</label></div><div class="mini-test__question" data-answer="0"><h3>3. Что дает Multi-LoRA?</h3><label class="mini-test__option"><input type="radio" name="lecture7_q3" value="0"> Несколько задач на одной базе</label><label class="mini-test__option"><input type="radio" name="lecture7_q3" value="1"> Только одну модель без адаптеров</label><label class="mini-test__option"><input type="radio" name="lecture7_q3" value="2"> Удаление PEFT</label><label class="mini-test__option"><input type="radio" name="lecture7_q3" value="3"> Отказ от деплоя</label></div>
-  <button class="mini-test__button" type="button">Проверить мини-тест</button>
-  <div class="mini-test__result" aria-live="polite"></div>
-</section><section class="skill-card">
-  <div class="skill-card__mark">7</div>
-  <div><h2>Ты прокачал навык</h2><p>Теперь ты понимаешь, как хранить, переключать, сливать и деплоить несколько LoRA-адаптеров.</p><p class="skill-card__motivation">Одна база и много адаптеров — это уже архитектура продукта, а не просто эксперимент.</p><a class="button accent" href="../practicals/practical7.html">Перейти к практике</a></div>
-</section><div class="pager"><a class="button" href="lecture6.html">← Предыдущая лекция</a><a class="button secondary" href="../index.html">К оглавлению</a><a class="button" href="lecture8.html">Следующая лекция →</a></div></article></main></body></html>
+print(compare_scores({&quot;validation_score&quot;: 0.62}, {&quot;validation_score&quot;: 0.74}))</code></pre>
+      </section>
+      <section class="mini-test" data-lecture-id="7"><h2>Мини-проверка</h2><p>Ответьте на 3 вопроса. Лекция засчитывается при результате минимум 2 из 3.</p><div class="mini-test__question" data-answer="0"><h3>1. Почему нужен baseline базовой модели?</h3><label class="mini-test__option"><input type="radio" name="lecture7_q1" value="0"> Чтобы понять реальный вклад адаптера</label><label class="mini-test__option"><input type="radio" name="lecture7_q1" value="1"> Чтобы удалить train split</label><label class="mini-test__option"><input type="radio" name="lecture7_q1" value="2"> Чтобы заменить PEFT</label></div><div class="mini-test__question" data-answer="0"><h3>2. Что может указывать на переобучение?</h3><label class="mini-test__option"><input type="radio" name="lecture7_q2" value="0"> Eval ухудшается, train loss падает</label><label class="mini-test__option"><input type="radio" name="lecture7_q2" value="1"> CSS стал короче</label><label class="mini-test__option"><input type="radio" name="lecture7_q2" value="2"> Ссылка открылась</label></div><div class="mini-test__question" data-answer="0"><h3>3. Что проверяют контрольные prompts?</h3><label class="mini-test__option"><input type="radio" name="lecture7_q3" value="0"> Поведение модели на важных сценариях</label><label class="mini-test__option"><input type="radio" name="lecture7_q3" value="1"> Наличие favicon</label><label class="mini-test__option"><input type="radio" name="lecture7_q3" value="2"> Размер браузера</label></div><button class="mini-test__button button" type="button">Проверить лекцию</button><p class="mini-test__result" aria-live="polite"></p></section>
+    </article>
+  </main>
+</body>
+</html>
