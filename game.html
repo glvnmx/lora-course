@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <title>LoRA Lab: симулятор обучения адаптера</title>
+  <title>LoRA Quest: Adapter Engineer</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/style.css">
@@ -13,10 +13,49 @@
   <script defer src="js/main.js"></script>
 </head>
 <body>
-  <nav class="top-nav"><a href="index.html">Содержание</a><a href="index.html#course-map">К курсу</a><a href="index.html#visual-lab">Визуализации</a><a href="game.html">LoRA Lab</a><a href="authors.html">Об авторах</a><a href="test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <nav class="top-nav"><a href="index.html">Содержание</a><a href="index.html#course-map">К курсу</a><a href="index.html#visual-lab">Визуализации</a><a href="game.html">LoRA Quest</a><a href="authors.html">Об авторах</a><a href="test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
   <main class="game-page">
-    <section class="game-hero"><div><p class="eyebrow">Мини-игра</p><h1>LoRA Lab</h1><p>Симулятор помогает почувствовать trade-off между validation score, GPU-памятью, forgetting score и размером адаптера. Выбирайте инженерные действия и доведите адаптер до стабильного качества.</p></div><div class="peter-badge"><strong>Цель</strong><span>Validation score >= 86 при memory < 90 и forgetting < 70</span></div></section>
-    <section class="game-panel" id="peterFarmGame"><div class="game-top"><div><h2>Adapter Tuning Lab</h2><p>Каждый ход меняет метрики обучения. Победа: высокий validation score без перерасхода памяти и переобучения.</p></div><button class="button secondary" type="button" data-game-reset>Новый запуск</button></div><div class="game-layout"><div class="farm-field" aria-label="Матрица адаптера"></div><aside class="game-dashboard"><div class="game-meter" data-game-meter="quality"><span>Validation score <b data-game-value="quality">0%</b></span><i></i></div><div class="game-meter" data-game-meter="memory"><span>GPU memory <b data-game-value="memory">0%</b></span><i></i></div><div class="game-meter danger" data-game-meter="forgetting"><span>Forgetting score <b data-game-value="forgetting">0%</b></span><i></i></div><div class="game-meter readiness" data-game-meter="readiness"><span>Adapter readiness <b data-game-value="readiness">0%</b></span><i></i></div></aside></div><div class="game-actions" aria-label="Карточки действий"></div><div class="game-log" aria-live="polite"></div></section>
+    <section class="game-hero">
+      <div>
+        <p class="eyebrow">Тренажёр</p>
+        <h1>LoRA Quest: Adapter Engineer</h1>
+        <p>Пять миссий тренируют инженерные решения LoRA/QLoRA: стоимость full fine-tuning, rank/alpha/dropout, target_modules, память GPU, eval и деплой.</p>
+      </div>
+      <div class="quest-badge"><strong>Цель</strong><span>Собрать устойчивый adapter pipeline и понять trade-off каждого решения.</span></div>
+    </section>
+    <section class="game-panel" id="loraQuestGame">
+      <div class="game-top">
+        <div>
+          <h2 data-mission-title>LoRA Quest</h2>
+          <p data-mission-scenario>Загрузка миссии...</p>
+        </div>
+        <div class="game-top__actions">
+          <button class="button secondary" type="button" data-game-next>Следующий уровень</button>
+          <button class="button secondary" type="button" data-game-reset>Начать заново</button>
+        </div>
+      </div>
+      <nav class="level-map" aria-label="Карта уровней"></nav>
+      <div class="mission-panel">
+        <div>
+          <p class="eyebrow">Цель уровня</p>
+          <h3 data-mission-goal>Выберите инженерное решение.</h3>
+        </div>
+        <div class="mission-feedback" aria-live="polite"></div>
+      </div>
+      <div class="game-layout">
+        <div class="adapter-board" aria-label="Пайплайн адаптера"></div>
+        <aside class="game-dashboard" aria-label="Метрики миссии">
+          <div class="game-meter" data-game-meter="quality"><span>Validation score <b data-game-value="quality">0%</b></span><i></i></div>
+          <div class="game-meter" data-game-meter="memory"><span>GPU memory <b data-game-value="memory">0%</b></span><i></i></div>
+          <div class="game-meter danger" data-game-meter="forgetting"><span>Forgetting risk <b data-game-value="forgetting">0%</b></span><i></i></div>
+          <div class="game-meter" data-game-meter="dataset"><span>Dataset health <b data-game-value="dataset">0%</b></span><i></i></div>
+          <div class="game-meter readiness" data-game-meter="readiness"><span>Adapter readiness <b data-game-value="readiness">0%</b></span><i></i></div>
+        </aside>
+      </div>
+      <div class="game-actions" aria-label="Действия уровня"></div>
+      <div class="quest-report" hidden></div>
+      <div class="game-log" aria-live="polite"></div>
+    </section>
   </main>
 </body>
 </html>

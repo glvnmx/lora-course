@@ -13,7 +13,7 @@
   <script defer src="../js/main.js"></script>
 </head>
 <body>
-  <nav class="top-nav"><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Lab</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <nav class="top-nav"><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Quest</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
   <main class="layout">
     <aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class=""><small>1.</small> Дорогая донастройка и роль LoRA</a><a href="lecture2.html" class=""><small>2.</small> PEFT и популярность LoRA</a><a href="lecture3.html" class=""><small>3.</small> Rank, alpha и scaling</a><a href="lecture4.html" class=""><small>4.</small> Target modules в transformer</a><a href="lecture5.html" class=""><small>5.</small> Python, PEFT и LoraConfig</a><a href="lecture6.html" class=""><small>6.</small> QLoRA и память GPU</a><a href="lecture7.html" class=""><small>7.</small> Eval, сравнение с базой и ошибки</a><a href="lecture8.html" class="active"><small>8.</small> Merge, storage и deployment</a></aside>
     <article class="content lecture">
@@ -28,15 +28,15 @@
 <section><h2>Деплой и мониторинг</h2><p>Для обслуживания множества адаптеров используют vLLM, LoRAX, S-LoRA и похожие системы. После деплоя нужны мониторинг latency, качества ответов, отказов загрузки адаптера и регрессионный набор prompt для новых версий.</p></section>
       <section class="lesson-summary"><h2>Итоги лекции</h2><ul><li>Адаптер можно хранить отдельно и переключать на одной базе.</li><li>Merge-and-unload упрощает inference, но убирает гибкость отдельного адаптера.</li><li>Артефакт должен содержать конфиг, базовую модель, метрики и условия совместимости.</li><li>Production требует мониторинга качества, latency и регрессий.</li></ul></section>
       <section class="code-runner python-runner" data-runner-id="lecture-8">
-        <div class="code-runner__head"><h2>Python-редактор</h2><span>учебный режим без backend</span></div>
-        <textarea class="code-runner__editor language-python" spellcheck="false" placeholder="Напишите Python-код здесь...">deployment_plan = {
+        <div class="code-runner__head"><h2>LoRA Config Studio</h2><span>сборка конфига без запуска Python</span></div>
+        <textarea class="code-runner__editor language-python" spellcheck="false" placeholder="Опишите LoraConfig или план обучения...">deployment_plan = {
     &quot;base_model&quot;: &quot;mistral-7b-instruct&quot;,
     &quot;adapter&quot;: &quot;support-lora-r16&quot;,
     &quot;mode&quot;: &quot;adapter-first&quot;,
     &quot;checks&quot;: [&quot;eval&quot;, &quot;latency&quot;, &quot;rollback&quot;],
 }
 print(deployment_plan)</textarea>
-        <div class="code-runner__actions"><button class="code-runner__run button" type="button">Проверить код</button><button class="code-runner__clear button secondary" type="button">Очистить</button><button class="code-runner__solution-btn button secondary" type="button">Показать пример</button><button class="code-runner__copy button secondary" type="button">Скопировать пример</button></div>
+        <div class="code-runner__actions"><button class="code-runner__run button" type="button">Проверить план</button><button class="code-runner__clear button secondary" type="button">Очистить</button><button class="code-runner__solution-btn button secondary" type="button">Показать пример</button><button class="code-runner__copy button secondary" type="button">Скопировать конфиг</button></div>
         <pre class="code-runner__output" aria-live="polite">Результат проверки появится здесь.</pre>
         <pre class="code-runner__solution" hidden><code class="language-python">deployment_plan = {
     &quot;base_model&quot;: &quot;mistral-7b-instruct&quot;,

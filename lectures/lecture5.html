@@ -13,7 +13,7 @@
   <script defer src="../js/main.js"></script>
 </head>
 <body>
-  <nav class="top-nav"><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Lab</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <nav class="top-nav"><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Quest</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
   <main class="layout">
     <aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class=""><small>1.</small> Дорогая донастройка и роль LoRA</a><a href="lecture2.html" class=""><small>2.</small> PEFT и популярность LoRA</a><a href="lecture3.html" class=""><small>3.</small> Rank, alpha и scaling</a><a href="lecture4.html" class=""><small>4.</small> Target modules в transformer</a><a href="lecture5.html" class="active"><small>5.</small> Python, PEFT и LoraConfig</a><a href="lecture6.html" class=""><small>6.</small> QLoRA и память GPU</a><a href="lecture7.html" class=""><small>7.</small> Eval, сравнение с базой и ошибки</a><a href="lecture8.html" class=""><small>8.</small> Merge, storage и deployment</a></aside>
     <article class="content lecture">
@@ -28,8 +28,8 @@
 <section><h2>Сохранение адаптера</h2><p>После обучения обычно сохраняют только adapter_config.json и adapter_model.safetensors. Это небольшой артефакт, который можно загрузить поверх той же базовой модели или слить с ней для простого inference.</p></section>
       <section class="lesson-summary"><h2>Итоги лекции</h2><ul><li>PEFT подключает LoRA через LoraConfig и get_peft_model.</li><li>Важные параметры: r, alpha, dropout и target_modules.</li><li>Датасет для SFT должен быть чистым, согласованным и иметь validation split.</li><li>Сохраняют адаптер отдельно от базовой модели, чтобы упростить хранение и деплой.</li></ul></section>
       <section class="code-runner python-runner" data-runner-id="lecture-5">
-        <div class="code-runner__head"><h2>Python-редактор</h2><span>учебный режим без backend</span></div>
-        <textarea class="code-runner__editor language-python" spellcheck="false" placeholder="Напишите Python-код здесь...">from peft import LoraConfig
+        <div class="code-runner__head"><h2>LoRA Config Studio</h2><span>сборка конфига без запуска Python</span></div>
+        <textarea class="code-runner__editor language-python" spellcheck="false" placeholder="Опишите LoraConfig или план обучения...">from peft import LoraConfig
 
 config = LoraConfig(
     r=16,
@@ -39,7 +39,7 @@ config = LoraConfig(
     task_type=&quot;CAUSAL_LM&quot;,
 )
 print(config.r, config.target_modules)</textarea>
-        <div class="code-runner__actions"><button class="code-runner__run button" type="button">Проверить код</button><button class="code-runner__clear button secondary" type="button">Очистить</button><button class="code-runner__solution-btn button secondary" type="button">Показать пример</button><button class="code-runner__copy button secondary" type="button">Скопировать пример</button></div>
+        <div class="code-runner__actions"><button class="code-runner__run button" type="button">Проверить план</button><button class="code-runner__clear button secondary" type="button">Очистить</button><button class="code-runner__solution-btn button secondary" type="button">Показать пример</button><button class="code-runner__copy button secondary" type="button">Скопировать конфиг</button></div>
         <pre class="code-runner__output" aria-live="polite">Результат проверки появится здесь.</pre>
         <pre class="code-runner__solution" hidden><code class="language-python">from peft import LoraConfig
 

@@ -116,7 +116,7 @@ function initAdapterLab() {
 
 const achievements = {
   balanced: 'Сбалансирован rank, alpha и dropout',
-  lab: 'LoRA Lab: адаптер готов к оценке',
+  lab: 'LoRA Quest: адаптер готов к оценке',
   test: 'Итоговая проверка открыта'
 };
 
@@ -143,7 +143,7 @@ function initCommandPalette() {
     ['Главная', `${root}index.html`],
     ['Содержание курса', `${root}index.html#course-map`],
     ['Визуализации', `${root}index.html#visual-lab`],
-    ['LoRA Lab', `${root}game.html`],
+    ['LoRA Quest', `${root}game.html`],
     ['Об авторах', `${root}authors.html`],
     ['Итоговый тест', `${root}test.html`],
     ...Array.from({ length: 8 }, (_, i) => [`Лекция ${i + 1}`, `${root}lectures/lecture${i + 1}.html`]),
@@ -185,91 +185,226 @@ function initCommandPalette() {
   input.addEventListener('input', render);
 }
 
-function initPeterFarmGame() {
-  const game = document.getElementById('peterFarmGame');
+function initLoraQuestGame() {
+  const game = document.getElementById('loraQuestGame');
   if (!game) return;
-  const matrix = game.querySelector('.farm-field');
+  const board = game.querySelector('.adapter-board');
   const log = game.querySelector('.game-log');
-  const stats = { quality: 38, memory: 30, forgetting: 18, readiness: 24, turn: 0 };
-  const actions = [
-    { name: 'Очистить датасет', type: 'good', q: 13, ready: 12, m: 3, f: -5, text: 'Удалены дубли, роли сообщений и chat template проверены.' },
-    { name: 'Увеличить rank', type: 'rank', q: 11, ready: 8, m: 12, f: 5, text: 'Адаптер получил больше ёмкости, но вырос расход памяти.' },
-    { name: 'Включить QLoRA NF4', type: 'quant', q: 5, ready: 7, m: -16, f: 1, text: '4-битная база снизила GPU memory и сохранила обучаемый адаптер.' },
-    { name: 'Слишком высокий alpha', type: 'risk', q: 4, ready: -5, m: 5, f: 16, text: 'Вклад адаптера стал слишком сильным: forgetting score растёт.' },
-    { name: 'Validation review', type: 'eval', q: 8, ready: 10, m: 1, f: -10, text: 'Baseline и адаптер сравнены на контрольных prompts.' },
-    { name: 'Шумный train split', type: 'bad', q: -10, ready: -12, m: 1, f: 10, text: 'В данных найдены противоречивые ответы и утечка validation.' }
+  const levelMap = game.querySelector('.level-map');
+  const missionTitle = game.querySelector('[data-mission-title]');
+  const missionGoal = game.querySelector('[data-mission-goal]');
+  const missionScenario = game.querySelector('[data-mission-scenario]');
+  const actionsBox = game.querySelector('.game-actions');
+  const feedback = game.querySelector('.mission-feedback');
+  const report = game.querySelector('.quest-report');
+  const storageKey = 'loraQuestProgress';
+  const levels = [
+    {
+      title: 'Дорогой full fine-tuning',
+      goal: 'Сохранить качество при лимите 24 GB GPU.',
+      scenario: 'Команда хочет дообучить 7B-модель для поддержки. Full fine-tuning выглядит привычно, но память ограничена.',
+      metrics: { quality: 62, memory: 54, forgetting: 24, dataset: 66, readiness: 30 },
+      actions: [
+        { label: 'Full fine-tuning всех весов', ok: false, delta: { quality: 12, memory: 48, forgetting: 18, readiness: -12 }, why: 'Качество может вырасти, но память взлетает выше лимита. Для адаптера задачи это слишком дорогой старт.', hint: 'Выбери PEFT-подход: базовые веса заморожены, обучается маленькая поправка.' },
+        { label: 'LoRA с замороженной базой', ok: true, delta: { quality: 14, memory: 14, forgetting: 4, readiness: 26 }, why: 'LoRA обучает A/B-матрицы, поэтому резко снижает число trainable parameters и оставляет запас памяти.' },
+        { label: 'Prompt-only без адаптера', ok: false, delta: { quality: 2, memory: -4, forgetting: 0, readiness: 2 }, why: 'Память почти не тратится, но задача требует устойчивого изменения поведения модели, а не только инструкции.', hint: 'Когда нужен новый навык или стиль ответа, LoRA обычно сильнее prompt-only.' }
+      ]
+    },
+    {
+      title: 'Rank и alpha',
+      goal: 'Подобрать r/alpha/dropout без переобучения.',
+      scenario: 'Датасет небольшой. Нужно поднять validation score, но не дать адаптеру слишком агрессивно переписать базу.',
+      metrics: { quality: 68, memory: 45, forgetting: 28, dataset: 58, readiness: 42 },
+      controls: true
+    },
+    {
+      title: 'Target modules',
+      goal: 'Выбрать модули для Llama-like архитектуры.',
+      scenario: 'Нужно решить, куда вставлять LoRA: только attention или ещё MLP-проекции.',
+      metrics: { quality: 62, memory: 48, forgetting: 30, dataset: 70, readiness: 38 },
+      modules: true
+    },
+    {
+      title: 'QLoRA survival',
+      goal: 'Уместиться в 16 GB и сохранить trainability.',
+      scenario: 'Модель 13B не помещается в обычном режиме. Нужна конфигурация памяти, а не магическое увеличение GPU.',
+      metrics: { quality: 64, memory: 92, forgetting: 32, dataset: 72, readiness: 36 },
+      actions: [
+        { label: 'NF4 + double quant + checkpointing', ok: true, delta: { quality: 9, memory: -34, forgetting: 2, readiness: 28 }, why: 'QLoRA хранит базу в 4-bit NF4, double quant экономит ещё память, checkpointing снижает activation memory.' },
+        { label: 'Увеличить batch size до 16', ok: false, delta: { quality: 5, memory: 24, forgetting: 8, readiness: -14 }, why: 'Большой batch может стабилизировать обучение, но здесь первым ограничением является память.', hint: 'Сначала включи QLoRA и gradient accumulation, потом повышай effective batch.' },
+        { label: 'rank 128 без квантования', ok: false, delta: { quality: 8, memory: 30, forgetting: 16, readiness: -18 }, why: 'Высокий rank увеличивает ёмкость и память, а без квантования 13B не переживёт лимит.', hint: 'Для ограниченной GPU начни с r=8..32 и NF4.' }
+      ]
+    },
+    {
+      title: 'Eval & Deploy',
+      goal: 'Пройти validation, regression prompts и выбрать деплой.',
+      scenario: 'Train loss красивый. Теперь надо доказать, что адаптер полезен вне train split и правильно доставить его в inference.',
+      metrics: { quality: 78, memory: 58, forgetting: 54, dataset: 74, readiness: 58 },
+      actions: [
+        { label: 'Baseline, validation split, regression prompts', ok: true, delta: { quality: 10, memory: 2, forgetting: -18, readiness: 26 }, why: 'Eval отделяет реальный прирост от запоминания train split и ловит регрессии поведения базовой модели.' },
+        { label: 'Смотреть только train loss', ok: false, delta: { quality: 4, memory: 0, forgetting: 18, readiness: -16 }, why: 'Train loss не показывает generalization. Можно получить высокий train score и слабый validation.', hint: 'Добавь baseline, held-out validation и ручные контрольные prompts.' },
+        { label: 'Adapter-first для частых переключений задач', ok: true, delta: { quality: 6, memory: -4, forgetting: -4, readiness: 18 }, why: 'Adapter-first удобно хранит маленькие LoRA-адаптеры отдельно и переключает их без копирования полной базы.' }
+      ]
+    }
   ];
+  const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+  let state = { level: saved.level || 0, unlocked: saved.unlocked || 1, completed: saved.completed || [], metrics: levels[saved.level || 0].metrics };
   const meters = {
     quality: game.querySelector('[data-game-meter="quality"] i'),
     memory: game.querySelector('[data-game-meter="memory"] i'),
     forgetting: game.querySelector('[data-game-meter="forgetting"] i'),
+    dataset: game.querySelector('[data-game-meter="dataset"] i'),
     readiness: game.querySelector('[data-game-meter="readiness"] i')
   };
   const values = {
     quality: game.querySelector('[data-game-value="quality"]'),
     memory: game.querySelector('[data-game-value="memory"]'),
     forgetting: game.querySelector('[data-game-value="forgetting"]'),
+    dataset: game.querySelector('[data-game-value="dataset"]'),
     readiness: game.querySelector('[data-game-value="readiness"]')
   };
   const clamp = (value) => Math.max(0, Math.min(100, value));
+  const persist = () => localStorage.setItem(storageKey, JSON.stringify({
+    level: state.level,
+    unlocked: state.unlocked,
+    completed: state.completed
+  }));
   const renderStats = () => {
     Object.keys(meters).forEach((key) => {
       if (!meters[key] || !values[key]) return;
-      meters[key].style.width = stats[key] + '%';
-      values[key].textContent = stats[key] + '%';
+      meters[key].style.width = state.metrics[key] + '%';
+      values[key].textContent = state.metrics[key] + '%';
     });
   };
-  const addLog = (text) => {
-    log.innerHTML = '<p>' + text + '</p>' + log.innerHTML;
+  const addLog = (text, tone = '') => {
+    log.innerHTML = `<p class="${tone}">${text}</p>` + log.innerHTML;
   };
-  const renderMatrix = () => {
-    matrix.innerHTML = '';
-    const active = Math.max(4, Math.round(stats.readiness / 7));
-    for (let idx = 0; idx < 16; idx += 1) {
-      const cell = document.createElement('button');
-      cell.type = 'button';
-      cell.className = idx < active ? 'plot grown' : 'plot';
-      cell.textContent = idx < active ? 'BA' : 'W0';
-      matrix.append(cell);
-    }
+  const renderBoard = () => {
+    const level = levels[state.level];
+    board.innerHTML = ['Data', 'Target modules', 'LoRA config', 'Memory plan', 'Eval', 'Deploy'].map((step, index) => {
+      const active = state.metrics.readiness > 24 + index * 11;
+      return `<div class="adapter-node ${active ? 'active' : ''}"><b>${index + 1}</b><span>${step}</span></div>`;
+    }).join('');
+    board.setAttribute('aria-label', `Пайплайн миссии: ${level.title}`);
   };
-  const deal = () => {
-    const tray = game.querySelector('.game-actions');
-    const roundActions = shuffle(actions).slice(0, 3);
-    tray.innerHTML = roundActions.map((action, index) => (
-      '<button type="button" class="action-card ' + action.type + '" data-action="' + index + '">' +
-      '<strong>' + action.name + '</strong><span>' + action.text + '</span></button>'
-    )).join('');
-    tray.querySelectorAll('.action-card').forEach((button, index) => {
-      button.addEventListener('click', () => applyAction(roundActions[index]));
+  const renderMap = () => {
+    levelMap.innerHTML = levels.map((level, index) => {
+      const done = state.completed.includes(index);
+      const locked = index >= state.unlocked;
+      return `<button type="button" class="${index === state.level ? 'active' : ''} ${done ? 'done' : ''}" ${locked ? 'disabled' : ''} data-level="${index}" aria-label="Уровень ${index + 1}: ${level.title}">
+        <span>${index + 1}</span><b>${level.title}</b>
+      </button>`;
+    }).join('');
+    levelMap.querySelectorAll('button:not([disabled])').forEach((button) => {
+      button.addEventListener('click', () => {
+        state.level = Number(button.dataset.level);
+        loadLevel();
+      });
     });
   };
   const applyAction = (action) => {
-    stats.turn += 1;
-    stats.quality = clamp(stats.quality + action.q);
-    stats.memory = clamp(stats.memory + action.m);
-    stats.forgetting = clamp(stats.forgetting + action.f);
-    stats.readiness = clamp(stats.readiness + action.ready + Math.round(stats.quality / 18) - Math.round(stats.forgetting / 22));
+    Object.keys(action.delta).forEach((key) => {
+      state.metrics[key] = clamp(state.metrics[key] + action.delta[key]);
+    });
     renderStats();
-    renderMatrix();
-    addLog('Ход ' + stats.turn + ': ' + action.text);
-    if (stats.memory >= 92) addLog('GPU memory почти исчерпана: уменьшите batch/rank или включите QLoRA.');
-    if (stats.forgetting >= 82) addLog('Forgetting score слишком высок: нужен eval, dropout или меньший alpha.');
-    if (stats.readiness >= 86 && stats.quality >= 76 && stats.memory < 90 && stats.forgetting < 70) {
-      addLog('Победа: адаптер готов к финальной оценке и сохранению.');
+    renderBoard();
+    feedback.innerHTML = `<strong>${action.ok ? 'Хороший ход' : 'Рискованный ход'}</strong><p>${action.why}</p>${action.hint ? `<p class="hint">${action.hint}</p>` : ''}`;
+    addLog(`${action.label}: ${action.why}`, action.ok ? 'success' : 'warning');
+    if (action.ok) completeLevel(action.why);
+  };
+  const completeLevel = (reason) => {
+    if (!state.completed.includes(state.level)) state.completed.push(state.level);
+    state.unlocked = Math.max(state.unlocked, Math.min(levels.length, state.level + 2));
+    persist();
+    renderMap();
+    if (state.completed.length === levels.length) {
+      report.hidden = false;
+      report.innerHTML = '<h3>Финальный отчёт</h3><p>Вы прошли путь Adapter Engineer: выбрали LoRA вместо дорогого full fine-tuning, сбалансировали rank/alpha/dropout, подобрали target_modules, применили QLoRA для памяти и закрыли eval/deploy-план.</p>';
       unlockAchievement('lab');
     }
-    deal();
+    game.querySelector('[data-game-next]').disabled = state.level >= levels.length - 1;
   };
-  game.querySelector('[data-game-reset]').addEventListener('click', () => {
-    Object.assign(stats, { quality: 38, memory: 30, forgetting: 18, readiness: 24, turn: 0 });
-    log.innerHTML = '';
-    addLog('Запуск LoRA Lab: настройте адаптер без перерасхода памяти и переобучения.');
+  const renderControlsLevel = () => {
+    actionsBox.innerHTML = `
+      <div class="quest-control"><label>rank r <b data-rank-value>16</b><input type="range" min="4" max="96" value="16" data-quest-rank></label></div>
+      <div class="quest-control"><label>alpha <b data-alpha-value>32</b><input type="range" min="8" max="192" value="32" data-quest-alpha></label></div>
+      <div class="quest-control"><label>dropout <b data-dropout-value>0.05</b><input type="range" min="0" max="20" value="5" data-quest-dropout></label></div>
+      <button type="button" class="action-card good" data-tune-check><strong>Проверить настройки</strong><span>Цель: r 8-32, alpha около 2r, dropout 0.05-0.1 для небольшого датасета.</span></button>`;
+    const update = () => {
+      const r = Number(game.querySelector('[data-quest-rank]').value);
+      const alpha = Number(game.querySelector('[data-quest-alpha]').value);
+      const dropout = Number(game.querySelector('[data-quest-dropout]').value) / 100;
+      game.querySelector('[data-rank-value]').textContent = r;
+      game.querySelector('[data-alpha-value]').textContent = alpha;
+      game.querySelector('[data-dropout-value]').textContent = dropout.toFixed(2);
+    };
+    actionsBox.querySelectorAll('input').forEach((input) => input.addEventListener('input', update));
+    actionsBox.querySelector('[data-tune-check]').addEventListener('click', () => {
+      const r = Number(game.querySelector('[data-quest-rank]').value);
+      const alpha = Number(game.querySelector('[data-quest-alpha]').value);
+      const dropout = Number(game.querySelector('[data-quest-dropout]').value) / 100;
+      const ok = r >= 8 && r <= 32 && alpha >= r && alpha <= r * 3 && dropout >= 0.04 && dropout <= 0.12;
+      applyAction(ok
+        ? { label: `r=${r}, alpha=${alpha}, dropout=${dropout.toFixed(2)}`, ok: true, delta: { quality: 16, memory: 12, forgetting: -6, dataset: 4, readiness: 28 }, why: 'Баланс ёмкости и регуляризации: rank даёт выразительность, alpha не доминирует, dropout снижает overfit.' }
+        : { label: `r=${r}, alpha=${alpha}, dropout=${dropout.toFixed(2)}`, ok: false, delta: { quality: 5, memory: r > 48 ? 24 : 8, forgetting: alpha > r * 4 || dropout < 0.02 ? 20 : 8, dataset: 0, readiness: -12 }, why: 'Конфигурация несбалансирована: слишком высокий rank/alpha или нулевой dropout повышают память и overfit.', hint: 'Попробуй r=16, alpha=32, dropout=0.05.' });
+    });
+    update();
+  };
+  const renderModulesLevel = () => {
+    const modules = ['q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj', 'embed_tokens', 'lm_head'];
+    actionsBox.innerHTML = `<div class="module-picker">${modules.map((m) => `<label><input type="checkbox" value="${m}" ${['q_proj', 'v_proj'].includes(m) ? 'checked' : ''}> ${m}</label>`).join('')}</div><button class="action-card good" type="button" data-modules-check><strong>Проверить target_modules</strong><span>Attention-проекции обычно безопасный старт, MLP добавляет ёмкость и расход памяти.</span></button>`;
+    actionsBox.querySelector('[data-modules-check]').addEventListener('click', () => {
+      const picked = [...actionsBox.querySelectorAll('input:checked')].map((input) => input.value);
+      const hasCore = picked.includes('q_proj') && picked.includes('v_proj');
+      const hasBad = picked.includes('embed_tokens') || picked.includes('lm_head');
+      const hasMlp = picked.some((m) => ['gate_proj', 'up_proj', 'down_proj'].includes(m));
+      applyAction(hasCore && !hasBad
+        ? { label: picked.join(', '), ok: true, delta: { quality: hasMlp ? 18 : 12, memory: hasMlp ? 18 : 8, forgetting: hasMlp ? 6 : 2, dataset: 4, readiness: 26 }, why: hasMlp ? 'Attention + MLP повышает ёмкость адаптера, но требует больше памяти и eval-контроля.' : 'q_proj/v_proj дают понятный минимальный LoRA-старт для attention без лишнего риска.' }
+        : { label: picked.join(', ') || 'ничего не выбрано', ok: false, delta: { quality: -4, memory: 10, forgetting: 10, dataset: 0, readiness: -16 }, why: 'Без q_proj/v_proj адаптер слабо влияет на attention, а lm_head/embed_tokens часто требуют отдельной осторожности.', hint: 'Начни с q_proj и v_proj; добавляй o_proj/MLP только при нехватке качества.' });
+    });
+  };
+  const renderActions = () => {
+    const level = levels[state.level];
+    if (level.controls) return renderControlsLevel();
+    if (level.modules) return renderModulesLevel();
+    actionsBox.innerHTML = level.actions.map((action, index) => (
+      `<button type="button" class="action-card ${action.ok ? 'good' : 'risk'}" data-action="${index}"><strong>${action.label}</strong><span>${action.ok ? 'Почему помогает' : 'Где риск'}: ${action.why}</span></button>`
+    )).join('');
+    actionsBox.querySelectorAll('.action-card').forEach((button, index) => {
+      button.addEventListener('click', () => applyAction(level.actions[index]));
+    });
+  };
+  function loadLevel() {
+    const level = levels[state.level];
+    state.metrics = { ...level.metrics };
+    missionTitle.textContent = `Уровень ${state.level + 1}. ${level.title}`;
+    missionGoal.textContent = level.goal;
+    missionScenario.textContent = level.scenario;
+    feedback.innerHTML = '<strong>Выберите инженерное решение</strong><p>После хода появится объяснение, что изменилось и почему это важно для LoRA.</p>';
     renderStats();
-    renderMatrix();
-    deal();
+    renderBoard();
+    renderMap();
+    renderActions();
+    game.querySelector('[data-game-next]').disabled = !state.completed.includes(state.level) || state.level >= levels.length - 1;
+    persist();
+  }
+  game.querySelector('[data-game-reset]').addEventListener('click', () => {
+    localStorage.removeItem(storageKey);
+    state = { level: 0, unlocked: 1, completed: [], metrics: levels[0].metrics };
+    log.innerHTML = '';
+    report.hidden = true;
+    addLog('LoRA Quest начат заново. Пройдите миссии от выбора PEFT до deploy.');
+    loadLevel();
   });
-  game.querySelector('[data-game-reset]').click();
+  game.querySelector('[data-game-next]').addEventListener('click', () => {
+    if (state.level < levels.length - 1) {
+      state.level += 1;
+      state.unlocked = Math.max(state.unlocked, state.level + 1);
+      loadLevel();
+    }
+  });
+  addLog('LoRA Quest: выберите миссию и соберите устойчивый adapter pipeline.');
+  loadLevel();
 }
 
 function initCourseProgress() {
@@ -362,22 +497,164 @@ function enhanceCodeEditor(editor) {
   update();
 }
 
-function pseudoCheckPython(code) {
-  const linesCount = code.split('\n').length;
-  const signals = [
-    ['LoraConfig', /LoraConfig/.test(code)],
-    ['rank/r', /\br\s*=|rank/.test(code)],
-    ['target_modules', /target_modules/.test(code)],
-    ['Python-синтаксис', /def |from |import |print\(/.test(code)]
-  ];
-  const found = signals.filter(([, ok]) => ok).map(([name]) => name);
-  const missing = signals.filter(([, ok]) => !ok).map(([name]) => name);
+function buildLoraConfigPreview(config) {
+  const target = config.targetModules.map((item) => `"${item}"`).join(', ');
+  const quant = config.quantization === 'none' ? '' : `
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="${config.quantization}",
+    bnb_4bit_use_double_quant=${config.doubleQuant ? 'True' : 'False'}
+)`;
+  return `${quant}
+lora_config = LoraConfig(
+    r=${config.rank},
+    lora_alpha=${config.alpha},
+    lora_dropout=${config.dropout.toFixed(2)},
+    target_modules=[${target}],
+    bias="none",
+    task_type="CAUSAL_LM"
+)
+
+training_plan = {
+    "batch_size": ${config.batchSize},
+    "sequence_length": ${config.sequenceLength},
+    "learning_rate": ${config.learningRate},
+    "validation_split": ${config.validationSplit.toFixed(2)},
+    "gradient_checkpointing": ${config.gradientCheckpointing ? 'True' : 'False'}
+}`.trim();
+}
+
+function reviewLoraPlan(config) {
+  const warnings = [];
+  const tips = [];
+  const alphaRatio = config.alpha / Math.max(1, config.rank);
+  const moduleSet = new Set(config.targetModules);
+  const memoryLoad = (config.quantization === 'none' ? 46 : 20)
+    + config.rank * (config.quantization === 'none' ? 1.2 : 0.62)
+    + config.batchSize * config.sequenceLength / 800
+    - (config.gradientCheckpointing ? 10 : 0)
+    - (config.doubleQuant ? 4 : 0);
+  if (config.rank > 64) warnings.push('rank выше 64 резко увеличивает память и риск overfit; начните с 8-32, если нет сильного сигнала качества.');
+  if (alphaRatio > 4) warnings.push('alpha слишком велик относительно rank: адаптер может доминировать и ухудшать forgetting score.');
+  if (config.dropout < 0.03) warnings.push('dropout почти выключен. Для небольших датасетов это повышает риск переобучения.');
+  if (config.validationSplit < 0.05) warnings.push('validation split слишком мал или отсутствует: вы не увидите generalization до деплоя.');
+  if (!moduleSet.has('q_proj') || !moduleSet.has('v_proj')) warnings.push('target_modules без q_proj/v_proj часто дают слабый старт для attention-LoRA.');
+  if (moduleSet.has('lm_head') || moduleSet.has('embed_tokens')) warnings.push('lm_head/embed_tokens требуют отдельной проверки: они могут увеличить память и изменить словарь/голову модели.');
+  if (memoryLoad > 86) warnings.push('высокий риск OOM: уменьшите batch/sequence length/rank или включите NF4, double quantization и checkpointing.');
+  if (config.quantization !== 'none') tips.push('QLoRA снижает память базы; качество держится за счёт обучения LoRA-адаптера поверх 4-bit весов.');
+  if (config.gradientCheckpointing) tips.push('Gradient checkpointing экономит activation memory ценой более медленного шага обучения.');
+  if (moduleSet.has('gate_proj') || moduleSet.has('up_proj') || moduleSet.has('down_proj')) tips.push('MLP-проекции добавляют ёмкость, но требуют eval-контроля и большего memory budget.');
+  tips.push(`Оценка memory load: ${Math.round(Math.max(8, Math.min(100, memoryLoad)))}%.`);
   return [
-    'Учебная проверка Python-кода выполнена в браузере без backend.',
-    'Строк: ' + linesCount + '. Найдено: ' + (found.length ? found.join(', ') : 'нет ключевых элементов') + '.',
-    missing.length ? 'Что можно добавить: ' + missing.join(', ') + '.' : 'Структура похожа на LoRA/PEFT-фрагмент.',
-    'Для реального обучения запустите код в Python-окружении с transformers, peft и torch.'
-  ].join('\n');
+    warnings.length ? 'Предупреждения:\n- ' + warnings.join('\n- ') : 'План выглядит сбалансированным для первого LoRA/QLoRA-эксперимента.',
+    'Советы инженера:\n- ' + tips.join('\n- '),
+    'Это статический помощник: он анализирует конфиг и риски, но не запускает Python в браузере.'
+  ].join('\n\n');
+}
+
+function getStudioConfig(studio) {
+  return {
+    rank: Number(studio.querySelector('[name="rank"]').value),
+    alpha: Number(studio.querySelector('[name="alpha"]').value),
+    dropout: Number(studio.querySelector('[name="dropout"]').value) / 100,
+    targetModules: [...studio.querySelectorAll('[name="targetModules"]:checked')].map((input) => input.value),
+    quantization: studio.querySelector('[name="quantization"]').value,
+    doubleQuant: studio.querySelector('[name="doubleQuant"]').checked,
+    batchSize: Number(studio.querySelector('[name="batchSize"]').value),
+    sequenceLength: Number(studio.querySelector('[name="sequenceLength"]').value),
+    learningRate: studio.querySelector('[name="learningRate"]').value,
+    validationSplit: Number(studio.querySelector('[name="validationSplit"]').value) / 100,
+    gradientCheckpointing: studio.querySelector('[name="gradientCheckpointing"]').checked
+  };
+}
+
+function initConfigStudio() {
+  document.querySelectorAll('.code-runner').forEach((runner, index) => {
+    const id = runner.dataset.runnerId || `runner-${index}`;
+    const key = `loraConfigStudio:${id}`;
+    runner.classList.add('config-studio');
+    runner.innerHTML = `
+      <div class="code-runner__head"><h2>LoRA Config Studio</h2><span>сборка конфига и проверка рисков без запуска Python</span></div>
+      <form class="config-studio__grid" aria-label="Параметры LoRA Config Studio">
+        <label>rank r<input name="rank" type="number" min="1" max="256" value="16"></label>
+        <label>alpha<input name="alpha" type="number" min="1" max="512" value="32"></label>
+        <label>dropout, %<input name="dropout" type="number" min="0" max="50" value="5"></label>
+        <label>quantization<select name="quantization"><option value="nf4">QLoRA NF4</option><option value="fp4">QLoRA FP4</option><option value="none">без квантования</option></select></label>
+        <label>batch size<input name="batchSize" type="number" min="1" max="128" value="4"></label>
+        <label>sequence length<input name="sequenceLength" type="number" min="128" max="32768" value="2048"></label>
+        <label>learning rate<input name="learningRate" value="2e-4"></label>
+        <label>validation split, %<input name="validationSplit" type="number" min="0" max="40" value="10"></label>
+        <label class="config-studio__toggle"><input name="doubleQuant" type="checkbox" checked> double quantization</label>
+        <label class="config-studio__toggle"><input name="gradientCheckpointing" type="checkbox" checked> gradient checkpointing</label>
+      </form>
+      <fieldset class="config-studio__modules"><legend>target_modules</legend>
+        ${['q_proj', 'v_proj', 'k_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj', 'lm_head'].map((module) => `<label><input type="checkbox" name="targetModules" value="${module}" ${['q_proj', 'v_proj'].includes(module) ? 'checked' : ''}> ${module}</label>`).join('')}
+      </fieldset>
+      <div class="code-runner__actions"><button class="code-runner__build button" type="button">Собрать конфиг</button><button class="code-runner__run button secondary" type="button">Проверить план</button><button class="code-runner__solution-btn button secondary" type="button">Показать пример</button><button class="code-runner__copy button secondary" type="button">Скопировать конфиг</button><button class="code-runner__clear button secondary" type="button">Сбросить</button></div>
+      <div class="config-studio__workspace"><pre class="code-runner__solution"><code class="language-python"></code></pre><pre class="code-runner__output" aria-live="polite"></pre></div>`;
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        Object.entries(data).forEach(([name, value]) => {
+          if (name === 'targetModules') {
+            runner.querySelectorAll('[name="targetModules"]').forEach((input) => { input.checked = value.includes(input.value); });
+          } else {
+            const input = runner.querySelector(`[name="${name}"]`);
+            if (input?.type === 'checkbox') input.checked = value;
+            else if (input) input.value = value;
+          }
+        });
+      } catch {}
+    }
+    const preview = runner.querySelector('.code-runner__solution code');
+    const output = runner.querySelector('.code-runner__output');
+    const sync = () => {
+      const config = getStudioConfig(runner);
+      preview.textContent = buildLoraConfigPreview(config);
+      localStorage.setItem(key, JSON.stringify(config));
+    };
+    runner.addEventListener('input', sync);
+    runner.querySelector('.code-runner__build').addEventListener('click', () => {
+      sync();
+      output.textContent = 'Конфиг собран в live-preview. Проверьте план, чтобы увидеть риски перед реальным запуском в Python-окружении.';
+    });
+    runner.querySelector('.code-runner__run').addEventListener('click', () => {
+      output.textContent = reviewLoraPlan(getStudioConfig(runner));
+    });
+    runner.querySelector('.code-runner__solution-btn').addEventListener('click', () => {
+      runner.querySelector('[name="rank"]').value = id.includes('6') ? 8 : 16;
+      runner.querySelector('[name="alpha"]').value = id.includes('6') ? 16 : 32;
+      runner.querySelector('[name="dropout"]').value = id.includes('3') ? 10 : 5;
+      runner.querySelector('[name="quantization"]').value = id.includes('6') ? 'nf4' : 'none';
+      runner.querySelector('[name="validationSplit"]').value = id.includes('7') ? 15 : 10;
+      sync();
+      output.textContent = 'Пример применён. Нажмите «Проверить план», чтобы увидеть риски и советы.';
+    });
+    runner.querySelector('.code-runner__clear').addEventListener('click', () => {
+      localStorage.removeItem(key);
+      runner.querySelector('form').reset();
+      runner.querySelectorAll('[name="targetModules"]').forEach((input) => { input.checked = ['q_proj', 'v_proj'].includes(input.value); });
+      sync();
+      output.textContent = 'Поля сброшены. Соберите новый конфиг.';
+    });
+    runner.querySelector('.code-runner__copy').addEventListener('click', async (event) => {
+      try {
+        await navigator.clipboard.writeText(preview.textContent);
+        event.currentTarget.textContent = 'Скопировано';
+        setTimeout(() => { event.currentTarget.textContent = 'Скопировать конфиг'; }, 1400);
+      } catch {
+        const area = document.createElement('textarea');
+        area.value = preview.textContent;
+        document.body.append(area);
+        area.select();
+        document.execCommand('copy');
+        area.remove();
+      }
+    });
+    sync();
+    output.textContent = 'Соберите конфиг и нажмите «Проверить план». Python здесь не запускается.';
+  });
 }
 
 function initCodePractice() {
@@ -389,11 +666,40 @@ function initCodePractice() {
     const copyBtn = box.querySelector('.code-practice__copy');
     const clearBtn = box.querySelector('.code-practice__clear');
     if (!editor) return;
+    box.classList.add('config-practice');
     const key = `loraCourseCode:${id}`;
     const saved = localStorage.getItem(key);
     if (saved !== null) editor.value = saved;
     enhanceCodeEditor(editor);
     editor.addEventListener('input', () => localStorage.setItem(key, editor.value));
+    const reviewBtn = document.createElement('button');
+    reviewBtn.className = 'code-practice__review button';
+    reviewBtn.type = 'button';
+    reviewBtn.textContent = 'Проверить план';
+    const reviewOutput = document.createElement('pre');
+    reviewOutput.className = 'code-runner__output';
+    reviewOutput.setAttribute('aria-live', 'polite');
+    reviewOutput.textContent = 'Опишите LoraConfig или план обучения, затем проверьте риски. Код не выполняется.';
+    box.querySelector('.code-practice__actions')?.prepend(reviewBtn);
+    box.append(reviewOutput);
+    reviewBtn.addEventListener('click', () => {
+      const text = editor.value;
+      const modules = ['q_proj', 'v_proj', 'k_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj', 'lm_head'].filter((module) => text.includes(module));
+      const readNumber = (pattern, fallback) => Number(text.match(pattern)?.[1] || fallback);
+      reviewOutput.textContent = reviewLoraPlan({
+        rank: readNumber(/\br\s*=\s*(\d+)/, 16),
+        alpha: readNumber(/lora_alpha\s*=\s*(\d+)/, 32),
+        dropout: Number(text.match(/lora_dropout\s*=\s*([0-9.]+)/)?.[1] || 0.05),
+        targetModules: modules.length ? modules : ['q_proj', 'v_proj'],
+        quantization: /nf4|4bit|4-bit|QLoRA/i.test(text) ? 'nf4' : 'none',
+        doubleQuant: /double/i.test(text),
+        batchSize: readNumber(/batch_size["']?\s*[:=]\s*(\d+)/, 4),
+        sequenceLength: readNumber(/sequence_length["']?\s*[:=]\s*(\d+)/, 2048),
+        learningRate: text.match(/learning_rate["']?\s*[:=]\s*([0-9.e-]+)/)?.[1] || '2e-4',
+        validationSplit: /validation|eval/i.test(text) ? 0.1 : 0,
+        gradientCheckpointing: /checkpoint/i.test(text)
+      });
+    });
     solutionBtn?.addEventListener('click', () => {
       if (!solution) return;
       const hidden = solution.hidden;
@@ -420,54 +726,7 @@ function initCodePractice() {
 }
 
 function initCodeRunners() {
-  document.querySelectorAll('.code-runner').forEach((runner, index) => {
-    const id = runner.dataset.runnerId || `runner-${index}`;
-    const editor = runner.querySelector('.code-runner__editor');
-    const output = runner.querySelector('.code-runner__output');
-    const solution = runner.querySelector('.code-runner__solution');
-    const runBtn = runner.querySelector('.code-runner__run');
-    const clearBtn = runner.querySelector('.code-runner__clear');
-    const solutionBtn = runner.querySelector('.code-runner__solution-btn');
-    const copyBtn = runner.querySelector('.code-runner__copy');
-    if (!editor || !output) return;
-    const key = `loraCourseRunner:${id}`;
-    const saved = localStorage.getItem(key);
-    if (saved !== null) editor.value = saved;
-    enhanceCodeEditor(editor);
-    editor.addEventListener('input', () => localStorage.setItem(key, editor.value));
-    const runCode = () => {
-      output.textContent = pseudoCheckPython(editor.value);
-    };
-    runBtn?.addEventListener('click', runCode);
-    clearBtn?.addEventListener('click', () => {
-      editor.value = '';
-      output.textContent = 'Вывод появится здесь.';
-      localStorage.removeItem(key);
-      editor.dispatchEvent(new Event('input'));
-      editor.focus();
-    });
-    solutionBtn?.addEventListener('click', () => {
-      if (!solution) return;
-      const hidden = solution.hidden;
-      solution.hidden = !hidden;
-      solutionBtn.textContent = hidden ? 'Скрыть решение' : 'Показать решение';
-    });
-    copyBtn?.addEventListener('click', async () => {
-      const code = solution?.innerText.trim() || '';
-      try {
-        await navigator.clipboard.writeText(code);
-        copyBtn.textContent = 'Скопировано';
-        setTimeout(() => { copyBtn.textContent = 'Скопировать решение'; }, 1400);
-      } catch {
-        const area = document.createElement('textarea');
-        area.value = code;
-        document.body.append(area);
-        area.select();
-        document.execCommand('copy');
-        area.remove();
-      }
-    });
-  });
+  initConfigStudio();
 }
 
 function renderQuiz() {
@@ -603,7 +862,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initAdapterLab();
   initAchievements();
   initCommandPalette();
-  initPeterFarmGame();
+  initLoraQuestGame();
   initCourseProgress();
   initMiniTests();
   initInlineChecks();

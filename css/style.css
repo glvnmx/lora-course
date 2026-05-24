@@ -10,7 +10,7 @@
   --primary-2: #1095c1;
   --accent: #f59e0b;
   --rose: #e85d75;
-  --leaf: #19a66a;
+  --success-accent: #16a34a;
   --matrix: #20c997;
   --ink: #182052;
   --bad: #dc2626;
@@ -33,7 +33,7 @@
   --primary-2: #55d4dc;
   --accent: #fbbf24;
   --rose: #fb7185;
-  --leaf: #34d399;
+  --success-accent: #22c55e;
   --matrix: #55d4dc;
   --ink: #0f172a;
   --code: #202a40;
@@ -121,9 +121,9 @@ a:hover {
   color: #fff;
   font-weight: 900;
   background:
-    linear-gradient(135deg, var(--leaf), var(--primary)),
+    linear-gradient(135deg, var(--success-accent), var(--primary)),
     repeating-linear-gradient(90deg, rgba(255,255,255,.22) 0 4px, transparent 4px 8px);
-  box-shadow: 0 10px 26px color-mix(in srgb, var(--leaf) 24%, transparent);
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--success-accent) 24%, transparent);
 }
 
 .top-nav a {
@@ -203,9 +203,9 @@ a:hover {
   width: 9px;
   height: 9px;
   margin-right: 8px;
-  border-radius: 1px 9px 1px 9px;
-  background: linear-gradient(135deg, var(--leaf), var(--accent));
-  transform: rotate(-18deg);
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--success-accent), var(--accent));
+  transform: none;
 }
 
 .lora-stage {
@@ -250,7 +250,7 @@ a:hover {
 }
 
 .base-matrix {
-  background: linear-gradient(145deg, #3858e9, var(--leaf));
+  background: linear-gradient(145deg, #3858e9, var(--success-accent));
 }
 
 .factor-b {
@@ -394,7 +394,7 @@ a:hover {
   right: 0;
   left: 0;
   height: 5px;
-  background: linear-gradient(90deg, var(--leaf), var(--matrix), var(--primary));
+  background: linear-gradient(90deg, var(--success-accent), var(--matrix), var(--primary));
 }
 
 .lecture section {
@@ -410,7 +410,7 @@ a:hover {
   width: 4px;
   height: calc(100% - 1.6em);
   border-radius: 999px;
-  background: linear-gradient(var(--leaf), var(--matrix), transparent);
+  background: linear-gradient(var(--success-accent), var(--matrix), transparent);
   opacity: 0.72;
 }
 
@@ -453,7 +453,7 @@ a:hover {
   height: 14px;
   margin-right: 8px;
   border-radius: 8px 0 8px 0;
-  background: linear-gradient(180deg, var(--leaf), var(--matrix));
+  background: linear-gradient(180deg, var(--success-accent), var(--matrix));
   vertical-align: -2px;
 }
 
@@ -483,7 +483,7 @@ a:hover {
 }
 
 .card:hover {
-  border-color: color-mix(in srgb, var(--leaf) 48%, var(--primary));
+  border-color: color-mix(in srgb, var(--success-accent) 48%, var(--primary));
   box-shadow: var(--shadow);
   text-decoration: none;
   transform: translateY(-4px) rotateX(1deg);
@@ -520,7 +520,7 @@ a:hover {
   padding: 9px 16px;
   border-radius: var(--radius);
   border: 1px solid var(--primary);
-  background: linear-gradient(135deg, var(--primary), var(--primary-2), var(--leaf));
+  background: linear-gradient(135deg, var(--primary), var(--primary-2), var(--success-accent));
   color: #fff;
   font-weight: 820;
   text-decoration: none;
@@ -539,7 +539,7 @@ a:hover {
 }
 
 .button.accent {
-  background: linear-gradient(135deg, var(--accent), #ffcf66, color-mix(in srgb, var(--leaf) 36%, #ffcf66));
+  background: linear-gradient(135deg, var(--accent), #ffcf66, color-mix(in srgb, var(--success-accent) 36%, #ffcf66));
   border-color: var(--accent);
   color: #211403;
 }
@@ -1075,7 +1075,7 @@ select {
   line-height: 1.04;
 }
 
-.peter-badge {
+.quest-badge {
   min-height: 180px;
   display: grid;
   align-content: center;
@@ -1089,7 +1089,7 @@ select {
   box-shadow: var(--soft-shadow);
 }
 
-.peter-badge strong {
+.quest-badge strong {
   font-size: 2rem;
 }
 
@@ -1117,7 +1117,7 @@ select {
   gap: 20px;
 }
 
-.farm-field {
+.adapter-board {
   display: grid;
   grid-template-columns: repeat(4, minmax(58px, 1fr));
   gap: 12px;
@@ -1272,7 +1272,7 @@ select {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--leaf), var(--primary), var(--accent));
+  background: linear-gradient(90deg, var(--success-accent), var(--primary), var(--accent));
   transition: width 0.35s ease;
 }
 
@@ -1322,9 +1322,9 @@ select {
 .inline-check {
   margin: 18px 0;
   padding: 18px;
-  border-color: color-mix(in srgb, var(--leaf) 34%, var(--line));
+  border-color: color-mix(in srgb, var(--success-accent) 34%, var(--line));
   background:
-    radial-gradient(circle at 8% 16%, color-mix(in srgb, var(--leaf) 13%, transparent), transparent 42%),
+    radial-gradient(circle at 8% 16%, color-mix(in srgb, var(--success-accent) 13%, transparent), transparent 42%),
     var(--panel);
 }
 
@@ -1335,7 +1335,7 @@ select {
 .inline-check__answer {
   margin-top: 12px;
   padding: 12px;
-  border-left: 4px solid var(--leaf);
+  border-left: 4px solid var(--success-accent);
   border-radius: 0 var(--radius) var(--radius) 0;
   background: color-mix(in srgb, var(--code) 74%, transparent);
 }
@@ -1370,7 +1370,7 @@ select {
   color: #fff;
   font-size: 1.6rem;
   font-weight: 900;
-  background: linear-gradient(135deg, var(--leaf), var(--accent));
+  background: linear-gradient(135deg, var(--success-accent), var(--accent));
 }
 
 .skill-card h2 {
@@ -1437,7 +1437,7 @@ select {
   padding: 9px 14px;
   border: 1px solid var(--primary);
   border-radius: var(--radius);
-  background: linear-gradient(135deg, var(--primary), var(--leaf));
+  background: linear-gradient(135deg, var(--primary), var(--success-accent));
   color: #fff;
   font-weight: 820;
   cursor: pointer;
@@ -1485,7 +1485,7 @@ select {
 .code-runner__solution,
 .code-practice__solution {
   margin-top: 14px;
-  border: 1px solid color-mix(in srgb, var(--leaf) 34%, var(--line));
+  border: 1px solid color-mix(in srgb, var(--success-accent) 34%, var(--line));
 }
 
 .code-runner__output {
@@ -1520,8 +1520,8 @@ select {
 }
 
 .author-card svg circle {
-  fill: color-mix(in srgb, var(--leaf) 18%, var(--code));
-  stroke: var(--leaf);
+  fill: color-mix(in srgb, var(--success-accent) 18%, var(--code));
+  stroke: var(--success-accent);
   stroke-width: 3;
 }
 
@@ -1878,7 +1878,7 @@ select {
   --accent: #f59e0b;
   --success: #10b981;
   --danger: #ef4444;
-  --leaf: var(--success);
+  --success-accent: var(--success);
   --matrix: #14d7b3;
   --rose: #8b5cf6;
   --bad: var(--danger);
@@ -1915,13 +1915,13 @@ select {
   --primary: #78a6ff;
   --primary-2: #38d5f2;
   --accent: #fbbf24;
-  --success: #34d399;
+  --success: #22c55e;
   --danger: #fb7185;
-  --leaf: var(--success);
+  --success-accent: var(--success);
   --matrix: #5eead4;
   --rose: #a78bfa;
   --bad: var(--danger);
-  --good: #34d399;
+  --good: #22c55e;
   --ink: #020617;
   --code: rgba(15, 23, 42, 0.88);
   --glass-border: rgba(221, 232, 255, 0.2);
@@ -2767,7 +2767,7 @@ input[type="checkbox"] {
   padding: clamp(22px, 3vw, 38px);
 }
 
-.peter-badge {
+.quest-badge {
   border-radius: var(--radius-xl);
   background:
     radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.48), transparent 32%),
@@ -2782,7 +2782,7 @@ input[type="checkbox"] {
   grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
 }
 
-.farm-field {
+.adapter-board {
   min-height: clamp(280px, 32vw, 420px);
   grid-template-columns: repeat(4, minmax(52px, 1fr));
   border-color: color-mix(in srgb, var(--matrix) 28%, var(--line));
@@ -3141,7 +3141,7 @@ input[type="checkbox"] {
     grid-template-columns: 1fr;
   }
 
-  .farm-field {
+  .adapter-board {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -3163,5 +3163,443 @@ input[type="checkbox"] {
   .reveal {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* Liquid Glass refresh */
+:root {
+  --panel: rgba(255, 255, 255, 0.34);
+  --panel-strong: rgba(255, 255, 255, 0.48);
+  --panel-readable: rgba(255, 255, 255, 0.68);
+  --glass-blur: 36px;
+  --glass-saturate: 1.55;
+  --glass-border: rgba(255, 255, 255, 0.58);
+  --success-accent: #16a34a;
+  --matrix: #55d4dc;
+}
+
+[data-theme="dark"] {
+  --panel: rgba(10, 16, 28, 0.42);
+  --panel-strong: rgba(16, 24, 42, 0.54);
+  --panel-readable: rgba(13, 19, 34, 0.74);
+  --glass-border: rgba(255, 255, 255, 0.14);
+}
+
+body {
+  background:
+    radial-gradient(circle at 12% 10%, rgba(56, 88, 233, 0.22), transparent 28vw),
+    radial-gradient(circle at 82% 14%, rgba(85, 212, 220, 0.18), transparent 25vw),
+    radial-gradient(circle at 56% 88%, rgba(139, 92, 246, 0.16), transparent 28vw),
+    radial-gradient(circle at 92% 80%, rgba(245, 158, 11, 0.18), transparent 24vw),
+    linear-gradient(135deg, var(--bg), var(--bg-2));
+}
+
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary-2) 66%, white);
+  outline-offset: 3px;
+}
+
+.top-nav {
+  top: 14px;
+  width: min(1180px, calc(100% - 28px));
+  margin: 0 auto;
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--panel-strong), color-mix(in srgb, var(--panel) 78%, transparent));
+  box-shadow: 0 18px 70px rgba(22, 36, 80, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+}
+
+.top-nav::before {
+  background:
+    linear-gradient(135deg, var(--primary), var(--primary-2) 55%, #8b5cf6),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.18) 0 4px, transparent 4px 8px);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--primary-2) 28%, transparent);
+}
+
+.button,
+.theme-toggle,
+.tab-button,
+.mini-test__button {
+  border-color: var(--glass-border);
+  background: linear-gradient(135deg, rgba(255,255,255,0.28), rgba(255,255,255,0.10));
+  color: var(--text);
+  box-shadow: 0 12px 32px rgba(31, 48, 105, 0.12), inset 0 1px 0 rgba(255,255,255,0.42);
+  backdrop-filter: blur(24px) saturate(1.35);
+  -webkit-backdrop-filter: blur(24px) saturate(1.35);
+}
+
+.button:not(.secondary),
+.button.accent {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 76%, transparent), color-mix(in srgb, var(--primary-2) 72%, transparent), color-mix(in srgb, var(--accent) 42%, transparent));
+  color: #fff;
+}
+
+.section-heading .eyebrow::before,
+.hero .eyebrow::before,
+.calculator-card .eyebrow::before,
+.wow-strip .eyebrow::before,
+.game-hero .eyebrow::before {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: radial-gradient(circle, #fff 0 18%, var(--primary-2) 35%, transparent 72%);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--primary-2) 68%, transparent);
+  transform: none;
+}
+
+.card,
+.stats-strip,
+.learning-route,
+.course-progress-card,
+.lecture-content,
+.lecture-progress,
+.sidebar,
+.mini-test,
+.practice-task,
+.question,
+.result,
+.tab-shell,
+.adapter-lab,
+.calculator-card,
+.wow-strip,
+.test-callout,
+.code-runner,
+.code-practice,
+.author-card,
+.command-box,
+.game-panel,
+.game-hero,
+.mission-panel,
+.quest-report {
+  border: 1px solid var(--glass-border);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.20), rgba(255,255,255,0.06)),
+    var(--panel);
+  box-shadow: 0 24px 80px rgba(24, 38, 84, 0.15), inset 0 1px 0 rgba(255,255,255,0.48), inset 0 -1px 0 rgba(255,255,255,0.10);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+}
+
+.lecture-content,
+.mini-test,
+.practice-task,
+.question,
+pre,
+code,
+.code-runner__output,
+.code-runner__solution,
+.code-practice__solution,
+.game-log,
+.wow-strip article,
+.lab-toggle {
+  background: var(--panel-readable);
+}
+
+.card,
+.adapter-lab,
+.tab-shell,
+.game-panel {
+  position: relative;
+}
+
+.card::before,
+.game-panel::after,
+.adapter-lab::after,
+.tab-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at var(--mx, 24%) var(--my, 18%), rgba(255,255,255,0.34), transparent 18rem),
+    linear-gradient(120deg, rgba(255,255,255,0.18), transparent 34%, rgba(255,255,255,0.08));
+  opacity: 0.7;
+}
+
+.card > *,
+.adapter-lab > *,
+.tab-shell > *,
+.game-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.config-studio__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(130px, 1fr));
+  gap: 12px;
+}
+
+.config-studio__grid label,
+.config-studio__toggle,
+.config-studio__modules label,
+.quest-control label {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--panel-readable) 82%, transparent);
+  font-weight: 760;
+}
+
+.config-studio input,
+.config-studio select,
+.config-practice textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--panel-readable) 78%, transparent);
+  color: var(--text);
+  font: inherit;
+}
+
+.config-studio input,
+.config-studio select {
+  padding: 9px 10px;
+}
+
+.config-studio__modules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.config-studio__modules label,
+.config-studio__toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.config-studio__workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.9fr);
+  gap: 14px;
+}
+
+.code-runner__output,
+.code-runner__solution {
+  white-space: pre-wrap;
+  min-height: 160px;
+}
+
+.quest-badge {
+  min-height: 180px;
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  padding: 22px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(56, 88, 233, 0.28), rgba(85, 212, 220, 0.18), rgba(245, 158, 11, 0.18)),
+    var(--panel);
+  box-shadow: var(--soft-shadow), inset 0 1px 0 rgba(255,255,255,0.45);
+}
+
+.quest-badge strong {
+  font-size: 2rem;
+}
+
+.game-top__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.level-map {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin: 0 0 18px;
+}
+
+.level-map button {
+  min-height: 82px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--panel-readable) 68%, transparent);
+  color: var(--text);
+  text-align: left;
+}
+
+.level-map button.active {
+  border-color: color-mix(in srgb, var(--primary-2) 62%, var(--line));
+}
+
+.level-map button.done span {
+  background: var(--success-accent);
+}
+
+.level-map span {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin-bottom: 8px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: #fff;
+  font-weight: 900;
+}
+
+.level-map b {
+  display: block;
+  line-height: 1.25;
+}
+
+.mission-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(260px, 1fr);
+  gap: 18px;
+  margin-bottom: 18px;
+  padding: 18px;
+}
+
+.mission-feedback strong {
+  display: block;
+  color: var(--primary);
+}
+
+.mission-feedback .hint,
+.game-log .warning {
+  color: var(--accent);
+}
+
+.game-log .success {
+  color: var(--success-accent);
+}
+
+.adapter-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  gap: 14px;
+  min-height: 360px;
+  padding: 18px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(56,88,233,0.16), rgba(85,212,220,0.10), rgba(245,158,11,0.10)),
+    var(--panel);
+}
+
+.adapter-node {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 10px;
+  min-height: 120px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--panel-readable) 70%, transparent);
+  text-align: center;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.adapter-node.active {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--primary-2) 52%, var(--line));
+  box-shadow: 0 16px 36px rgba(56, 88, 233, 0.14);
+}
+
+.adapter-node b {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+}
+
+.module-picker {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.action-card {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.24), rgba(255,255,255,0.08)),
+    var(--panel);
+  backdrop-filter: blur(24px) saturate(1.35);
+  -webkit-backdrop-filter: blur(24px) saturate(1.35);
+}
+
+.action-card.good {
+  border-color: color-mix(in srgb, var(--primary-2) 44%, var(--line));
+}
+
+.action-card.risk {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .top-nav,
+  .card,
+  .stats-strip,
+  .learning-route,
+  .course-progress-card,
+  .lecture-content,
+  .lecture-progress,
+  .sidebar,
+  .mini-test,
+  .practice-task,
+  .question,
+  .tab-shell,
+  .adapter-lab,
+  .calculator-card,
+  .wow-strip,
+  .test-callout,
+  .code-runner,
+  .code-practice,
+  .author-card,
+  .game-panel,
+  .game-hero {
+    background: var(--panel-readable);
+  }
+}
+
+@media (max-width: 900px) {
+  .top-nav {
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+
+  .config-studio__grid,
+  .config-studio__workspace,
+  .mission-panel,
+  .level-map {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .adapter-board {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .top-nav {
+    top: 8px;
+    width: calc(100% - 16px);
+    border-radius: 22px;
+  }
+
+  .config-studio__grid,
+  .config-studio__workspace,
+  .mission-panel,
+  .level-map,
+  .module-picker,
+  .adapter-board {
+    grid-template-columns: 1fr;
   }
 }

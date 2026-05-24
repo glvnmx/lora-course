@@ -13,7 +13,7 @@
   <script defer src="../js/main.js"></script>
 </head>
 <body>
-  <nav class="top-nav"><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Lab</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <nav class="top-nav"><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Quest</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
   <main class="layout">
     <aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class=""><small>1.</small> Дорогая донастройка и роль LoRA</a><a href="lecture2.html" class=""><small>2.</small> PEFT и популярность LoRA</a><a href="lecture3.html" class=""><small>3.</small> Rank, alpha и scaling</a><a href="lecture4.html" class="active"><small>4.</small> Target modules в transformer</a><a href="lecture5.html" class=""><small>5.</small> Python, PEFT и LoraConfig</a><a href="lecture6.html" class=""><small>6.</small> QLoRA и память GPU</a><a href="lecture7.html" class=""><small>7.</small> Eval, сравнение с базой и ошибки</a><a href="lecture8.html" class=""><small>8.</small> Merge, storage и deployment</a></aside>
     <article class="content lecture">
@@ -28,8 +28,8 @@
 <section><h2>Trade-off ширины адаптации</h2><p>Чем больше target_modules, тем выше ёмкость и расход памяти. Узкий набор быстрее и дешевле, но может не покрыть нужное поведение. Хорошая практика - начать с q_proj/v_proj, затем расширять список на основании eval и ошибок генераций.</p></section>
       <section class="lesson-summary"><h2>Итоги лекции</h2><ul><li>LoRA встраивается в конкретные линейные модули модели.</li><li>target_modules должны соответствовать именам слоёв архитектуры.</li><li>q_proj и v_proj часто являются хорошим стартом для LLM.</li><li>Расширение target_modules увеличивает качество потенциально, но также размер и риск переобучения.</li></ul></section>
       <section class="code-runner python-runner" data-runner-id="lecture-4">
-        <div class="code-runner__head"><h2>Python-редактор</h2><span>учебный режим без backend</span></div>
-        <textarea class="code-runner__editor language-python" spellcheck="false" placeholder="Напишите Python-код здесь...">def pick_target_modules(model_family):
+        <div class="code-runner__head"><h2>LoRA Config Studio</h2><span>сборка конфига без запуска Python</span></div>
+        <textarea class="code-runner__editor language-python" spellcheck="false" placeholder="Опишите LoraConfig или план обучения...">def pick_target_modules(model_family):
     presets = {
         &quot;llama&quot;: [&quot;q_proj&quot;, &quot;v_proj&quot;],
         &quot;mistral&quot;: [&quot;q_proj&quot;, &quot;v_proj&quot;, &quot;o_proj&quot;],
@@ -38,7 +38,7 @@
     return presets.get(model_family, [&quot;q_proj&quot;, &quot;v_proj&quot;])
 
 print(pick_target_modules(&quot;llama&quot;))</textarea>
-        <div class="code-runner__actions"><button class="code-runner__run button" type="button">Проверить код</button><button class="code-runner__clear button secondary" type="button">Очистить</button><button class="code-runner__solution-btn button secondary" type="button">Показать пример</button><button class="code-runner__copy button secondary" type="button">Скопировать пример</button></div>
+        <div class="code-runner__actions"><button class="code-runner__run button" type="button">Проверить план</button><button class="code-runner__clear button secondary" type="button">Очистить</button><button class="code-runner__solution-btn button secondary" type="button">Показать пример</button><button class="code-runner__copy button secondary" type="button">Скопировать конфиг</button></div>
         <pre class="code-runner__output" aria-live="polite">Результат проверки появится здесь.</pre>
         <pre class="code-runner__solution" hidden><code class="language-python">def pick_target_modules(model_family):
     presets = {

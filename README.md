@@ -8,9 +8,9 @@
 - `lectures/lecture1.html` ... `lectures/lecture8.html` — восемь лекций.
 - `practicals/practical1.html` ... `practicals/practical8.html` — восемь практических заданий по 20 пунктов.
 - `test.html` — итоговый тест из 36 вопросов пяти типов.
-- `game.html` — мини-игра "LoRA Lab".
-- `css/style.css` — адаптивная светлая и темная тема, визуальные вкладки, карточки и всплывающие реплики.
-- `js/main.js` — тема, вкладки, калькулятор LoRA-параметров, интерактивные уведомления, drag-and-drop и проверка теста.
+- `game.html` — обучающая игра "LoRA Quest: Adapter Engineer".
+- `css/style.css` — адаптивная светлая и темная тема, liquid glass-панели, визуальные вкладки, карточки и тренажёры.
+- `js/main.js` — тема, вкладки, калькулятор LoRA-параметров, LoRA Config Studio, LoRA Quest, прогресс, уведомления, drag-and-drop и проверка теста.
 
 ## Интерактивные элементы
 
@@ -18,10 +18,15 @@
 - Вкладки: карта курса, методы PEFT, пайплайн обучения, деплой.
 - Калькулятор числа параметров LoRA для заданных `d_out`, `d_in` и `r`.
 - Лаборатория LoRA-параметров со слайдерами `rank`, `alpha`, `dropout` и QLoRA-переключателем.
+- LoRA Config Studio в лекциях: сборка `LoraConfig`, выбор `target_modules`, QLoRA, batch size, sequence length, learning rate и validation split.
+- Проверка плана без имитации запуска Python: Studio показывает live-preview конфига, предупреждает про высокий rank/alpha, отсутствие validation split, неподходящие target modules и риск OOM.
+- Практические страницы сохраняют заметки в `localStorage` и дают честную проверку конфигурационного плана.
 - Командная палитра `Ctrl+K` для быстрого перехода по сайту.
-- Мини-игра про Петра I, LoRA и сельхоз-модель.
+- LoRA Quest с пятью миссиями Adapter Engineer: full fine-tuning vs LoRA, rank/alpha/dropout, target_modules, QLoRA survival, eval и deploy.
 - Сессионные достижения за удачные действия.
 - Учебные уведомления используются только для явных действий пользователя: прогресс, проверка заданий и достижения.
+
+Важно: сайт не запускает Python в браузере. Все интерактивные проверки работают как статический помощник по конфигурации и инженерным рискам.
 
 ## Локальный запуск
 

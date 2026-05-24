@@ -13,7 +13,7 @@
   <script defer src="../js/main.js"></script>
 </head>
 <body>
-  <nav class="top-nav"><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Lab</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <nav class="top-nav"><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Quest</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
   <main class="layout">
     <aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class=""><small>1.</small> Дорогая донастройка и роль LoRA</a><a href="lecture2.html" class="active"><small>2.</small> PEFT и популярность LoRA</a><a href="lecture3.html" class=""><small>3.</small> Rank, alpha и scaling</a><a href="lecture4.html" class=""><small>4.</small> Target modules в transformer</a><a href="lecture5.html" class=""><small>5.</small> Python, PEFT и LoraConfig</a><a href="lecture6.html" class=""><small>6.</small> QLoRA и память GPU</a><a href="lecture7.html" class=""><small>7.</small> Eval, сравнение с базой и ошибки</a><a href="lecture8.html" class=""><small>8.</small> Merge, storage и deployment</a></aside>
     <article class="content lecture">
@@ -28,15 +28,15 @@
 <section><h2>Ограничения метода</h2><p>LoRA не исправляет плохой датасет и не гарантирует качество сама по себе. Если задача требует радикально новых знаний, очень большой доменной перестройки или строгих гарантий безопасности, нужны качественные данные, оценка, фильтрация и иногда более широкий fine-tuning.</p></section>
       <section class="lesson-summary"><h2>Итоги лекции</h2><ul><li>PEFT - семейство методов экономной донастройки.</li><li>LoRA популярна из-за простоты, качества и хорошей поддержки в tooling.</li><li>Адаптер можно хранить отдельно, переключать и при необходимости сливать с базой.</li><li>Качество LoRA всё равно определяется данными, целевыми слоями и проверкой результата.</li></ul></section>
       <section class="code-runner python-runner" data-runner-id="lecture-2">
-        <div class="code-runner__head"><h2>Python-редактор</h2><span>учебный режим без backend</span></div>
-        <textarea class="code-runner__editor language-python" spellcheck="false" placeholder="Напишите Python-код здесь...">peft_methods = {
+        <div class="code-runner__head"><h2>LoRA Config Studio</h2><span>сборка конфига без запуска Python</span></div>
+        <textarea class="code-runner__editor language-python" spellcheck="false" placeholder="Опишите LoraConfig или план обучения...">peft_methods = {
     &quot;LoRA&quot;: &quot;низкоранговая поправка к слоям&quot;,
     &quot;QLoRA&quot;: &quot;LoRA поверх 4-битной базы&quot;,
     &quot;Prefix tuning&quot;: &quot;обучаемые префиксы в attention&quot;,
 }
 for name, idea in peft_methods.items():
     print(f&quot;{name}: {idea}&quot;)</textarea>
-        <div class="code-runner__actions"><button class="code-runner__run button" type="button">Проверить код</button><button class="code-runner__clear button secondary" type="button">Очистить</button><button class="code-runner__solution-btn button secondary" type="button">Показать пример</button><button class="code-runner__copy button secondary" type="button">Скопировать пример</button></div>
+        <div class="code-runner__actions"><button class="code-runner__run button" type="button">Проверить план</button><button class="code-runner__clear button secondary" type="button">Очистить</button><button class="code-runner__solution-btn button secondary" type="button">Показать пример</button><button class="code-runner__copy button secondary" type="button">Скопировать конфиг</button></div>
         <pre class="code-runner__output" aria-live="polite">Результат проверки появится здесь.</pre>
         <pre class="code-runner__solution" hidden><code class="language-python">peft_methods = {
     &quot;LoRA&quot;: &quot;низкоранговая поправка к слоям&quot;,
