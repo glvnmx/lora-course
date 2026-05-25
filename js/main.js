@@ -44,7 +44,7 @@ function initReveal() {
 
 function initPointerGlow() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.matchMedia('(pointer: coarse)').matches) return;
-  const nodes = document.querySelectorAll('.card, .button, .tab-shell, .game-panel, .adapter-lab, .calculator-card, .course-progress-card, .practice-task, .question, .author-card');
+  const nodes = document.querySelectorAll('.card, .button, .tab-shell, .game-panel, .adapter-lab, .course-progress-card, .practice-task, .question, .author-card');
   if (!nodes.length) return;
   nodes.forEach((node) => {
     let frame = 0;
@@ -73,25 +73,6 @@ function initHomeTabs() {
       panel.classList.toggle('active', panel.id === `tab-${target}`);
     });
   }));
-}
-
-function initLoraCalculator() {
-  const form = document.getElementById('loraCalculator');
-  const output = document.getElementById('loraCalcResult');
-  if (!form || !output) return;
-  const formatter = new Intl.NumberFormat('ru-RU');
-  const update = () => {
-    const data = new FormData(form);
-    const dout = Math.max(1, Number(data.get('dout')) || 1);
-    const din = Math.max(1, Number(data.get('din')) || 1);
-    const rank = Math.max(1, Number(data.get('rank')) || 1);
-    const lora = rank * (dout + din);
-    const full = dout * din;
-    const pct = full ? lora / full * 100 : 0;
-    output.textContent = `${formatter.format(lora)} параметров, ${pct.toFixed(2)}% от полной матрицы`;
-  };
-  form.addEventListener('input', update);
-  update();
 }
 
 function initAdapterLab() {
@@ -130,7 +111,7 @@ function initAdapterLab() {
 const achievements = {
   balanced: 'Сбалансирован rank, alpha и dropout',
   lab: 'LoRA Quest: адаптер готов к оценке',
-  test: 'Общая проверка открыта'
+  test: 'Итоговый тест открыт'
 };
 
 function unlockAchievement(id) {
@@ -158,7 +139,7 @@ function initCommandPalette() {
     ['Лекции', `${root}index.html#lectures`],
     ['Практика', `${root}index.html#practices`],
     ['Тренажёр', `${root}game.html`],
-    ['Общая проверка', `${root}test.html`],
+    ['Итоговый тест', `${root}test.html`],
     ['Итоговый проект', `${root}final-project.html`],
     ['Об авторах', `${root}authors.html`],
     ...Array.from({ length: 8 }, (_, i) => [`Лекция ${i + 1}`, `${root}lectures/lecture${i + 1}.html`]),
@@ -879,7 +860,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initReveal();
   initPointerGlow();
   initHomeTabs();
-  initLoraCalculator();
   initAdapterLab();
   initAchievements();
   initCommandPalette();

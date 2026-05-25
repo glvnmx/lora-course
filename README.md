@@ -7,17 +7,16 @@
 - `index.html` — оглавление курса.
 - `lectures/lecture1.html` ... `lectures/lecture8.html` — восемь лекций.
 - `practicals/practical1.html` ... `practicals/practical8.html` — восемь практических заданий по 20 пунктов.
-- `test.html` — общая проверка по теории курса из 24 вопросов.
+- `test.html` — итоговый тест по теории курса из 24 вопросов.
 - `final-project.html` — итоговый проект: разработка собственного LoRA-адаптера и оформление Git-репозитория.
 - `game.html` — обучающая игра "LoRA Quest: Adapter Engineer".
 - `css/style.css` — адаптивная светлая и темная тема, liquid glass-панели, визуальные вкладки, карточки и тренажёры.
-- `js/main.js` — тема, вкладки, калькулятор LoRA-параметров, LoRA Config Studio, LoRA Quest, прогресс, уведомления, drag-and-drop и проверка теста.
+- `js/main.js` — тема, вкладки, LoRA Config Studio, LoRA Quest, прогресс, уведомления, drag-and-drop и проверка теста.
 
 ## Интерактивные элементы
 
 - Визуальная схема LoRA на главной странице.
 - Вкладки: карта курса, методы PEFT, пайплайн обучения, деплой.
-- Калькулятор числа параметров LoRA для заданных `d_out`, `d_in` и `r`.
 - Лаборатория LoRA-параметров со слайдерами `rank`, `alpha`, `dropout` и QLoRA-переключателем.
 - В лекциях есть мини-тесты и короткие примеры того, как тема применяется в реальном ML/LLM-проекте.
 - LoRA Config Studio остаётся в практических заданиях: помогает собрать `LoraConfig`, выбрать `target_modules`, QLoRA, batch size, sequence length, learning rate и validation split.

@@ -13,80 +13,132 @@
   <script defer src="js/main.js"></script>
 </head>
 <body>
-  <nav class="top-nav"><a class="brand-link" href="index.html" aria-label="Вернуться на главную страницу">LoRA</a><a href="index.html">Главная</a><a href="index.html#course-map">Содержание курса</a><a href="index.html#lectures">Лекции</a><a href="index.html#practices">Практика</a><a href="game.html">Тренажёр</a><a href="test.html">Общая проверка</a><a href="final-project.html">Итоговый проект</a><a href="authors.html">Об авторах</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <nav class="top-nav"><a class="brand-link" href="index.html" aria-label="Вернуться на главную страницу">LoRA</a><a href="index.html">Главная</a><a href="index.html#course-map">Содержание курса</a><a href="index.html#lectures">Лекции</a><a href="index.html#practices">Практика</a><a href="game.html">Тренажёр</a><a href="test.html">Итоговый тест</a><a href="final-project.html">Итоговый проект</a><a href="authors.html">Об авторах</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
   <main class="final-project-page">
     <section class="final-project-hero">
       <div>
         <p class="eyebrow">Итоговый проект</p>
         <h1>Итоговый проект: собственный LoRA-адаптер</h1>
-        <p class="hero-value">Пройдите весь путь от выбора задачи до публикации результата: задача, base model, датасет, обучение, оценка, артефакты и Git-репозиторий.</p>
-        <p>На выходе должен быть готовый LoRA-адаптер, который можно сохранить, протестировать, описать и воспроизвести по инструкции.</p>
-        <div class="hero-actions"><a class="button" href="#project-steps">Начать итоговый проект</a><a class="button secondary" href="test.html">Пройти общую проверку</a></div>
+        <p class="hero-value">Соберите небольшой воспроизводимый проект: задача, данные, конфигурация LoRA/QLoRA, обучение, оценка и публикация результата.</p>
+        <p>Страница устроена как практика: каждый этап вынесен в отдельную вкладку с конкретными действиями.</p>
+        <div class="hero-actions"><a class="button" href="#project-steps">Начать итоговый проект</a><a class="button secondary" href="test.html">Пройти итоговый тест</a></div>
       </div>
-      <div class="project-output-card"><strong>Финальный результат</strong><span>LoRA-адаптер + Git-репозиторий с артефактами, конфигом, eval-отчетом и примерами до/после.</span></div>
-    </section>
-
-    <section class="project-section" id="project-artifacts">
-      <div class="section-heading"><p class="eyebrow">Артефакты</p><h2>Что должно получиться на выходе</h2><p>Итог курса - не тест, а готовый LoRA-адаптер, оформленный как воспроизводимый инженерный проект.</p></div>
-      <div class="artifact-grid">
-        <article><strong>adapter_config.json</strong><span>Конфигурация PEFT-адаптера и ссылка на совместимую base model.</span></article>
-        <article><strong>adapter_model.safetensors</strong><span>Файл весов адаптера или аналогичный сохраненный артефакт.</span></article>
-        <article><strong>README.md</strong><span>Цель проекта, ограничения, данные, запуск и примеры использования.</span></article>
-        <article><strong>train_config.yaml / config.json</strong><span>Параметры обучения: r, alpha, dropout, target_modules, batch, LR, QLoRA.</span></article>
-        <article><strong>eval_report.md</strong><span>Baseline, метрики, ручная рубрика, ошибки и выводы.</span></article>
-        <article><strong>prompt/response до и после</strong><span>Минимум 5 контрольных примеров, показывающих эффект адаптера.</span></article>
-        <article><strong>Инструкция запуска</strong><span>Как загрузить base model, подключить адаптер и выполнить inference.</span></article>
-        <article><strong>Git-репозиторий</strong><span>Ссылка или описание репозитория с понятной структурой проекта.</span></article>
-      </div>
+      <aside class="project-output-card"><strong>Финальный результат</strong><span>LoRA-адаптер и понятное описание проекта: что обучалось, как запускать и чем результат лучше baseline.</span></aside>
     </section>
 
     <section class="project-section" id="project-steps">
-      <div class="section-heading"><p class="eyebrow">Разработка</p><h2>Пошаговая разработка LoRA-адаптера</h2></div>
-      <div class="project-timeline">
-        <article><span>Шаг 1</span><h3>Выбрать задачу адаптера</h3><p>Опишите, какую задачу решает адаптер, кто пользователь, какой формат ответа нужен и как вы поймете, что адаптер работает лучше базовой модели.</p><ul><li>технический ассистент с заданным стилем ответов;</li><li>FAQ-бот по продукту или внутренней базе;</li><li>генерация описаний товаров, вакансий или карточек;</li><li>классификация обращений или текстов;</li><li>доменный ассистент для конкретной предметной области.</li></ul></article>
-        <article><span>Шаг 2</span><h3>Выбрать базовую модель</h3><p>Подберите base model под язык, лицензию, контекст и доступную GPU-память. Чем больше модель, тем выше требования к VRAM и времени эксперимента.</p><p>Если обычный LoRA не помещается в память, используйте QLoRA: 4-bit загрузка базы снижает memory budget, а адаптер продолжает обучать нужное поведение. Адаптер не заменяет базовую модель: он хранит добавку, которую нужно подключать к совместимой base model.</p></article>
-        <article><span>Шаг 3</span><h3>Подготовить датасет</h3><p>Соберите небольшие, чистые и проверяемые примеры. Разделите данные на train/validation и сохраните описание источника данных.</p><pre><code class="language-json">{
-  "instruction": "Объясни, что такое LoRA",
-  "input": "",
-  "output": "LoRA - это метод параметрически-эффективного дообучения..."
-}</code></pre></article>
-        <article><span>Шаг 4</span><h3>Собрать конфигурацию LoRA</h3><p>Зафиксируйте rank, alpha, dropout и target_modules. Начинайте с умеренных значений, например r 8-32, alpha около 2r и dropout 0.05-0.1 для небольшого датасета.</p><p>Проверьте target_modules через архитектуру модели, а не копируйте список вслепую.</p></article>
-        <article><span>Шаг 5</span><h3>Обучить LoRA или QLoRA</h3><p>Запустите короткий SFT-эксперимент, сохраните train/eval loss, предупреждения по памяти и итоговую версию конфига. Если возникает OOM, уменьшите batch, sequence length или rank, включите checkpointing и QLoRA.</p></article>
-        <article><span>Шаг 6</span><h3>Оценить качество</h3><p>Сравните базовую модель и адаптер на одинаковых prompt. Используйте validation loss, ручную рубрику, контрольные примеры и список регрессий.</p></article>
-        <article><span>Шаг 7</span><h3>Сохранить и проверить артефакты</h3><p>Сохраните adapter_config.json и adapter_model.safetensors, затем проверьте загрузку адаптера в отдельном inference-скрипте или notebook.</p></article>
-        <article><span>Шаг 8</span><h3>Оформить и запушить проект</h3><p>Соберите README.md, train_config.yaml, eval_report.md, примеры до/после и инструкцию запуска. Запушьте проект в Git-репозиторий и добавьте ссылку в README или описание сдачи.</p></article>
+      <div class="section-heading"><p class="eyebrow">Разработка</p><h2>Пять вкладок реализации</h2><p>Идите по шагам слева направо и фиксируйте решения сразу в материалах проекта.</p></div>
+      <div class="tab-shell project-tabs">
+        <div class="tab-list" role="tablist" aria-label="Этапы итогового проекта">
+          <button class="tab-button active" type="button" data-tab="task-data">1. Задача и данные</button>
+          <button class="tab-button" type="button" data-tab="lora-config">2. Конфигурация LoRA</button>
+          <button class="tab-button" type="button" data-tab="training">3. Обучение</button>
+          <button class="tab-button" type="button" data-tab="evaluation">4. Оценка качества</button>
+          <button class="tab-button" type="button" data-tab="publish">5. Публикация</button>
+        </div>
+
+        <article class="tab-panel active" id="tab-task-data">
+          <div class="project-tab-layout">
+            <div class="project-tab-main">
+              <h3>Выбор задачи и данных</h3>
+              <p>Сначала выберите понятную прикладную задачу. Не берите слишком широкий сценарий: адаптер должен улучшить один конкретный тип ответов.</p>
+              <ul>
+                <li>Опишите пользователя: кто будет задавать вопросы и в каком контексте.</li>
+                <li>Зафиксируйте формат ответа: тон, структура, ограничения, обязательные поля.</li>
+                <li>Подготовьте небольшой датасет с чистыми примерами.</li>
+                <li>Определите baseline: какие ответы дает базовая модель до обучения.</li>
+              </ul>
+            </div>
+            <aside class="project-tab-side"><strong>Мини-чеклист</strong><p>10-30 хороших примеров полезнее, чем большой шумный датасет. Baseline сохраните до обучения, чтобы сравнение было честным.</p></aside>
+          </div>
+        </article>
+
+        <article class="tab-panel" id="tab-lora-config">
+          <div class="project-tab-layout">
+            <div class="project-tab-main">
+              <h3>Конфигурация LoRA</h3>
+              <p>Подберите настройки адаптера и коротко объясните каждое решение. Это поможет воспроизвести эксперимент и понять ограничения.</p>
+              <ul>
+                <li>Выберите base model с учетом языка, лицензии, размера и доступной GPU-памяти.</li>
+                <li>Определите target_modules по архитектуре модели, а не копированием из чужого примера.</li>
+                <li>Выберите rank, alpha и dropout. Для старта часто хватает умеренных значений.</li>
+                <li>Запишите, почему такие параметры подходят вашей задаче и датасету.</li>
+              </ul>
+            </div>
+            <aside class="project-tab-side"><strong>Подсказка</strong><p>Если датасет маленький, не начинайте с очень высокого rank. Сначала проверьте простой вариант, затем расширяйте конфигурацию.</p></aside>
+          </div>
+        </article>
+
+        <article class="tab-panel" id="tab-training">
+          <div class="project-tab-layout">
+            <div class="project-tab-main">
+              <h3>Обучение</h3>
+              <p>Опишите запуск LoRA или QLoRA так, чтобы другой студент смог повторить эксперимент без догадок.</p>
+              <ul>
+                <li>Укажите основные параметры обучения: batch size, learning rate, epochs/steps, sequence length.</li>
+                <li>Если памяти мало, используйте QLoRA, gradient accumulation и checkpointing.</li>
+                <li>При OOM уменьшайте batch, sequence length или rank, а не меняйте всё сразу.</li>
+                <li>Сохраните итоговую конфигурацию обучения рядом с проектом.</li>
+              </ul>
+            </div>
+            <aside class="project-tab-side"><strong>Что сохранить</strong><p>Base model, LoraConfig, параметры запуска, seed, train/eval loss и заметки о проблемах с памятью.</p></aside>
+          </div>
+        </article>
+
+        <article class="tab-panel" id="tab-evaluation">
+          <div class="project-tab-layout">
+            <div class="project-tab-main">
+              <h3>Оценка качества</h3>
+              <p>Покажите, что адаптер действительно улучшил поведение модели, а не просто запомнил тренировочные примеры.</p>
+              <ul>
+                <li>Сравните baseline и adapter на одинаковых prompt.</li>
+                <li>Подготовьте несколько контрольных prompt, которых не было в train.</li>
+                <li>Опишите критерии качества: точность, формат, полнота, стиль, отсутствие лишнего.</li>
+                <li>Сделайте краткий eval-отчет с выводами и известными ограничениями.</li>
+              </ul>
+            </div>
+            <aside class="project-tab-side"><strong>Хороший отчет</strong><p>Достаточно таблицы до/после, 3-5 контрольных примеров и короткого вывода: где адаптер стал лучше, а где еще ошибается.</p></aside>
+          </div>
+        </article>
+
+        <article class="tab-panel" id="tab-publish">
+          <div class="project-tab-layout">
+            <div class="project-tab-main">
+              <h3>Публикация и защита проекта</h3>
+              <p>Финальный шаг - оформить результат так, чтобы его можно было проверить, запустить и обсудить.</p>
+              <ul>
+                <li>Оформите README: цель, данные, модель, настройки, запуск, ограничения.</li>
+                <li>Опишите, как загрузить base model и подключить адаптер.</li>
+                <li>Покажите примеры до/после обучения.</li>
+                <li>Подготовьте короткое объяснение результата для защиты проекта.</li>
+              </ul>
+            </div>
+            <aside class="project-tab-side"><strong>Артефакты внутри проекта</strong><p>README, конфиг обучения, eval-отчет, примеры до/после и файлы адаптера, если вы их публикуете.</p></aside>
+          </div>
+        </article>
       </div>
     </section>
 
-    <section class="project-section">
-      <div class="section-heading"><p class="eyebrow">Структура</p><h2>Рекомендуемая структура репозитория</h2></div>
-      <pre><code class="language-text">lora-final-project/
-├── README.md
-├── configs/
-│   └── train_config.yaml
-├── data/
-│   └── sample_dataset.jsonl
-├── adapter/
-│   ├── adapter_config.json
-│   └── adapter_model.safetensors
-├── eval/
-│   ├── eval_report.md
-│   └── before_after_examples.md
-└── inference/
-    └── load_adapter.py</code></pre>
+    <section class="project-section useful-links">
+      <div class="section-heading"><p class="eyebrow">Справка</p><h2>Полезные ссылки</h2><p>Небольшой набор источников, которые помогут при настройке и защите проекта.</p></div>
+      <div class="useful-link-grid">
+        <a href="https://huggingface.co/docs/peft">Hugging Face PEFT documentation</a>
+        <a href="https://huggingface.co/docs/transformers">Hugging Face Transformers documentation</a>
+        <a href="https://arxiv.org/abs/2106.09685">LoRA paper</a>
+        <a href="https://habr.com/ru/articles/791966/">Хабр: PEFT, LoRA, Prefix tuning, Prompt tuning и Adapters</a>
+        <a href="https://habr.com/ru/articles/829324/">Хабр: supervised fine-tuning LLM и LoRA</a>
+      </div>
     </section>
 
     <section class="project-section checklist-section">
       <div class="section-heading"><p class="eyebrow">Критерии</p><h2>Чеклист готовности</h2></div>
       <div class="checklist-grid">
-        <label><input type="checkbox"> Задача и пользователь адаптера описаны.</label>
-        <label><input type="checkbox"> Base model выбрана с учетом лицензии, языка и GPU.</label>
-        <label><input type="checkbox"> Датасет приведен к instruction/input/output или chat-формату.</label>
-        <label><input type="checkbox"> LoraConfig сохранен и объяснен.</label>
+        <label><input type="checkbox"> Задача, пользователь и формат ответа описаны.</label>
+        <label><input type="checkbox"> Base model и target_modules выбраны осознанно.</label>
+        <label><input type="checkbox"> Rank, alpha и dropout объяснены.</label>
+        <label><input type="checkbox"> Параметры обучения сохранены.</label>
         <label><input type="checkbox"> Есть сравнение baseline и адаптера.</label>
-        <label><input type="checkbox"> adapter_config.json и adapter_model.safetensors проверены загрузкой.</label>
-        <label><input type="checkbox"> README.md содержит инструкцию запуска.</label>
-        <label><input type="checkbox"> Проект запушен в Git-репозиторий.</label>
+        <label><input type="checkbox"> README содержит запуск и примеры до/после.</label>
       </div>
     </section>
   </main>
