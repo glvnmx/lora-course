@@ -10,7 +10,8 @@ function initTheme() {
 }
 
 function initLibs() {
-  if (window.renderMathInElement) {
+  const hasMath = document.body.textContent.includes('$');
+  if (hasMath && window.renderMathInElement) {
     renderMathInElement(document.body, {
       delimiters: [
         { left: '$$', right: '$$', display: true },
@@ -18,7 +19,7 @@ function initLibs() {
       ]
     });
   }
-  if (window.hljs) hljs.highlightAll();
+  if (window.hljs && document.querySelector('pre code')) hljs.highlightAll();
 }
 
 function shuffle(items) {
@@ -26,8 +27,9 @@ function shuffle(items) {
 }
 
 function initReveal() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const items = document.querySelectorAll('.home section, .lora-stage, .card, .tab-shell, .game-panel, .game-hero');
-  if (!items.length) return;
+  if (!items.length || !('IntersectionObserver' in window)) return;
   items.forEach((item) => item.classList.add('reveal'));
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -41,12 +43,23 @@ function initReveal() {
 }
 
 function initPointerGlow() {
-  document.querySelectorAll('.card, .button, .tab-shell, .game-panel, .adapter-lab, .calculator-card, .course-progress-card, .practice-task, .question, .author-card').forEach((node) => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.matchMedia('(pointer: coarse)').matches) return;
+  const nodes = document.querySelectorAll('.card, .button, .tab-shell, .game-panel, .adapter-lab, .calculator-card, .course-progress-card, .practice-task, .question, .author-card');
+  if (!nodes.length) return;
+  nodes.forEach((node) => {
+    let frame = 0;
+    let lastEvent = null;
     node.addEventListener('pointermove', (event) => {
-      const box = node.getBoundingClientRect();
-      node.style.setProperty('--mx', `${event.clientX - box.left}px`);
-      node.style.setProperty('--my', `${event.clientY - box.top}px`);
-    });
+      lastEvent = event;
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        if (!lastEvent) return;
+        const box = node.getBoundingClientRect();
+        node.style.setProperty('--mx', Math.round(lastEvent.clientX - box.left) + 'px');
+        node.style.setProperty('--my', Math.round(lastEvent.clientY - box.top) + 'px');
+      });
+    }, { passive: true });
   });
 }
 
@@ -141,11 +154,12 @@ function initCommandPalette() {
   const root = nested ? '../' : '';
   const links = [
     ['Главная', `${root}index.html`],
-    ['Содержание курса', `${root}index.html#course-map`],
-    ['Визуализации', `${root}index.html#visual-lab`],
-    ['LoRA Quest', `${root}game.html`],
-    ['Об авторах', `${root}authors.html`],
+    ['Карта курса', `${root}index.html#course-map`],
+    ['Лекции и практики', `${root}index.html#lessons-practices`],
+    ['Тренажёр / игра', `${root}game.html`],
     ['Итоговый тест', `${root}test.html`],
+    ['Итоговый проект', `${root}index.html#final-project`],
+    ['Об авторах', `${root}authors.html`],
     ...Array.from({ length: 8 }, (_, i) => [`Лекция ${i + 1}`, `${root}lectures/lecture${i + 1}.html`]),
     ...Array.from({ length: 8 }, (_, i) => [`Практика ${i + 1}`, `${root}practicals/practical${i + 1}.html`])
   ];
@@ -248,7 +262,7 @@ function initLoraQuestGame() {
     }
   ];
   const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
-  let state = { level: saved.level || 0, unlocked: saved.unlocked || 1, completed: saved.completed || [], metrics: levels[saved.level || 0].metrics };
+  let state = { level: saved.level || 0, unlocked: saved.unlocked || 1, completed: saved.completed || [], score: saved.score || 0, badges: saved.badges || [], metrics: levels[saved.level || 0].metrics };
   const meters = {
     quality: game.querySelector('[data-game-meter="quality"] i'),
     memory: game.querySelector('[data-game-meter="memory"] i'),
@@ -267,7 +281,9 @@ function initLoraQuestGame() {
   const persist = () => localStorage.setItem(storageKey, JSON.stringify({
     level: state.level,
     unlocked: state.unlocked,
-    completed: state.completed
+    completed: state.completed,
+    score: state.score,
+    badges: state.badges
   }));
   const renderStats = () => {
     Object.keys(meters).forEach((key) => {
@@ -308,7 +324,10 @@ function initLoraQuestGame() {
     });
     renderStats();
     renderBoard();
-    feedback.innerHTML = `<strong>${action.ok ? 'Хороший ход' : 'Рискованный ход'}</strong><p>${action.why}</p>${action.hint ? `<p class="hint">${action.hint}</p>` : ''}`;
+    state.score = Math.max(0, state.score + (action.ok ? 20 : -5));
+    if (state.score >= 60 && !state.badges.includes('Стабильный старт')) state.badges.push('Стабильный старт');
+    feedback.innerHTML = `<strong>${action.ok ? 'Хороший ход' : 'Рискованный ход'} · ${state.score} очков</strong><p>${action.why}</p>${action.hint ? `<p class="hint">${action.hint}</p>` : ''}`;
+    persist();
     addLog(`${action.label}: ${action.why}`, action.ok ? 'success' : 'warning');
     if (action.ok) completeLevel(action.why);
   };
@@ -319,7 +338,8 @@ function initLoraQuestGame() {
     renderMap();
     if (state.completed.length === levels.length) {
       report.hidden = false;
-      report.innerHTML = '<h3>Финальный отчёт</h3><p>Вы прошли путь Adapter Engineer: выбрали LoRA вместо дорогого full fine-tuning, сбалансировали rank/alpha/dropout, подобрали target_modules, применили QLoRA для памяти и закрыли eval/deploy-план.</p>';
+      if (!state.badges.includes('Adapter Engineer')) state.badges.push('Adapter Engineer');
+      report.innerHTML = '<h3>Финальный отчёт</h3><p>Вы прошли путь Adapter Engineer: выбрали LoRA вместо дорогого full fine-tuning, сбалансировали rank/alpha/dropout, подобрали target_modules, применили QLoRA для памяти и закрыли eval/deploy-план.</p><p><strong>Очки:</strong> ' + state.score + '. <strong>Бейджи:</strong> ' + state.badges.join(', ') + '.</p>';
       unlockAchievement('lab');
     }
     game.querySelector('[data-game-next]').disabled = state.level >= levels.length - 1;
@@ -390,7 +410,7 @@ function initLoraQuestGame() {
   }
   game.querySelector('[data-game-reset]').addEventListener('click', () => {
     localStorage.removeItem(storageKey);
-    state = { level: 0, unlocked: 1, completed: [], metrics: levels[0].metrics };
+    state = { level: 0, unlocked: 1, completed: [], score: 0, badges: [], metrics: levels[0].metrics };
     log.innerHTML = '';
     report.hidden = true;
     addLog('LoRA Quest начат заново. Пройдите миссии от выбора PEFT до deploy.');
@@ -849,7 +869,7 @@ function checkQuiz() {
   const pct = Math.round(score * 100 / qs.length);
   document.getElementById('result').hidden = false;
   document.getElementById('result').innerHTML = `<h2>Результат: ${score} из ${qs.length} (${pct}%)</h2>${mistakes.length ? `<h3>Ошибки</h3><ol>${mistakes.join('')}</ol>` : '<p>Все ответы верны.</p>'}`;
-  document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('result').scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
 }
 
 document.addEventListener('DOMContentLoaded', () => {

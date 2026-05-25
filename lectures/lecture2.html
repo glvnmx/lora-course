@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <title>PEFT и LoRA: от общей идеи к рабочему методу</title>
+  <title>Что такое PEFT и зачем нужен LoRA-адаптер</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../css/style.css">
@@ -13,14 +13,15 @@
   <script defer src="../js/main.js"></script>
 </head>
 <body>
-  <nav class="top-nav"><a class="brand-link" href="../index.html" aria-label="Вернуться на главную страницу">LoRA</a><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Quest</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <nav class="top-nav"><a class="brand-link" href="../index.html" aria-label="Вернуться на главную страницу">LoRA</a><a href="../index.html">Главная</a><a href="../index.html#course-map">Карта курса</a><a href="../index.html#lessons-practices">Лекции и практики</a><a href="../game.html">Тренажёр / игра</a><a href="../test.html">Итоговый тест</a><a href="../index.html#final-project">Итоговый проект</a><a href="../authors.html">Об авторах</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
   <main class="layout">
-    <aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class=""><small>1.</small> Дорогая донастройка и роль LoRA</a><a href="lecture2.html" class="active"><small>2.</small> PEFT и популярность LoRA</a><a href="lecture3.html" class=""><small>3.</small> Rank, alpha и scaling</a><a href="lecture4.html" class=""><small>4.</small> Target modules в transformer</a><a href="lecture5.html" class=""><small>5.</small> Python, PEFT и LoraConfig</a><a href="lecture6.html" class=""><small>6.</small> QLoRA и память GPU</a><a href="lecture7.html" class=""><small>7.</small> Eval, сравнение с базой и ошибки</a><a href="lecture8.html" class=""><small>8.</small> Merge, storage и deployment</a></aside>
+    <aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class=""><small>1.</small> Дообучение и стоимость</a><a href="lecture2.html" class="active"><small>2.</small> PEFT и LoRA-адаптер</a><a href="lecture3.html" class=""><small>3.</small> Rank, alpha и A/B</a><a href="lecture4.html" class=""><small>4.</small> LoRA внутри Transformer</a><a href="lecture5.html" class=""><small>5.</small> Hugging Face PEFT</a><a href="lecture6.html" class=""><small>6.</small> QLoRA на слабой GPU</a><a href="lecture7.html" class=""><small>7.</small> Оценка качества</a><a href="lecture8.html" class=""><small>8.</small> Сохранение и публикация</a></aside>
     <article class="content lecture">
       <div class="breadcrumbs"><a href="../index.html">Курс</a><span>Лекция 2</span></div>
       <p class="eyebrow">Лекция 2 из 8</p>
-      <h1>PEFT и LoRA: от общей идеи к рабочему методу</h1>
-      <p class="lecture-lead">Увидите, какие подходы входят в PEFT, чем LoRA отличается от prompt/prefix tuning и почему она стала стандартным стартом для прикладной донастройки LLM.</p>
+      <h1>Что такое PEFT и зачем нужен LoRA-адаптер</h1>
+      <p class="lecture-lead">PEFT означает parameter-efficient fine-tuning: мы обучаем не всю модель, а маленькую управляемую добавку. В этой лекции LoRA рассматривается как самый понятный стартовый адаптер для прикладной GenAI-задачи.</p>
+      <nav class="page-actions page-actions--top" aria-label="Быстрые переходы"><a class="button" href="../practicals/practical2.html">Перейти к практике</a><a class="button secondary" href="../index.html">На главную</a></nav>
       <div class="lecture-progress" data-lecture-id="2"><div><strong>Прогресс лекции</strong><span data-lecture-progress-text>Прогресс курса обновится после мини-теста</span></div><div><i data-progress-bar style="width:0%"></i></div></div>
       <section><h2>Что входит в PEFT</h2><p>К PEFT относятся adapters, prompt tuning, prefix tuning, IA3, LoRA, QLoRA и другие способы ограничить область обучения. Их объединяет идея: не менять всю модель, а добавить управляемый небольшой механизм адаптации.</p></section>
 <section><h2>LoRA среди PEFT-методов</h2><p>Prompt и prefix tuning меняют входной контекст или добавляют обучаемые префиксы. LoRA работает ближе к самим слоям модели: она добавляет обучаемую низкоранговую ветку к линейным проекциям. Поэтому LoRA часто стабильнее для доменных SFT-задач и проще сливается с базой после обучения.</p></section>
@@ -47,15 +48,8 @@ for name, idea in peft_methods.items():
     print(f&quot;{name}: {idea}&quot;)</code></pre>
       </section>
       <section class="mini-test" data-lecture-id="2"><h2>Мини-проверка</h2><p>Ответьте на 3 вопроса. Лекция засчитывается при результате минимум 2 из 3.</p><div class="mini-test__question" data-answer="0"><h3>1. Какой метод относится к PEFT?</h3><label class="mini-test__option"><input type="radio" name="lecture2_q1" value="0"> LoRA</label><label class="mini-test__option"><input type="radio" name="lecture2_q1" value="1"> DNS</label><label class="mini-test__option"><input type="radio" name="lecture2_q1" value="2"> CSS reset</label></div><div class="mini-test__question" data-answer="0"><h3>2. Почему LoRA удобно версионировать?</h3><label class="mini-test__option"><input type="radio" name="lecture2_q2" value="0"> Адаптер намного меньше полной модели</label><label class="mini-test__option"><input type="radio" name="lecture2_q2" value="1"> Он всегда хранится в README</label><label class="mini-test__option"><input type="radio" name="lecture2_q2" value="2"> Он не зависит от базы</label></div><div class="mini-test__question" data-answer="0"><h3>3. Что LoRA не заменяет?</h3><label class="mini-test__option"><input type="radio" name="lecture2_q3" value="0"> Качественные данные и eval</label><label class="mini-test__option"><input type="radio" name="lecture2_q3" value="1"> Все веса модели</label><label class="mini-test__option"><input type="radio" name="lecture2_q3" value="2"> Имена target_modules</label></div><button class="mini-test__button button" type="button">Проверить лекцию</button><p class="mini-test__result" aria-live="polite"></p></section>
-      <section class="return-home" aria-labelledby="return-home-title">
-        <div class="return-home-card">
-          <div>
-            <h2 id="return-home-title">Готово?</h2>
-            <p>Вернитесь на главный экран, чтобы выбрать следующую лекцию, практику или тренировку.</p>
-          </div>
-          <div class="return-home-actions"><a class="return-home-button" href="../index.html" aria-label="Вернуться на главную страницу">На главный экран</a></div>
-        </div>
-      </section>
+      <nav class="page-actions page-actions--bottom" aria-label="Быстрые переходы"><a class="button" href="../practicals/practical2.html">Перейти к практике</a><a class="button secondary" href="../index.html">На главную</a></nav>
+      <section class="return-home" aria-labelledby="return-home-title"><div class="return-home-card"><div><h2 id="return-home-title">Лекция пройдена?</h2><p>Закрепите тему в связанной практике или вернитесь к карте курса.</p></div><div class="return-home-actions"><a class="return-home-button" href="../practicals/practical2.html">Перейти к практике</a></div></div></section>
     </article>
   </main>
 </body>

@@ -3947,3 +3947,188 @@ textarea {
     margin-left: 0;
   }
 }
+
+
+/* Performance and course structure pass */
+:root {
+  --glass-blur: 14px;
+  --glass-saturate: 1.12;
+  --glass-shadow: 0 14px 34px rgba(15, 23, 42, 0.10), inset 0 1px 0 rgba(255,255,255,0.42);
+  --soft-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="dark"] {
+  --panel: rgba(14, 22, 36, 0.82);
+  --panel-strong: rgba(18, 27, 44, 0.92);
+  --panel-readable: rgba(18, 27, 44, 0.96);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --soft-shadow: 0 10px 26px rgba(0, 0, 0, 0.24);
+}
+
+body {
+  background: linear-gradient(135deg, var(--bg), var(--bg-2));
+  animation: none;
+}
+
+body::before {
+  opacity: 0.34;
+  animation: none;
+}
+
+body::after,
+.adapter-lab::before,
+.card::after,
+.signal-line {
+  display: none;
+}
+
+.top-nav,
+.card,
+.course-progress-card,
+.sidebar,
+.content,
+.practice-task,
+.question,
+.mini-test,
+.code-runner,
+.code-practice,
+.tab-shell,
+.adapter-lab,
+.calculator-card,
+.test-callout,
+.game-panel,
+.game-hero,
+.return-home-card,
+.author-card {
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow: var(--soft-shadow);
+}
+
+.lora-stage {
+  animation: none;
+  backdrop-filter: blur(10px) saturate(1.08);
+  -webkit-backdrop-filter: blur(10px) saturate(1.08);
+}
+
+.factor-a, .factor-b, .adapter-stack, .operator {
+  animation: none !important;
+  text-shadow: none;
+}
+
+.card::before, .game-panel::after, .adapter-lab::after, .tab-shell::after {
+  opacity: 0.32;
+}
+
+.button:hover, .card:hover, .action-card:hover, .adapter-node.active {
+  transform: translateY(-2px);
+}
+
+.concept-strip,
+.learning-map,
+.project-grid {
+  display: grid;
+  gap: clamp(14px, 2vw, 22px);
+}
+
+.concept-strip {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+}
+
+.concept-strip article,
+.learning-step,
+.project-grid article,
+.practice-brief,
+.practice-checklist {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background: var(--panel-readable);
+  box-shadow: var(--soft-shadow);
+}
+
+.concept-strip article,
+.learning-step,
+.project-grid article,
+.practice-brief,
+.practice-checklist {
+  padding: clamp(18px, 2.4vw, 26px);
+}
+
+.learning-map {
+  grid-template-columns: 1fr;
+}
+
+.learning-step {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.learning-step span {
+  color: var(--primary-2);
+  font-weight: 820;
+}
+
+.learning-step h3 {
+  margin: 4px 0 6px;
+}
+
+.learning-step__result {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--muted);
+}
+
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0 24px;
+}
+
+.page-actions--bottom {
+  margin-top: 28px;
+}
+
+.practice-checklist label {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  font-weight: 760;
+}
+
+.practice-checklist textarea {
+  min-height: 110px;
+  width: 100%;
+}
+
+.final-project .button {
+  margin-top: 12px;
+}
+
+.project-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+}
+
+@media (max-width: 760px) {
+  .learning-step {
+    grid-template-columns: 1fr;
+  }
+
+  .page-actions .button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce), (update: slow) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation: none !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

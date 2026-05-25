@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <title>Настройка LoRA-адаптера в Hugging Face PEFT</title>
+  <title>Как настроить LoRA через Hugging Face PEFT</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../css/style.css">
@@ -13,14 +13,15 @@
   <script defer src="../js/main.js"></script>
 </head>
 <body>
-  <nav class="top-nav"><a class="brand-link" href="../index.html" aria-label="Вернуться на главную страницу">LoRA</a><a href="../index.html">Содержание</a><a href="../index.html#course-map">К курсу</a><a href="../index.html#visual-lab">Визуализации</a><a href="../game.html">LoRA Quest</a><a href="../authors.html">Об авторах</a><a href="../test.html">Итоговый тест</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <nav class="top-nav"><a class="brand-link" href="../index.html" aria-label="Вернуться на главную страницу">LoRA</a><a href="../index.html">Главная</a><a href="../index.html#course-map">Карта курса</a><a href="../index.html#lessons-practices">Лекции и практики</a><a href="../game.html">Тренажёр / игра</a><a href="../test.html">Итоговый тест</a><a href="../index.html#final-project">Итоговый проект</a><a href="../authors.html">Об авторах</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
   <main class="layout">
-    <aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class=""><small>1.</small> Дорогая донастройка и роль LoRA</a><a href="lecture2.html" class=""><small>2.</small> PEFT и популярность LoRA</a><a href="lecture3.html" class=""><small>3.</small> Rank, alpha и scaling</a><a href="lecture4.html" class=""><small>4.</small> Target modules в transformer</a><a href="lecture5.html" class="active"><small>5.</small> Python, PEFT и LoraConfig</a><a href="lecture6.html" class=""><small>6.</small> QLoRA и память GPU</a><a href="lecture7.html" class=""><small>7.</small> Eval, сравнение с базой и ошибки</a><a href="lecture8.html" class=""><small>8.</small> Merge, storage и deployment</a></aside>
+    <aside class="sidebar"><h3>Лекции</h3><a href="lecture1.html" class=""><small>1.</small> Дообучение и стоимость</a><a href="lecture2.html" class=""><small>2.</small> PEFT и LoRA-адаптер</a><a href="lecture3.html" class=""><small>3.</small> Rank, alpha и A/B</a><a href="lecture4.html" class=""><small>4.</small> LoRA внутри Transformer</a><a href="lecture5.html" class="active"><small>5.</small> Hugging Face PEFT</a><a href="lecture6.html" class=""><small>6.</small> QLoRA на слабой GPU</a><a href="lecture7.html" class=""><small>7.</small> Оценка качества</a><a href="lecture8.html" class=""><small>8.</small> Сохранение и публикация</a></aside>
     <article class="content lecture">
       <div class="breadcrumbs"><a href="../index.html">Курс</a><span>Лекция 5</span></div>
       <p class="eyebrow">Лекция 5 из 8</p>
-      <h1>Настройка LoRA-адаптера в Hugging Face PEFT</h1>
-      <p class="lecture-lead">Соберёте практический пайплайн: загрузка модели, LoraConfig, подключение адаптера, обучение через SFTTrainer и сохранение результата.</p>
+      <h1>Как настроить LoRA через Hugging Face PEFT</h1>
+      <p class="lecture-lead">Переходим от идеи к рабочему плану: базовая модель, tokenizer, LoraConfig, target_modules, SFTTrainer, сохранение адаптера и контроль рисков перед реальным запуском.</p>
+      <nav class="page-actions page-actions--top" aria-label="Быстрые переходы"><a class="button" href="../practicals/practical5.html">Перейти к практике</a><a class="button secondary" href="../index.html">На главную</a></nav>
       <div class="lecture-progress" data-lecture-id="5"><div><strong>Прогресс лекции</strong><span data-lecture-progress-text>Прогресс курса обновится после мини-теста</span></div><div><i data-progress-bar style="width:0%"></i></div></div>
       <section><h2>Базовый стек</h2><p>Практический LoRA-пайплайн обычно строится на transformers, peft, datasets, trl и accelerate. transformers загружает модель и токенизатор, peft внедряет адаптер, trl даёт SFTTrainer, а datasets помогает готовить train/eval splits.</p></section>
 <section><h2>LoraConfig</h2><p>Ключевые параметры: r, lora_alpha, lora_dropout, target_modules, bias и task_type. Для causal language modeling обычно используют task_type=&quot;CAUSAL_LM&quot;. Конфиг должен отражать задачу и ограничения памяти, а не просто копировать случайный пример.</p></section>
@@ -53,15 +54,8 @@ config = LoraConfig(
 print(config.r, config.target_modules)</code></pre>
       </section>
       <section class="mini-test" data-lecture-id="5"><h2>Мини-проверка</h2><p>Ответьте на 3 вопроса. Лекция засчитывается при результате минимум 2 из 3.</p><div class="mini-test__question" data-answer="0"><h3>1. Какая библиотека Hugging Face отвечает за LoRA-адаптеры?</h3><label class="mini-test__option"><input type="radio" name="lecture5_q1" value="0"> peft</label><label class="mini-test__option"><input type="radio" name="lecture5_q1" value="1"> matplotlib</label><label class="mini-test__option"><input type="radio" name="lecture5_q1" value="2"> flask</label></div><div class="mini-test__question" data-answer="0"><h3>2. Что задаёт lora_dropout?</h3><label class="mini-test__option"><input type="radio" name="lecture5_q2" value="0"> Регуляризацию ветки адаптера</label><label class="mini-test__option"><input type="radio" name="lecture5_q2" value="1"> Порт сервера</label><label class="mini-test__option"><input type="radio" name="lecture5_q2" value="2"> Размер HTML</label></div><div class="mini-test__question" data-answer="0"><h3>3. Что важно сохранить вместе с адаптером?</h3><label class="mini-test__option"><input type="radio" name="lecture5_q3" value="0"> Совместимую базовую модель и конфиг</label><label class="mini-test__option"><input type="radio" name="lecture5_q3" value="1"> Случайный скриншот</label><label class="mini-test__option"><input type="radio" name="lecture5_q3" value="2"> Только CSS</label></div><button class="mini-test__button button" type="button">Проверить лекцию</button><p class="mini-test__result" aria-live="polite"></p></section>
-      <section class="return-home" aria-labelledby="return-home-title">
-        <div class="return-home-card">
-          <div>
-            <h2 id="return-home-title">Готово?</h2>
-            <p>Вернитесь на главный экран, чтобы выбрать следующую лекцию, практику или тренировку.</p>
-          </div>
-          <div class="return-home-actions"><a class="return-home-button" href="../index.html" aria-label="Вернуться на главную страницу">На главный экран</a></div>
-        </div>
-      </section>
+      <nav class="page-actions page-actions--bottom" aria-label="Быстрые переходы"><a class="button" href="../practicals/practical5.html">Перейти к практике</a><a class="button secondary" href="../index.html">На главную</a></nav>
+      <section class="return-home" aria-labelledby="return-home-title"><div class="return-home-card"><div><h2 id="return-home-title">Лекция пройдена?</h2><p>Закрепите тему в связанной практике или вернитесь к карте курса.</p></div><div class="return-home-actions"><a class="return-home-button" href="../practicals/practical5.html">Перейти к практике</a></div></div></section>
     </article>
   </main>
 </body>
