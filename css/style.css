@@ -4984,3 +4984,88 @@ pre code,
     min-height: 24px;
   }
 }
+
+
+/* Course polish follow-up */
+.home .section-heading {
+  align-items: center;
+}
+
+.home .section-heading > p:not(.eyebrow) {
+  display: none;
+}
+
+#lectures .topic-card,
+#practices .topic-card {
+  grid-template-columns: 52px minmax(0, 1fr);
+  grid-template-rows: auto minmax(72px, 1fr) auto;
+  min-height: 178px;
+  align-items: start;
+}
+
+#lectures .topic-card span,
+#practices .topic-card span {
+  grid-row: 1 / -1;
+}
+
+#lectures .topic-card strong,
+#practices .topic-card strong {
+  align-self: start;
+  min-height: 72px;
+  display: flex;
+  align-items: flex-start;
+  line-height: 1.35;
+}
+
+#lectures .topic-card em,
+#practices .topic-card em {
+  align-self: end;
+  margin-top: 8px;
+}
+
+.lesson-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.lesson-nav .button {
+  width: 100%;
+}
+
+.implementation-list {
+  display: grid;
+  gap: 10px;
+  padding-left: 1.2rem;
+}
+
+.done-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  margin-top: 18px;
+  padding: 9px 14px;
+  border: 1px solid color-mix(in srgb, var(--success-accent) 58%, var(--line));
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--success-accent) 16%, var(--panel)), color-mix(in srgb, var(--primary) 10%, var(--panel)));
+  color: var(--text);
+  font-weight: 840;
+  cursor: pointer;
+  box-shadow: var(--soft-shadow);
+}
+
+.done-action input {
+  accent-color: var(--success-accent);
+}
+
+@media (max-width: 640px) {
+  #lectures .topic-card,
+  #practices .topic-card {
+    min-height: 150px;
+  }
+
+  #lectures .topic-card strong,
+  #practices .topic-card strong {
+    min-height: auto;
+  }
+}
