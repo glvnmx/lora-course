@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <title>Итоговый проект: разработка собственного LoRA-адаптера</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script defer src="js/main.js"></script>
+</head>
+<body>
+  <nav class="top-nav"><a class="brand-link" href="index.html" aria-label="Вернуться на главную страницу">LoRA</a><a href="index.html">Главная</a><a href="index.html#course-map">Содержание курса</a><a href="index.html#lectures">Лекции</a><a href="index.html#practices">Практика</a><a href="game.html">Тренажёр</a><a href="test.html">Общая проверка</a><a href="final-project.html">Итоговый проект</a><a href="authors.html">Об авторах</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <main class="final-project-page">
+    <section class="final-project-hero">
+      <div>
+        <p class="eyebrow">Итоговый проект</p>
+        <h1>Итоговый проект: собственный LoRA-адаптер</h1>
+        <p class="hero-value">Пройдите весь путь от выбора задачи до публикации результата: задача, base model, датасет, обучение, оценка, артефакты и Git-репозиторий.</p>
+        <p>На выходе должен быть готовый LoRA-адаптер, который можно сохранить, протестировать, описать и воспроизвести по инструкции.</p>
+        <div class="hero-actions"><a class="button" href="#project-steps">Начать итоговый проект</a><a class="button secondary" href="test.html">Пройти общую проверку</a></div>
+      </div>
+      <div class="project-output-card"><strong>Финальный результат</strong><span>LoRA-адаптер + Git-репозиторий с артефактами, конфигом, eval-отчетом и примерами до/после.</span></div>
+    </section>
+
+    <section class="project-section" id="project-artifacts">
+      <div class="section-heading"><p class="eyebrow">Артефакты</p><h2>Что должно получиться на выходе</h2><p>Итог курса - не тест, а готовый LoRA-адаптер, оформленный как воспроизводимый инженерный проект.</p></div>
+      <div class="artifact-grid">
+        <article><strong>adapter_config.json</strong><span>Конфигурация PEFT-адаптера и ссылка на совместимую base model.</span></article>
+        <article><strong>adapter_model.safetensors</strong><span>Файл весов адаптера или аналогичный сохраненный артефакт.</span></article>
+        <article><strong>README.md</strong><span>Цель проекта, ограничения, данные, запуск и примеры использования.</span></article>
+        <article><strong>train_config.yaml / config.json</strong><span>Параметры обучения: r, alpha, dropout, target_modules, batch, LR, QLoRA.</span></article>
+        <article><strong>eval_report.md</strong><span>Baseline, метрики, ручная рубрика, ошибки и выводы.</span></article>
+        <article><strong>prompt/response до и после</strong><span>Минимум 5 контрольных примеров, показывающих эффект адаптера.</span></article>
+        <article><strong>Инструкция запуска</strong><span>Как загрузить base model, подключить адаптер и выполнить inference.</span></article>
+        <article><strong>Git-репозиторий</strong><span>Ссылка или описание репозитория с понятной структурой проекта.</span></article>
+      </div>
+    </section>
+
+    <section class="project-section" id="project-steps">
+      <div class="section-heading"><p class="eyebrow">Разработка</p><h2>Пошаговая разработка LoRA-адаптера</h2></div>
+      <div class="project-timeline">
+        <article><span>Шаг 1</span><h3>Выбрать задачу адаптера</h3><p>Опишите, какую задачу решает адаптер, кто пользователь, какой формат ответа нужен и как вы поймете, что адаптер работает лучше базовой модели.</p><ul><li>технический ассистент с заданным стилем ответов;</li><li>FAQ-бот по продукту или внутренней базе;</li><li>генерация описаний товаров, вакансий или карточек;</li><li>классификация обращений или текстов;</li><li>доменный ассистент для конкретной предметной области.</li></ul></article>
+        <article><span>Шаг 2</span><h3>Выбрать базовую модель</h3><p>Подберите base model под язык, лицензию, контекст и доступную GPU-память. Чем больше модель, тем выше требования к VRAM и времени эксперимента.</p><p>Если обычный LoRA не помещается в память, используйте QLoRA: 4-bit загрузка базы снижает memory budget, а адаптер продолжает обучать нужное поведение. Адаптер не заменяет базовую модель: он хранит добавку, которую нужно подключать к совместимой base model.</p></article>
+        <article><span>Шаг 3</span><h3>Подготовить датасет</h3><p>Соберите небольшие, чистые и проверяемые примеры. Разделите данные на train/validation и сохраните описание источника данных.</p><pre><code class="language-json">{
+  "instruction": "Объясни, что такое LoRA",
+  "input": "",
+  "output": "LoRA - это метод параметрически-эффективного дообучения..."
+}</code></pre></article>
+        <article><span>Шаг 4</span><h3>Собрать конфигурацию LoRA</h3><p>Зафиксируйте rank, alpha, dropout и target_modules. Начинайте с умеренных значений, например r 8-32, alpha около 2r и dropout 0.05-0.1 для небольшого датасета.</p><p>Проверьте target_modules через архитектуру модели, а не копируйте список вслепую.</p></article>
+        <article><span>Шаг 5</span><h3>Обучить LoRA или QLoRA</h3><p>Запустите короткий SFT-эксперимент, сохраните train/eval loss, предупреждения по памяти и итоговую версию конфига. Если возникает OOM, уменьшите batch, sequence length или rank, включите checkpointing и QLoRA.</p></article>
+        <article><span>Шаг 6</span><h3>Оценить качество</h3><p>Сравните базовую модель и адаптер на одинаковых prompt. Используйте validation loss, ручную рубрику, контрольные примеры и список регрессий.</p></article>
+        <article><span>Шаг 7</span><h3>Сохранить и проверить артефакты</h3><p>Сохраните adapter_config.json и adapter_model.safetensors, затем проверьте загрузку адаптера в отдельном inference-скрипте или notebook.</p></article>
+        <article><span>Шаг 8</span><h3>Оформить и запушить проект</h3><p>Соберите README.md, train_config.yaml, eval_report.md, примеры до/после и инструкцию запуска. Запушьте проект в Git-репозиторий и добавьте ссылку в README или описание сдачи.</p></article>
+      </div>
+    </section>
+
+    <section class="project-section">
+      <div class="section-heading"><p class="eyebrow">Структура</p><h2>Рекомендуемая структура репозитория</h2></div>
+      <pre><code class="language-text">lora-final-project/
+├── README.md
+├── configs/
+│   └── train_config.yaml
+├── data/
+│   └── sample_dataset.jsonl
+├── adapter/
+│   ├── adapter_config.json
+│   └── adapter_model.safetensors
+├── eval/
+│   ├── eval_report.md
+│   └── before_after_examples.md
+└── inference/
+    └── load_adapter.py</code></pre>
+    </section>
+
+    <section class="project-section checklist-section">
+      <div class="section-heading"><p class="eyebrow">Критерии</p><h2>Чеклист готовности</h2></div>
+      <div class="checklist-grid">
+        <label><input type="checkbox"> Задача и пользователь адаптера описаны.</label>
+        <label><input type="checkbox"> Base model выбрана с учетом лицензии, языка и GPU.</label>
+        <label><input type="checkbox"> Датасет приведен к instruction/input/output или chat-формату.</label>
+        <label><input type="checkbox"> LoraConfig сохранен и объяснен.</label>
+        <label><input type="checkbox"> Есть сравнение baseline и адаптера.</label>
+        <label><input type="checkbox"> adapter_config.json и adapter_model.safetensors проверены загрузкой.</label>
+        <label><input type="checkbox"> README.md содержит инструкцию запуска.</label>
+        <label><input type="checkbox"> Проект запушен в Git-репозиторий.</label>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

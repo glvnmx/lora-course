@@ -7,7 +7,8 @@
 - `index.html` — оглавление курса.
 - `lectures/lecture1.html` ... `lectures/lecture8.html` — восемь лекций.
 - `practicals/practical1.html` ... `practicals/practical8.html` — восемь практических заданий по 20 пунктов.
-- `test.html` — итоговый тест из 36 вопросов пяти типов.
+- `test.html` — общая проверка по теории курса из 24 вопросов.
+- `final-project.html` — итоговый проект: разработка собственного LoRA-адаптера и оформление Git-репозитория.
 - `game.html` — обучающая игра "LoRA Quest: Adapter Engineer".
 - `css/style.css` — адаптивная светлая и темная тема, liquid glass-панели, визуальные вкладки, карточки и тренажёры.
 - `js/main.js` — тема, вкладки, калькулятор LoRA-параметров, LoRA Config Studio, LoRA Quest, прогресс, уведомления, drag-and-drop и проверка теста.
@@ -23,6 +24,7 @@
 - Практические страницы сохраняют заметки в `localStorage` и дают честную проверку конфигурационного плана: Studio показывает live-preview конфига, предупреждает про высокий rank/alpha, отсутствие validation split, неподходящие target modules и риск OOM.
 - Командная палитра `Ctrl+K` для быстрого перехода по сайту.
 - LoRA Quest с пятью миссиями Adapter Engineer: full fine-tuning vs LoRA, rank/alpha/dropout, target_modules, QLoRA survival, eval и deploy.
+- Итог курса — готовый LoRA-адаптер с `adapter_config.json`, `adapter_model.safetensors`, README, eval-отчётом и Git-репозиторием.
 - Сессионные достижения за удачные действия.
 - Учебные уведомления используются только для явных действий пользователя: прогресс, проверка заданий и достижения.
 

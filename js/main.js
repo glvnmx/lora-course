@@ -130,7 +130,7 @@ function initAdapterLab() {
 const achievements = {
   balanced: 'Сбалансирован rank, alpha и dropout',
   lab: 'LoRA Quest: адаптер готов к оценке',
-  test: 'Итоговая проверка открыта'
+  test: 'Общая проверка открыта'
 };
 
 function unlockAchievement(id) {
@@ -154,12 +154,12 @@ function initCommandPalette() {
   const root = nested ? '../' : '';
   const links = [
     ['Главная', `${root}index.html`],
-    ['Карта курса', `${root}index.html#course-map`],
+    ['Содержание курса', `${root}index.html#course-map`],
     ['Лекции', `${root}index.html#lectures`],
-    ['Практические задания', `${root}index.html#practices`],
-    ['Тренажёр / игра', `${root}game.html`],
-    ['Итоговый тест', `${root}test.html`],
-    ['Итоговый проект', `${root}index.html#final-project`],
+    ['Практика', `${root}index.html#practices`],
+    ['Тренажёр', `${root}game.html`],
+    ['Общая проверка', `${root}test.html`],
+    ['Итоговый проект', `${root}final-project.html`],
     ['Об авторах', `${root}authors.html`],
     ...Array.from({ length: 8 }, (_, i) => [`Лекция ${i + 1}`, `${root}lectures/lecture${i + 1}.html`]),
     ...Array.from({ length: 8 }, (_, i) => [`Практика ${i + 1}`, `${root}practicals/practical${i + 1}.html`])

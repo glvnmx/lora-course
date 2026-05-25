@@ -4228,3 +4228,299 @@ body::after,
     width: 100%;
   }
 }
+
+
+/* Course structure refresh: navigation, final project and game dark theme */
+body {
+  overflow-x: hidden;
+}
+
+.top-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  max-width: min(1180px, calc(100% - 24px));
+  padding: 8px;
+  overflow: visible;
+}
+
+.top-nav a {
+  min-height: 38px;
+  padding: 0 10px;
+  font-size: clamp(0.82rem, 0.72vw, 0.94rem);
+}
+
+.top-nav .brand-link {
+  min-width: 58px;
+  height: 38px;
+  margin-right: 2px;
+}
+
+.theme-toggle {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  margin-left: auto;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  line-height: 1;
+}
+
+.learning-step__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.quick-link-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.quick-link {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  min-height: 78px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: var(--soft-shadow);
+}
+
+.quick-link:hover {
+  text-decoration: none;
+  border-color: color-mix(in srgb, var(--primary) 34%, var(--line));
+  transform: translateY(-1px);
+}
+
+.quick-link span {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+  font-weight: 880;
+}
+
+.quick-link strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.final-project-page {
+  width: var(--container);
+  max-width: none;
+  margin: 0 auto;
+  padding: clamp(24px, 4vw, 56px) 0;
+}
+
+.final-project-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.42fr);
+  gap: clamp(18px, 3vw, 36px);
+  align-items: center;
+  min-height: min(620px, 72vh);
+  padding: clamp(26px, 5vw, 58px);
+  border: 1px solid color-mix(in srgb, var(--primary) 28%, var(--line));
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--panel-readable, var(--panel)) 88%, var(--primary) 8%), color-mix(in srgb, var(--panel-readable, var(--panel)) 90%, var(--matrix) 8%));
+  box-shadow: var(--shadow);
+}
+
+.final-project-hero h1 {
+  max-width: 940px;
+  margin: 0.1em 0 0.32em;
+  font-size: clamp(2.2rem, 5vw, 4.8rem);
+  line-height: 1.04;
+}
+
+.project-output-card {
+  display: grid;
+  gap: 10px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: var(--soft-shadow);
+}
+
+.project-output-card strong {
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.project-section {
+  margin-top: clamp(28px, 5vw, 64px);
+}
+
+.artifact-grid,
+.checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+}
+
+.artifact-grid article,
+.checklist-grid label,
+.project-timeline article {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: var(--soft-shadow);
+}
+
+.artifact-grid article {
+  display: grid;
+  gap: 8px;
+}
+
+.artifact-grid span,
+.project-timeline p,
+.project-timeline li {
+  color: var(--muted);
+}
+
+.project-timeline {
+  display: grid;
+  gap: 16px;
+}
+
+.project-timeline article > span {
+  display: inline-grid;
+  place-items: center;
+  min-height: 34px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+  font-weight: 840;
+}
+
+.project-timeline h3 {
+  margin: 12px 0 8px;
+  font-size: clamp(1.25rem, 2vw, 1.8rem);
+}
+
+.project-timeline pre,
+.project-section pre {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--code);
+}
+
+.checklist-grid label {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.quest-badge,
+.mission-panel,
+.game-hero,
+.game-panel,
+.action-card {
+  color: var(--text);
+}
+
+.quest-badge span,
+.mission-panel p,
+.mission-panel h3,
+.game-hero p,
+.action-card span {
+  color: var(--muted);
+}
+
+.quest-badge strong,
+.mission-panel .eyebrow {
+  color: var(--primary);
+}
+
+[data-theme="dark"] .quest-badge,
+[data-theme="dark"] .mission-panel,
+[data-theme="dark"] .game-hero,
+[data-theme="dark"] .game-panel,
+[data-theme="dark"] .action-card {
+  background-color: color-mix(in srgb, var(--panel-solid) 86%, transparent);
+  color: var(--text);
+}
+
+[data-theme="dark"] .quest-badge *,
+[data-theme="dark"] .mission-panel *,
+[data-theme="dark"] .game-hero *,
+[data-theme="dark"] .game-panel *,
+[data-theme="dark"] .action-card * {
+  color: inherit;
+}
+
+[data-theme="dark"] .quest-badge span,
+[data-theme="dark"] .mission-panel p,
+[data-theme="dark"] .game-hero p,
+[data-theme="dark"] .action-card span {
+  color: var(--muted);
+}
+
+[data-theme="dark"] .quest-badge strong,
+[data-theme="dark"] .mission-panel .eyebrow {
+  color: var(--primary-2);
+}
+
+@media (max-width: 980px) {
+  .top-nav {
+    justify-content: flex-start;
+  }
+
+  .theme-toggle {
+    margin-left: 0;
+  }
+
+  .final-project-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .top-nav {
+    max-width: min(100% - 12px, 1180px);
+    border-radius: 18px;
+  }
+
+  .top-nav a {
+    min-height: 34px;
+    padding: 0 8px;
+    font-size: 0.82rem;
+  }
+
+  .theme-toggle {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  .final-project-page {
+    width: min(100% - 16px, 1320px);
+  }
+
+  .final-project-hero,
+  .project-output-card,
+  .artifact-grid article,
+  .checklist-grid label,
+  .project-timeline article {
+    padding: 16px;
+  }
+}
