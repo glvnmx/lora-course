@@ -4132,3 +4132,99 @@ body::after,
     transform: none !important;
   }
 }
+
+
+.real-world {
+  margin: 24px 0;
+  padding: 20px;
+  border: 1px solid color-mix(in srgb, var(--success-accent) 34%, var(--line));
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--panel) 86%, var(--matrix) 8%);
+}
+
+.real-world h2 {
+  margin-top: 0;
+}
+
+.final-project {
+  display: grid;
+  gap: clamp(18px, 2.4vw, 28px);
+}
+
+.final-project__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: end;
+  padding: clamp(22px, 3vw, 34px);
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, var(--line));
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--panel-readable) 88%, var(--primary) 8%), color-mix(in srgb, var(--panel-readable) 90%, var(--matrix) 8%));
+  box-shadow: var(--shadow);
+}
+
+.final-project__hero h2 {
+  margin: 0 0 10px;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 1.08;
+}
+
+.final-project__hero p:not(.eyebrow) {
+  max-width: 760px;
+  color: var(--muted);
+}
+
+.final-project__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.project-grid--outcomes article {
+  position: relative;
+  overflow: hidden;
+}
+
+.project-step {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 12px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--primary), var(--matrix));
+  color: #fff;
+  font-weight: 840;
+}
+
+.project-artifacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.project-artifacts span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--text);
+  font-weight: 780;
+  box-shadow: var(--soft-shadow);
+}
+
+@media (max-width: 760px) {
+  .final-project__hero {
+    grid-template-columns: 1fr;
+  }
+
+  .final-project__cta,
+  .final-project__cta .button {
+    width: 100%;
+  }
+}

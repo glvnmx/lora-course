@@ -155,7 +155,8 @@ function initCommandPalette() {
   const links = [
     ['Главная', `${root}index.html`],
     ['Карта курса', `${root}index.html#course-map`],
-    ['Лекции и практики', `${root}index.html#lessons-practices`],
+    ['Лекции', `${root}index.html#lectures`],
+    ['Практические задания', `${root}index.html#practices`],
     ['Тренажёр / игра', `${root}game.html`],
     ['Итоговый тест', `${root}test.html`],
     ['Итоговый проект', `${root}index.html#final-project`],

@@ -13,7 +13,7 @@
   <script defer src="../js/main.js"></script>
 </head>
 <body>
-  <nav class="top-nav"><a class="brand-link" href="../index.html" aria-label="Вернуться на главную страницу">LoRA</a><a href="../index.html">Главная</a><a href="../index.html#course-map">Карта курса</a><a href="../index.html#lessons-practices">Лекции и практики</a><a href="../game.html">Тренажёр / игра</a><a href="../test.html">Итоговый тест</a><a href="../index.html#final-project">Итоговый проект</a><a href="../authors.html">Об авторах</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <nav class="top-nav"><a class="brand-link" href="../index.html" aria-label="Вернуться на главную страницу">LoRA</a><a href="../index.html">Главная</a><a href="../index.html#course-map">Карта курса</a><a href="../index.html#lectures">Лекции</a><a href="../index.html#practices">Практические задания</a><a href="../game.html">Тренажёр / игра</a><a href="../test.html">Итоговый тест</a><a href="../index.html#final-project">Итоговый проект</a><a href="../authors.html">Об авторах</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
   <main class="layout">
     <aside class="sidebar"><h3>Практики</h3><a href="practical1.html" class=""><small>1.</small> оценить стоимость дообучения и выбрать LoRA</a><a href="practical2.html" class=""><small>2.</small> выбрать PEFT-подход под задачу</a><a href="practical3.html" class=""><small>3.</small> рассчитать rank, alpha и параметры LoRA</a><a href="practical4.html" class=""><small>4.</small> выбрать target_modules в Transformer</a><a href="practical5.html" class=""><small>5.</small> собрать LoraConfig и SFT-пайплайн</a><a href="practical6.html" class=""><small>6.</small> настроить QLoRA для слабой видеокарты</a><a href="practical7.html" class="active"><small>7.</small> проверить качество LoRA-адаптера</a><a href="practical8.html" class=""><small>8.</small> сохранить, протестировать и описать адаптер</a></aside>
     <article class="content practice-page">
@@ -21,7 +21,6 @@
       <p class="eyebrow">Практика 7 из 8</p>
       <h1>Мини-лаба: проверить качество LoRA-адаптера</h1>
       <p class="lecture-lead">Цель практики: сделать минимальный, но полезный протокол оценки адаптера до деплоя. Результат: eval-протокол с baseline, validation, контрольными prompt и критериями качества.</p>
-      <nav class="page-actions page-actions--top" aria-label="Быстрые переходы"><a class="button" href="../lectures/lecture7.html">Вернуться к лекции</a><a class="button secondary" href="../index.html">На главную</a></nav>
       <section class="practice-brief"><h2>Что получится</h2><p>eval-протокол с baseline, validation, контрольными prompt и критериями качества.</p><p>Связь с лекцией: сначала перечитайте «Как проверить качество LoRA-адаптера», затем выполните шаги ниже по порядку.</p></section>
       <section class="practice-tasks"><article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>1</span><b>Шаг</b></div><h3>Выберите baseline и запишите, какой реальный результат должен дать адаптер.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
 <article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>2</span><b>Шаг</b></div><h3>Опишите baseline: как базовая модель решает задачу до дообучения.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
@@ -74,9 +73,8 @@ config = LoraConfig(
 )
 print(lora_params(4096, 4096, config.r, modules=2))</code></pre>
       </section>
-      <nav class="page-actions page-actions--bottom" aria-label="Быстрые переходы"><a class="button" href="../lectures/lecture7.html">Вернуться к лекции</a><a class="button secondary" href="../index.html">На главную</a></nav>
-      <section class="return-home" aria-labelledby="return-home-title"><div class="return-home-card"><div><h2 id="return-home-title">Практика завершена?</h2><p>Вернитесь к лекции, если нужно освежить теорию, или откройте карту курса.</p></div><div class="return-home-actions"><a class="return-home-button" href="../lectures/lecture7.html">Вернуться к лекции</a></div></div></section>
-    </article>
+      <nav class="page-actions page-actions--bottom" aria-label="Навигация по практике"><a class="button" href="../lectures/lecture7.html">Вернуться к лекции</a><a class="button secondary" href="../index.html#practices">К списку практик</a></nav>
+</article>
   </main>
 </body>
 </html>

@@ -18,9 +18,9 @@
 - Вкладки: карта курса, методы PEFT, пайплайн обучения, деплой.
 - Калькулятор числа параметров LoRA для заданных `d_out`, `d_in` и `r`.
 - Лаборатория LoRA-параметров со слайдерами `rank`, `alpha`, `dropout` и QLoRA-переключателем.
-- LoRA Config Studio в лекциях: сборка `LoraConfig`, выбор `target_modules`, QLoRA, batch size, sequence length, learning rate и validation split.
-- Проверка плана без имитации запуска Python: Studio показывает live-preview конфига, предупреждает про высокий rank/alpha, отсутствие validation split, неподходящие target modules и риск OOM.
-- Практические страницы сохраняют заметки в `localStorage` и дают честную проверку конфигурационного плана.
+- В лекциях есть мини-тесты и короткие примеры того, как тема применяется в реальном ML/LLM-проекте.
+- LoRA Config Studio остаётся в практических заданиях: помогает собрать `LoraConfig`, выбрать `target_modules`, QLoRA, batch size, sequence length, learning rate и validation split.
+- Практические страницы сохраняют заметки в `localStorage` и дают честную проверку конфигурационного плана: Studio показывает live-preview конфига, предупреждает про высокий rank/alpha, отсутствие validation split, неподходящие target modules и риск OOM.
 - Командная палитра `Ctrl+K` для быстрого перехода по сайту.
 - LoRA Quest с пятью миссиями Adapter Engineer: full fine-tuning vs LoRA, rank/alpha/dropout, target_modules, QLoRA survival, eval и deploy.
 - Сессионные достижения за удачные действия.
