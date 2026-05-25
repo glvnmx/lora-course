@@ -13,68 +13,37 @@
   <script defer src="../js/main.js"></script>
 </head>
 <body>
-  <nav class="top-nav"><a class="brand-link" href="../index.html" aria-label="Вернуться на главную страницу">LoRA</a><a href="../index.html">Главная</a><a href="../index.html#course-map">Содержание курса</a><a href="../index.html#lectures">Лекции</a><a href="../index.html#practices">Практика</a><a href="../game.html">Тренажёр</a><a href="../test.html">Итоговый тест</a><a href="../final-project.html">Итоговый проект</a><a href="../authors.html">Об авторах</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
+  <nav class="top-nav"><span class="brand-link brand-link--static">LoRA</span><a href="../index.html">Главная</a><a href="../index.html#course-map">Содержание курса</a><a href="../index.html#lectures">Лекции</a><a href="../index.html#practices">Практика</a><a href="../game.html">Тренажёр</a><a href="../test.html">Итоговый тест</a><a href="../final-project.html">Итоговый проект</a><a href="../authors.html">Об авторах</a><button class="theme-toggle" type="button" aria-label="Переключить тему">◐</button></nav>
   <main class="layout">
     <aside class="sidebar"><h3>Практики</h3><a href="practical1.html" class=""><small>1.</small> оценить стоимость дообучения и выбрать LoRA</a><a href="practical2.html" class=""><small>2.</small> выбрать PEFT-подход под задачу</a><a href="practical3.html" class=""><small>3.</small> рассчитать rank, alpha и параметры LoRA</a><a href="practical4.html" class=""><small>4.</small> выбрать target_modules в Transformer</a><a href="practical5.html" class=""><small>5.</small> собрать LoraConfig и SFT-пайплайн</a><a href="practical6.html" class="active"><small>6.</small> настроить QLoRA для слабой видеокарты</a><a href="practical7.html" class=""><small>7.</small> проверить качество LoRA-адаптера</a><a href="practical8.html" class=""><small>8.</small> сохранить, протестировать и описать адаптер</a></aside>
     <article class="content practice-page">
       <div class="breadcrumbs"><a href="../index.html">Курс</a><span>Практика 6</span></div>
       <p class="eyebrow">Практика 6 из 8</p>
       <h1>Мини-лаба: настроить QLoRA для слабой видеокарты</h1>
-      <p class="lecture-lead">Цель практики: подготовить конфигурацию QLoRA для обучения на ограниченной GPU-памяти. Результат: памятный QLoRA-план: 4-bit NF4, batch, sequence length, checkpointing и оценка OOM-риска.</p>
-      <section class="practice-brief"><h2>Что получится</h2><p>памятный QLoRA-план: 4-bit NF4, batch, sequence length, checkpointing и оценка OOM-риска.</p><p>Связь с лекцией: сначала перечитайте «Как обучать LoRA на слабой видеокарте с QLoRA», затем выполните шаги ниже по порядку.</p></section>
-      <section class="practice-tasks"><article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>1</span><b>Шаг</b></div><h3>Выберите лимит VRAM и запишите, какой реальный результат должен дать адаптер.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>2</span><b>Шаг</b></div><h3>Опишите baseline: как базовая модель решает задачу до дообучения.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>3</span><b>Шаг</b></div><h3>Сформулируйте, почему простого prompt недостаточно или где он может быть достаточен.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>4</span><b>Шаг</b></div><h3>Запишите ограничение по данным, времени и GPU-памяти.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>5</span><b>Шаг</b></div><h3>Свяжите задачу с темой лекции: Как обучать LoRA на слабой видеокарте с QLoRA.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>6</span><b>Шаг</b></div><h3>Подготовьте один пример instruction-формата: system, user, assistant.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>7</span><b>Шаг</b></div><h3>Проверьте данные: дубликаты, роли сообщений, длины примеров и отсутствие утечки validation.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>8</span><b>Шаг</b></div><h3>Выберите базовую модель и зафиксируйте её точное имя или revision.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>9</span><b>Шаг</b></div><h3>Определите NF4 4-bit и запишите главный риск для эксперимента.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>10</span><b>Шаг</b></div><h3>Выберите double quantization как инженерное решение и объясните trade-off.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>11</span><b>Шаг</b></div><h3>Задайте стартовые target_modules и объясните, почему они подходят архитектуре.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>12</span><b>Шаг</b></div><h3>Задайте r, lora_alpha и lora_dropout для первого запуска.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>13</span><b>Шаг</b></div><h3>Посчитайте или оцените число обучаемых параметров для выбранного rank.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>14</span><b>Шаг</b></div><h3>Решите, нужен ли QLoRA, и запишите, что изменится в memory budget.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>15</span><b>Шаг</b></div><h3>Составьте минимальный план обучения: batch, sequence length, learning rate, validation split.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>16</span><b>Шаг</b></div><h3>Опишите, какие логи и метрики будете смотреть во время обучения.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>17</span><b>Шаг</b></div><h3>Подготовьте eval-набор: baseline, validation, контрольные prompt и ручная рубрика.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>18</span><b>Шаг</b></div><h3>Сформулируйте критерий успеха и критерий отката адаптера.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>19</span><b>Шаг</b></div><h3>Запишите, какие артефакты нужно сохранить вместе с адаптером.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article>
-<article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>20</span><b>Шаг</b></div><h3>Соберите итоговый результат: памятный QLoRA-план: 4-bit NF4, batch, sequence length, checkpointing и оценка OOM-риска.</h3><textarea placeholder="Запишите результат шага, расчёт или решение"></textarea></article></section>
-      <section class="practice-checklist"><h2>Чек-лист самопроверки</h2><ul><li>Есть цель и понятный результат мини-работы.</li><li>Выбранная конфигурация связана с задачей и ограничениями.</li><li>Есть validation или контрольные prompt, а не только train loss.</li><li>Записаны риски: память, переобучение, несовместимость базы и адаптера.</li></ul><label>Заметки по практике<textarea placeholder="Что получилось, где возникли вопросы, какие настройки хотите проверить дальше"></textarea></label></section>
-      <section class="code-practice python-runner" data-practice-id="practical-6">
-        <div class="code-runner__head"><h2>LoRA Config Studio</h2><span>план LoRA/QLoRA и проверка рисков</span></div>
-        <textarea class="code-practice__editor language-python" spellcheck="false" placeholder="Опишите LoraConfig или план обучения...">from peft import LoraConfig
-
-def lora_params(d_in, d_out, r, modules=1):
-    return modules * r * (d_in + d_out)
+      <p class="lecture-lead">Рабочий сценарий вместо абстрактного конспекта: вы действуете как ML/LLM-инженер, которому нужно принять решение с ограничениями по данным, GPU и качеству.</p>
+      <section class="practice-brief"><h2>Рабочий сценарий</h2><p>Команда хочет обучить 13B-модель на 16 GB VRAM. Обычный LoRA запуск падает с OOM.</p><h3>Цель</h3><p>составить QLoRA memory plan: NF4, double quant, checkpointing, accumulation и ограничения context length.</p></section>
+      <section><h2>Исходные ограничения</h2><div class="constraint-grid"><span>GPU 16 GB</span><span>13B base model</span><span>длинные примеры до 4096 токенов</span><span>нужно сохранить качество</span></div></section>
+      <section class="practice-tasks"><article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>1</span><b>Этап</b></div><h3>Включите 4-bit NF4 для base model.</h3><label><input type="checkbox"> Baseline или исходное состояние зафиксированы</label></article><article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>2</span><b>Этап</b></div><h3>Выберите batch и gradient accumulation.</h3><label><input type="checkbox"> Ограничение учтено в решении</label></article><article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>3</span><b>Этап</b></div><h3>Решите, нужен ли gradient checkpointing.</h3><label>Выберите вариант<select><option>NF4 + double quant + checkpointing</option><option>batch=16 без квантования</option><option>rank=128 без изменения памяти</option></select></label></article><article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>4</span><b>Этап</b></div><h3>Снизьте sequence length или rank при OOM.</h3><label><input type="checkbox"> Риск записан и проверяем</label></article><article class="practice-task" data-task-type="lab-step"><div class="practice-task__meta"><span>5</span><b>Этап</b></div><h3>Опишите, чем пожертвуете первым.</h3><label>QLoRA memory plan<textarea placeholder="Коротко: решение, расчёт или критерий готовности"></textarea></label></article></section>
+      <section class="practice-checklist"><h2>Финальный результат</h2><p>памятный QLoRA-план и порядок действий при OOM.</p><div class="checklist-grid"><label><input type="checkbox"> Задача и ограничения понятны без автора.</label><label><input type="checkbox"> Решение связано с метриками качества и memory budget.</label><label><input type="checkbox"> Есть baseline или контрольные prompts.</label><label><input type="checkbox"> Записан риск и следующий эксперимент.</label></div></section>
+      <section class="code-practice python-runner" data-practice-id="practical-6"><div class="code-runner__head"><h2>LoRA Config Studio</h2><span>черновик конфигурации и проверка рисков</span></div><textarea class="code-practice__editor language-python" spellcheck="false" placeholder="Опишите LoraConfig или план обучения...">from peft import LoraConfig
 
 config = LoraConfig(
-    r=16,
-    lora_alpha=32,
+    r=8,
+    lora_alpha=16,
     lora_dropout=0.05,
     target_modules=[&quot;q_proj&quot;, &quot;v_proj&quot;],
     task_type=&quot;CAUSAL_LM&quot;,
 )
-print(lora_params(4096, 4096, config.r, modules=2))</textarea>
-        <div class="code-practice__actions"><button class="code-practice__copy button secondary" type="button">Скопировать план</button><button class="code-practice__clear button secondary" type="button">Очистить</button><button class="code-practice__solution-btn button" type="button">Показать пример</button></div>
-        <pre class="code-practice__solution" hidden><code class="language-python">from peft import LoraConfig
 
-def lora_params(d_in, d_out, r, modules=1):
-    return modules * r * (d_in + d_out)
-
-config = LoraConfig(
-    r=16,
-    lora_alpha=32,
-    lora_dropout=0.05,
-    target_modules=[&quot;q_proj&quot;, &quot;v_proj&quot;],
-    task_type=&quot;CAUSAL_LM&quot;,
-)
-print(lora_params(4096, 4096, config.r, modules=2))</code></pre>
-      </section>
+training_plan = {
+    &quot;validation_split&quot;: 0.1,
+    &quot;batch_size&quot;: 1,
+    &quot;sequence_length&quot;: 2048,
+    &quot;learning_rate&quot;: &quot;2e-4&quot;,
+    &quot;gradient_checkpointing&quot;: True,
+}</textarea><div class="code-practice__actions"><button class="code-practice__copy button secondary" type="button">Скопировать план</button><button class="code-practice__clear button secondary" type="button">Очистить</button><button class="code-practice__solution-btn button" type="button">Показать пример</button></div><pre class="code-practice__solution" hidden><code class="language-python"># Минимальный ориентир: проверьте trainable parameters, validation split и OOM-риск до запуска обучения.</code></pre></section>
       <nav class="page-actions page-actions--bottom" aria-label="Навигация по практике"><a class="button" href="../lectures/lecture6.html">Вернуться к лекции</a><a class="button secondary" href="../index.html#practices">К списку практик</a></nav>
-</article>
+    </article>
   </main>
 </body>
 </html>

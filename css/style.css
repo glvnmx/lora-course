@@ -4725,3 +4725,262 @@ pre code,
     position: static;
   }
 }
+
+
+/* Scenario course refresh */
+.brand-link--static,
+.top-nav .brand-link--static {
+  display: inline-grid;
+  place-items: center;
+  min-width: 58px;
+  height: 38px;
+  padding: 0 10px;
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 900;
+  cursor: default;
+  user-select: none;
+  background: linear-gradient(135deg, var(--success-accent), var(--primary));
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--success-accent) 24%, transparent);
+}
+
+.top-nav .brand-link--static:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+.top-nav::before {
+  content: none;
+}
+
+.learning-step {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(14px, 3vw, 28px);
+  min-height: 128px;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--panel-readable, var(--panel)) 86%, transparent), color-mix(in srgb, var(--primary) 8%, transparent)),
+    radial-gradient(circle at 8% 0%, color-mix(in srgb, var(--matrix) 16%, transparent), transparent 34%);
+}
+
+.learning-step__copy {
+  min-width: 0;
+}
+
+.learning-step__copy span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--primary-2);
+  font-weight: 860;
+}
+
+.learning-step__copy h3 {
+  justify-self: start;
+  max-width: none;
+  margin: 0 0 8px;
+  text-align: left;
+}
+
+.learning-step__copy p {
+  max-width: 760px;
+  margin: 0;
+  color: var(--muted);
+}
+
+.learning-step__actions {
+  justify-content: flex-end;
+  min-width: 220px;
+}
+
+.learning-step__actions .button {
+  min-width: 100px;
+}
+
+#lectures .topic-card,
+#practices .topic-card {
+  position: relative;
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--glass-border, var(--line)) 72%, transparent);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--panel-readable, var(--panel)) 86%, transparent), color-mix(in srgb, var(--panel-solid) 42%, transparent)),
+    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--primary) 16%, transparent), transparent 38%),
+    radial-gradient(circle at 88% 100%, color-mix(in srgb, var(--matrix) 14%, transparent), transparent 36%);
+  backdrop-filter: blur(22px) saturate(1.18);
+  -webkit-backdrop-filter: blur(22px) saturate(1.18);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.10), inset 0 1px 0 rgba(255,255,255,0.34);
+}
+
+#lectures .topic-card::before,
+#practices .topic-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, rgba(255,255,255,0.36), transparent 28%, transparent 68%, rgba(255,255,255,0.12));
+  opacity: 0.5;
+}
+
+#lectures .topic-card:hover,
+#practices .topic-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.16), inset 0 1px 0 rgba(255,255,255,0.42);
+}
+
+.term-grid,
+.constraint-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0 4px;
+}
+
+.term-grid span,
+.constraint-grid span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 7px 11px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--primary) 9%, var(--panel));
+  color: var(--text);
+  font-weight: 780;
+}
+
+.diagram-compare,
+.diagram-flow,
+.diagram-equation,
+.diagram-stack {
+  display: grid;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.diagram-compare {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.diagram-compare.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.diagram-compare div,
+.diagram-flow span,
+.diagram-equation span,
+.diagram-stack span {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--panel-solid) 72%, transparent);
+  box-shadow: var(--soft-shadow);
+}
+
+.diagram-compare b,
+.diagram-compare span,
+.diagram-compare small {
+  display: block;
+}
+
+.diagram-compare span,
+.diagram-compare small {
+  color: var(--muted);
+}
+
+.diagram-flow {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.diagram-flow.four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.diagram-flow span,
+.diagram-stack span {
+  position: relative;
+  text-align: center;
+  font-weight: 820;
+}
+
+.diagram-equation {
+  grid-template-columns: minmax(120px, 1fr) auto minmax(120px, 1fr) auto minmax(120px, 1fr);
+}
+
+.diagram-equation b {
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+  font-size: 1.6rem;
+}
+
+.diagram-stack {
+  grid-template-columns: 1fr;
+}
+
+.practice-task select,
+.practice-task input[type="text"],
+.practice-task input[type="number"] {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--panel-solid) 76%, transparent);
+  color: var(--text);
+}
+
+.project-tab-main h4 {
+  margin: 18px 0 6px;
+  color: var(--primary);
+}
+
+.project-tab-main ol {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.project-tab-side label {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-top: 10px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+[data-theme="dark"] #lectures .topic-card,
+[data-theme="dark"] #practices .topic-card,
+[data-theme="dark"] .diagram-compare div,
+[data-theme="dark"] .diagram-flow span,
+[data-theme="dark"] .diagram-equation span,
+[data-theme="dark"] .diagram-stack span {
+  background: color-mix(in srgb, var(--panel-solid) 84%, transparent);
+}
+
+@media (max-width: 760px) {
+  .learning-step {
+    grid-template-columns: 1fr;
+  }
+
+  .learning-step__actions {
+    justify-content: stretch;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .learning-step__actions .button {
+    flex: 1 1 130px;
+  }
+
+  .diagram-compare,
+  .diagram-compare.three,
+  .diagram-flow,
+  .diagram-flow.four,
+  .diagram-equation {
+    grid-template-columns: 1fr;
+  }
+
+  .diagram-equation b {
+    min-height: 24px;
+  }
+}
